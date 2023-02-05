@@ -18,7 +18,7 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     var brightness = SchedulerBinding.instance.window.platformBrightness;
     var theme = brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-    Color fontColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    Color fontColor = Theme.of(context).colorScheme.onBackground;
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -38,19 +38,49 @@ class _ScanPageState extends State<ScanPage> {
               return ColoredBox(
                 color: Colors.white,
                 child: Scaffold(
-                  backgroundColor: brightness == Brightness.dark ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
-                  body: SafeArea(
-                    child: Column(children: [
+                    backgroundColor: brightness == Brightness.dark ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
+                    body: Column(children: [
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60),
                         child: Text(
                           "Title".tr(),
-                          style: TextStyle(color: fontColor, fontSize: 30, fontWeight: FontWeight.w600),
+                          style: TextStyle(color: fontColor, fontSize: 30, fontWeight: FontWeight.w500),
                         ),
-                      )
+                      ),
                     ]),
-                  ),
-                ),
+                    bottomSheet: Container(
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      height: 60,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              // If the scan HAS started, it should be disabled.
+                              onPressed: B.scanStarted ? null : B.startScan,
+                              child: const Icon(Icons.search),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              // If the scan HAS started, it should be disabled.
+                              onPressed: B.foundDeviceWaitingToConnect ? B.connectToDevice : null,
+                              child: const Icon(Icons.bluetooth),
+                            ),
+                          ),
+                          // This would be for what we want to do after connecting
+                          SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                              onPressed: B.connected ? () {} : null,
+                              child: const Icon(Icons.question_mark_rounded),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
               );
             },
           ),
