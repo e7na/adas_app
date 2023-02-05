@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:reactive_ble/Screens/scan_page.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:reactive_ble/Data/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  runApp(EasyLocalization(useOnlyLangCode: true, supportedLocales: const [Locale('en'), Locale('ar')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('en'),
-      child: const MyApp()));
+  runApp(EasyLocalization(useOnlyLangCode: true, supportedLocales: const [Locale('en'), Locale('ar')], path: 'assets/translations', fallbackLocale: const Locale('en'), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,15 +15,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BLE',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: const ScanPage(),
-    );
+    return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+      return MaterialApp(
+        title: 'BLE',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: lightColorScheme ?? defaultLightColorScheme,
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: darkColorScheme ?? defaultDarkColorScheme,
+          useMaterial3: true,
+        ),
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        home: const ScanPage(),
+      );
+    });
   }
 }
