@@ -56,6 +56,13 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
   }
 
+  // Simple function to stop searching for devices
+  void stopScan() async {
+    await scanStream.cancel();
+    scanStarted = false;
+    emit(BleStop());
+  }
+
   void connectToDevice() {
     // We're done scanning, we can cancel it
     scanStream.cancel();

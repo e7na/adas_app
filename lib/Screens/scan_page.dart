@@ -18,7 +18,7 @@ class _ScanPageState extends State<ScanPage> {
   Widget build(BuildContext context) {
     var brightness = SchedulerBinding.instance.window.platformBrightness;
     var theme = brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-    Color fontColor = Theme.of(context).colorScheme.onBackground;
+    //Color fontColor = Theme.of(context).colorScheme.onBackground;
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -39,14 +39,20 @@ class _ScanPageState extends State<ScanPage> {
                 color: Colors.white,
                 child: Scaffold(
                     backgroundColor: brightness == Brightness.dark ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
-                    body: Column(children: [
+                    body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const SizedBox(
+                        height: 40,
+                      ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                         child: Text(
                           "Title".tr(),
-                          style: TextStyle(color: fontColor, fontSize: 30, fontWeight: FontWeight.w500),
+                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                         ),
                       ),
+                      ListTile(
+                        title: Text("T1".tr(),style: const TextStyle(fontWeight: FontWeight.w400),),
+                      )
                     ]),
                     bottomSheet: Container(
                       color: Theme.of(context).colorScheme.surfaceVariant,
@@ -58,8 +64,8 @@ class _ScanPageState extends State<ScanPage> {
                             width: 100,
                             child: ElevatedButton(
                               // If the scan HAS started, it should be disabled.
-                              onPressed: B.scanStarted ? null : B.startScan,
-                              child: const Icon(Icons.search),
+                              onPressed: B.scanStarted ? B.stopScan : B.startScan,
+                              child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
                             ),
                           ),
                           SizedBox(
