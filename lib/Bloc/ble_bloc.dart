@@ -41,7 +41,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     Map<Permission, PermissionStatus> status = await [
       Permission.location,
       Permission.bluetoothScan,
-      Permission.bluetoothConnect
+      Permission.bluetoothConnect,
+      Permission.nearbyWifiDevices
     ].request();
 
     return status.entries
@@ -54,7 +55,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     bool permGranted = false;
     if (Platform.isAndroid) {
       permGranted = await checkPermissions();
-      //await Permission.nearbyWifiDevices.request();
     } else if (Platform.isIOS) {
       permGranted = true;
     }
