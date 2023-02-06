@@ -37,13 +37,25 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     on<BleEvent>((event, emit) {});
   }
 
+  Future<bool> checkPermissions() async {
+    Map<Permission, PermissionStatus> status = await [
+      Permission.location,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect
+    ].request();
+
+    return status.entries
+        .map((e) => e.value.isGranted)
+        .reduce((value, element) => false);
+  }
+
   void startScan() async {
     // Platform permissions handling stuff
     bool permGranted = false;
     scanStarted = true;
     emit(BleScan());
     if (Platform.isAndroid) {
-      permGranted = await Permission.location.request().isGranted;
+      permGranted = await checkPermissions();
       //await Permission.nearbyWifiDevices.request();
     } else if (Platform.isIOS) {
       permGranted = true;
