@@ -38,14 +38,13 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   Future<bool> checkPermissions() async {
-    Map<Permission, PermissionStatus> status = await [
+    return (await [
       Permission.location,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
-      Permission.nearbyWifiDevices
-    ].request();
-
-    return status.entries
+      Permission.nearbyWifiDevices,
+    ].request())
+        .entries
         .map((e) => e.value.isGranted)
         .reduce((accumulator, element) => accumulator && element);
   }
