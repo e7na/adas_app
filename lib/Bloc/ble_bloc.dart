@@ -17,6 +17,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool foundDeviceWaitingToConnect = false;
   bool scanStarted = false;
   bool connected = false;
+  bool locationService = false;
   final devices = <DiscoveredDevice>[];
   String currentLog = "";
 
@@ -37,7 +38,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     on<BleEvent>((event, emit) {});
   }
 
+  // Permissions handling stuff
   Future<bool> checkPermissions() async {
+    locationService =
+        await Permission.locationWhenInUse.serviceStatus.isEnabled;
+    emit(BleScan());
     return (await [
       Permission.location,
       Permission.bluetoothScan,
@@ -50,32 +55,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   void startScan() async {
-    // Platform permissions handling stuff
-    bool permGranted = false;
-    if (Platform.isAndroid) {
-      permGranted = await checkPermissions();
-    } else if (Platform.isIOS) {
-      permGranted = true;
-    }
-    scanStarted = true;
-    emit(BleScan());
     // Main scanning logic happens here
-    if (permGranted) {
-      currentLog = 'Start ble discovery';
-      scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen(
-          (device) {
-        final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
-        if (knownDeviceIndex >= 0) {
-          devices[knownDeviceIndex] = device;
-        } else {
-          devices.add(device);
-        }
-        emit(BleAddDevice());
-      },
-          onError: (Object e) =>
-              currentLog = 'Device scan fails with error: $e');
-      emit(BleError());
-    }
+    scanStarted = true;
+    currentLog = 'Start ble discovery';
+    scanStream =
+        flutterReactiveBle.scanForDevices(withServices: []).listen((device) {
+      final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
+      if (knownDeviceIndex >= 0) {
+        devices[knownDeviceIndex] = device;
+      } else {
+        devices.add(device);
+      }
+      emit(BleAddDevice());
+    }, onError: (Object e) => currentLog = 'Device scan fails with error: $e');
+    emit(BleError());
   }
 
   // Simple function to stop searching for devices
@@ -117,13 +110,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         default:
       }
     });
-  }
-
-  // This Function checks if location is enabled or not
-  Future<bool> checkDeviceLocationIsOn() async {
-    bool x = await Permission.locationWhenInUse.serviceStatus.isEnabled;
-    emit(BleConnected());
-    return x;
   }
 
   // This Function is used to enable bluetooth

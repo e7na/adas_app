@@ -67,6 +67,12 @@ class TheScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    scaffoldMsg() {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Enable Location Service First"),
+      ));
+    }
+
     return Scaffold(
         backgroundColor: brightness == Brightness.dark
             ? Theme.of(context).colorScheme.background
@@ -116,17 +122,14 @@ class TheScaffold extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: ElevatedButton(
-                  // If the scan HAS started, it should be disabled.
+                  // start scan or stop it.
                   onPressed: B.scanStarted
                       ? B.stopScan
                       : () async {
-                          if (await B.checkDeviceLocationIsOn() != true) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text("Enable Location Service First"),
-                            ));
+                          await B.checkPermissions();
+                          if (B.locationService == false) {
+                            scaffoldMsg();
                           } else {
-                            await B.checkPermissions();
                             B.startBlue();
                             B.startScan();
                           }
