@@ -41,107 +41,116 @@ class _ScanPageState extends State<ScanPage> {
               var B = BleBloc.get(context);
               return ColoredBox(
                 color: Colors.white,
-                child: Scaffold(
-                    backgroundColor: brightness == Brightness.dark
-                        ? Theme.of(context).colorScheme.background
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceVariant
-                            .withOpacity(0.6),
-                    body: ListView(children: [
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
-                          "Title".tr(),
-                          style: TextStyle(
-                              color: primary,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      ListTile(
-                        title: Text(
-                          B.scanStarted ? "T2".tr() : "T1".tr(),
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                      B.devices.isNotEmpty
-                          ? ListView.builder(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: B.devices.length,
-                              itemBuilder: (context, index) {
-                                return bleTile(
-                                    B.devices[index].name,
-                                    B.devices[index].id,
-                                    B.devices[index].rssi,
-                                    primary);
-                              })
-                          : SizedBox(
-                              height: 500,
-                              child: Center(
-                                  child: Text(
-                                "Scan Not Started",
-                                style: TextStyle(color: primary),
-                              ))),
-                    ]),
-                    bottomNavigationBar: Container(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
-                      height: 60,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: ElevatedButton(
-                              // If the scan HAS started, it should be disabled.
-                              onPressed: B.scanStarted
-                                  ? B.stopScan
-                                  : () async {
-                                      if (await B.checkDeviceLocationIsOn() !=
-                                          true) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                          content: Text(
-                                              "Enable Location Service First"),
-                                        ));
-                                      } else {
-                                        B.startBlue();
-                                        B.startScan();
-                                      }
-                                    },
-                              child: Icon(
-                                  B.scanStarted ? Icons.cancel : Icons.search),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: ElevatedButton(
-                              // If the scan HAS started, it should be disabled.
-                              onPressed: B.foundDeviceWaitingToConnect
-                                  ? B.connectToDevice
-                                  : null,
-                              child: const Icon(Icons.save),
-                            ),
-                          ),
-                          // This would be for what we want to do after connecting
-                          SizedBox(
-                            width: 100,
-                            child: ElevatedButton(
-                              onPressed: B.connected ? () {} : null,
-                              child: const Icon(Icons.arrow_forward),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                child: TheScaffold(
+                  brightness: brightness,
+                  primary: primary,
+                  B: B,
+                ),
               );
             },
+          ),
+        ));
+  }
+}
+
+class TheScaffold extends StatelessWidget {
+  const TheScaffold({
+    super.key,
+    required this.brightness,
+    required this.primary,
+    required this.B,
+  });
+
+  final Brightness brightness;
+  final Color primary;
+  final BleBloc B;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.background
+            : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
+        body: ListView(children: [
+          const SizedBox(
+            height: 40,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              "Title".tr(),
+              style: TextStyle(
+                  color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+            ),
+          ),
+          ListTile(
+            title: Text(
+              B.scanStarted ? "T2".tr() : "T1".tr(),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+            ),
+          ),
+          B.devices.isNotEmpty
+              ? ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: B.devices.length,
+                  itemBuilder: (context, index) {
+                    return bleTile(B.devices[index].name, B.devices[index].id,
+                        B.devices[index].rssi, primary);
+                  })
+              : SizedBox(
+                  height: 500,
+                  child: Center(
+                      child: Text(
+                    "Scan Not Started",
+                    style: TextStyle(color: primary),
+                  ))),
+        ]),
+        bottomNavigationBar: Container(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                width: 100,
+                child: ElevatedButton(
+                  // If the scan HAS started, it should be disabled.
+                  onPressed: B.scanStarted
+                      ? B.stopScan
+                      : () async {
+                          if (await B.checkDeviceLocationIsOn() != true) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Enable Location Service First"),
+                            ));
+                          } else {
+                            B.startBlue();
+                            B.startScan();
+                          }
+                        },
+                  child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
+                ),
+              ),
+              SizedBox(
+                width: 100,
+                child: ElevatedButton(
+                  // If the scan HAS started, it should be disabled.
+                  onPressed:
+                      B.foundDeviceWaitingToConnect ? B.connectToDevice : null,
+                  child: const Icon(Icons.save),
+                ),
+              ),
+              // This would be for what we want to do after connecting
+              SizedBox(
+                width: 100,
+                child: ElevatedButton(
+                  onPressed: B.connected ? () {} : null,
+                  child: const Icon(Icons.arrow_forward),
+                ),
+              ),
+            ],
           ),
         ));
   }
