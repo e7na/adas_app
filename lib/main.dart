@@ -7,7 +7,12 @@ import 'package:reactive_ble/Data/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  runApp(EasyLocalization(useOnlyLangCode: true, supportedLocales: const [Locale('en'), Locale('ar')], path: 'assets/translations', fallbackLocale: const Locale('en'), child: const MyApp()));
+  runApp(EasyLocalization(
+      useOnlyLangCode: true,
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

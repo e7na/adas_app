@@ -15,6 +15,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool foundDeviceWaitingToConnect = false;
   bool scanStarted = false;
   bool connected = false;
+
   // Bluetooth related variables
   late DiscoveredDevice dDevice;
   final flutterReactiveBle = FlutterReactiveBle();
@@ -23,9 +24,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // These are the UUIDs of the cars device/s??
   final Uuid serviceUuid = Uuid.parse("75C276C3-8F97-20BC-A143-B354244886D4");
-  final Uuid characteristicUuid = Uuid.parse("6ACF4F08-CC9D-D495-6B41-AA7E60C4E8A6");
+  final Uuid characteristicUuid =
+      Uuid.parse("6ACF4F08-CC9D-D495-6B41-AA7E60C4E8A6");
 
   static BleBloc get(context) => BlocProvider.of(context);
+
   BleBloc() : super(BleInitial()) {
     on<BleEvent>((event, emit) {});
   }
@@ -45,7 +48,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
     // Main scanning logic happens here
     if (permGranted) {
-      scanStream = flutterReactiveBle.scanForDevices(withServices: [serviceUuid]).listen((device) {
+      scanStream = flutterReactiveBle
+          .scanForDevices(withServices: [serviceUuid]).listen((device) {
         // Change this string to what we define later
         if (device.name == 'Something') {
           dDevice = device;
@@ -67,14 +71,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     // We're done scanning, we can cancel it
     scanStream.cancel();
     // Let's listen to our connection so we can make updates on a state change
-    Stream<ConnectionStateUpdate> currentConnectionStream =
-        flutterReactiveBle.connectToAdvertisingDevice(id: dDevice.id, prescanDuration: const Duration(seconds: 1), withServices: [serviceUuid, characteristicUuid]);
+    Stream<ConnectionStateUpdate> currentConnectionStream = flutterReactiveBle
+        .connectToAdvertisingDevice(
+            id: dDevice.id,
+            prescanDuration: const Duration(seconds: 1),
+            withServices: [serviceUuid, characteristicUuid]);
     currentConnectionStream.listen((event) {
       switch (event.connectionState) {
         // We're connected and good to go!
         case DeviceConnectionState.connected:
           {
-            rxCharacteristic = QualifiedCharacteristic(serviceId: serviceUuid, characteristicId: characteristicUuid, deviceId: event.deviceId);
+            rxCharacteristic = QualifiedCharacteristic(
+                serviceId: serviceUuid,
+                characteristicId: characteristicUuid,
+                deviceId: event.deviceId);
             foundDeviceWaitingToConnect = false;
             connected = true;
             emit(BleConnected());
