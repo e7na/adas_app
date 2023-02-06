@@ -7,6 +7,10 @@ class BleInitial extends BleState {}
 
 class BleScan extends BleState {}
 
+class BleAddDevice extends BleState {}
+
+class BleError extends BleState {}
+
 class BleStop extends BleState {}
 
 class BleFound extends BleState {}

@@ -15,6 +15,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool foundDeviceWaitingToConnect = false;
   bool scanStarted = false;
   bool connected = false;
+  final devices = <DiscoveredDevice>[];
+  String currentLog = "";
 
   // Bluetooth related variables
   late DiscoveredDevice dDevice;
@@ -48,15 +50,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
     // Main scanning logic happens here
     if (permGranted) {
-      scanStream = flutterReactiveBle
-          .scanForDevices(withServices: [serviceUuid]).listen((device) {
-        // Change this string to what we define later
-        if (device.name == 'Something') {
-          dDevice = device;
-          foundDeviceWaitingToConnect = true;
-          emit(BleFound());
+      currentLog = 'Start ble discovery';
+      scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen(
+          (device) {
+        final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
+        if (knownDeviceIndex >= 0) {
+          devices[knownDeviceIndex] = device;
+        } else {
+          devices.add(device);
         }
-      });
+        emit(BleAddDevice());
+      },
+          onError: (Object e) =>
+              currentLog = 'Device scan fails with error: $e');
+      emit(BleError());
     }
   }
 

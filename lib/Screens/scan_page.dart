@@ -70,7 +70,7 @@ class _ScanPageState extends State<ScanPage> {
                                   const TextStyle(fontWeight: FontWeight.w400),
                             ),
                           ),
-                          bleTile("Name Of Device", "44:83:20:79:23:97", -64),
+                          B.devices.isNotEmpty ? bleTile(B.devices.first.name, B.devices.first.id, B.devices.first.rssi): Container(),
                         ]),
                     bottomSheet: Container(
                       color: Theme.of(context).colorScheme.surfaceVariant,
