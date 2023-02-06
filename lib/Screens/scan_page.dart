@@ -21,7 +21,7 @@ class _ScanPageState extends State<ScanPage> {
     var brightness = SchedulerBinding.instance.window.platformBrightness;
     var theme =
         brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-    //Color fontColor = Theme.of(context).colorScheme.onBackground;
+    Color primary = Theme.of(context).colorScheme.primary;
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -53,18 +53,20 @@ class _ScanPageState extends State<ScanPage> {
                         height: 40,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
                           "Title".tr(),
-                          style: const TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              color: primary,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                       ListTile(
                         title: Text(
-                          "T1".tr(),
-                          style: const TextStyle(fontWeight: FontWeight.w400),
+                          B.scanStarted ? "T2".tr() : "T1".tr(),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400),
                         ),
                       ),
                       B.devices.isNotEmpty
@@ -74,8 +76,11 @@ class _ScanPageState extends State<ScanPage> {
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: B.devices.length,
                               itemBuilder: (context, index) {
-                                return bleTile(B.devices[index].name,
-                                    B.devices[index].id, B.devices[index].rssi);
+                                return bleTile(
+                                    B.devices[index].name,
+                                    B.devices[index].id,
+                                    B.devices[index].rssi,
+                                    primary);
                               })
                           : Container(),
                     ]),
@@ -102,7 +107,7 @@ class _ScanPageState extends State<ScanPage> {
                               onPressed: B.foundDeviceWaitingToConnect
                                   ? B.connectToDevice
                                   : null,
-                              child: const Icon(Icons.bluetooth),
+                              child: const Icon(Icons.save),
                             ),
                           ),
                           // This would be for what we want to do after connecting
@@ -110,7 +115,7 @@ class _ScanPageState extends State<ScanPage> {
                             width: 100,
                             child: ElevatedButton(
                               onPressed: B.connected ? () {} : null,
-                              child: const Icon(Icons.question_mark_rounded),
+                              child: const Icon(Icons.arrow_forward),
                             ),
                           ),
                         ],

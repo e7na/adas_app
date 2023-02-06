@@ -1,4 +1,5 @@
 {
   "Title": "Scan for Devices",
-  "T1" : "Enable Bluetooth and Start Scanning by Pressing the Search Icon from the Bottom Bar."
+  "T1" : "Enable Bluetooth and Start Scanning by Pressing the Search Icon from the Bottom Bar.",
+  "T2" : "Connect To the Cars Devices Then Press the Save Icon from the Bottom Bar."
 }
