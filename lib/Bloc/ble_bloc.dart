@@ -29,8 +29,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // These are the UUIDs of the cars device/s??
   final Uuid serviceUuid = Uuid.parse("75C276C3-8F97-20BC-A143-B354244886D4");
-  final Uuid characteristicUuid =
-      Uuid.parse("6ACF4F08-CC9D-D495-6B41-AA7E60C4E8A6");
+  final Uuid characteristicUuid = Uuid.parse("6ACF4F08-CC9D-D495-6B41-AA7E60C4E8A6");
 
   static BleBloc get(context) => BlocProvider.of(context);
 
@@ -39,27 +38,22 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   // Permissions handling stuff
-  Future<bool> checkPermissions() async {
-    locationService =
-        await Permission.locationWhenInUse.serviceStatus.isEnabled;
+  Future<Map<Permission, PermissionStatus>> requestPermissions() async {
+    locationService = await Permission.locationWhenInUse.serviceStatus.isEnabled;
     emit(BleScan());
     return (await [
       Permission.location,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
       Permission.nearbyWifiDevices,
-    ].request())
-        .entries
-        .map((e) => e.value.isGranted)
-        .reduce((accumulator, element) => accumulator && element);
+    ].request());
   }
 
   void startScan() async {
     // Main scanning logic happens here
     scanStarted = true;
     currentLog = 'Start ble discovery';
-    scanStream =
-        flutterReactiveBle.scanForDevices(withServices: []).listen((device) {
+    scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen((device) {
       final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
       if (knownDeviceIndex >= 0) {
         devices[knownDeviceIndex] = device;

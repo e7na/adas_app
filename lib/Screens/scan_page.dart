@@ -19,8 +19,7 @@ class _ScanPageState extends State<ScanPage> {
   @override
   Widget build(BuildContext context) {
     var brightness = SchedulerBinding.instance.window.platformBrightness;
-    var theme =
-        brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+    var theme = brightness == Brightness.dark ? Brightness.light : Brightness.dark;
     Color primary = Theme.of(context).colorScheme.primary;
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
@@ -30,8 +29,7 @@ class _ScanPageState extends State<ScanPage> {
           statusBarBrightness: theme,
           // For iOS (dark icons)
           systemNavigationBarIconBrightness: theme,
-          systemNavigationBarColor:
-              Theme.of(context).colorScheme.surfaceVariant,
+          systemNavigationBarColor: Theme.of(context).colorScheme.surfaceVariant,
         ),
         child: BlocProvider(
           create: (context) => BleBloc(),
@@ -85,8 +83,7 @@ class TheScaffold extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               "Title".tr(),
-              style: TextStyle(
-                  color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+              style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
             ),
           ),
           ListTile(
@@ -102,8 +99,8 @@ class TheScaffold extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: B.devices.length,
                   itemBuilder: (context, index) {
-                    return bleTile(B.devices[index].name, B.devices[index].id,
-                        B.devices[index].rssi, primary);
+                    return bleTile(
+                        B.devices[index].name, B.devices[index].id, B.devices[index].rssi, primary);
                   })
               : SizedBox(
                   height: 500,
@@ -126,7 +123,7 @@ class TheScaffold extends StatelessWidget {
                   onPressed: B.scanStarted
                       ? B.stopScan
                       : () async {
-                          await B.checkPermissions();
+                          await B.requestPermissions();
                           if (B.locationService == false) {
                             scaffoldMsg();
                           } else {
@@ -141,8 +138,7 @@ class TheScaffold extends StatelessWidget {
                 width: 100,
                 child: ElevatedButton(
                   // If the scan HAS started, it should be disabled.
-                  onPressed:
-                      B.foundDeviceWaitingToConnect ? B.connectToDevice : null,
+                  onPressed: B.foundDeviceWaitingToConnect ? B.connectToDevice : null,
                   child: const Icon(Icons.save),
                 ),
               ),
