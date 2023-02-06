@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_ble/Bloc/ble_bloc.dart';
 
-import '../Widgets/BLETile.dart';
+import '../Widgets/ble_tile.dart';
 
 //This page is shown when scanning for BLE devices
 class ScanPage extends StatefulWidget {
@@ -99,8 +99,8 @@ class TheScaffold extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: B.devices.length,
                   itemBuilder: (context, index) {
-                    return bleTile(
-                        B.devices[index].name, B.devices[index].id, B.devices[index].rssi, primary);
+                    return bleTile(B.devices[index].name, B.devices[index].id,
+                        B.devices[index].rssi, primary, index);
                   })
               : SizedBox(
                   height: 500,
@@ -134,12 +134,12 @@ class TheScaffold extends StatelessWidget {
                   child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 100,
                 child: ElevatedButton(
                   // If the scan HAS started, it should be disabled.
-                  onPressed: B.foundDeviceWaitingToConnect ? B.connectToDevice : null,
-                  child: const Icon(Icons.save),
+                  onPressed: null,
+                  child: Icon(Icons.save),
                 ),
               ),
               // This would be for what we want to do after connecting

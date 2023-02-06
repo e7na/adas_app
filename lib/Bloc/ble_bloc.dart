@@ -14,7 +14,6 @@ part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
   // Some state management stuff
-  bool foundDeviceWaitingToConnect = false;
   bool scanStarted = false;
   bool connected = false;
   bool locationService = false;
@@ -22,10 +21,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   String currentLog = "";
 
   // Bluetooth related variables
-  late DiscoveredDevice dDevice;
   final flutterReactiveBle = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> scanStream;
-  late QualifiedCharacteristic rxCharacteristic;
 
   // These are the UUIDs of the cars device/s??
   final Uuid serviceUuid = Uuid.parse("75C276C3-8F97-20BC-A143-B354244886D4");
@@ -73,25 +70,28 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     emit(BleStop());
   }
 
-  void connectToDevice() {
-    // We're done scanning, we can cancel it
-    scanStream.cancel();
+  void connectToDevice(int index) {
+    debugPrint('Outside');
+    DiscoveredDevice device = devices[index];
     // Let's listen to our connection so we can make updates on a state change
-    Stream<ConnectionStateUpdate> currentConnectionStream = flutterReactiveBle
-        .connectToAdvertisingDevice(
-            id: dDevice.id,
-            prescanDuration: const Duration(seconds: 1),
-            withServices: [serviceUuid, characteristicUuid]);
+    Stream<ConnectionStateUpdate> currentConnectionStream =
+        flutterReactiveBle.connectToAdvertisingDevice(
+      id: device.id,
+      prescanDuration: const Duration(seconds: 5),
+      connectionTimeout: const Duration(seconds: 2), withServices: [],
+    );
     currentConnectionStream.listen((event) {
+      debugPrint('Inside');
       switch (event.connectionState) {
-        // We're connected and good to go!
+        case DeviceConnectionState.connecting:
+          {
+            debugPrint('Connecting');
+            break;
+          }
+      // We're connected and good to go!
         case DeviceConnectionState.connected:
           {
-            rxCharacteristic = QualifiedCharacteristic(
-                serviceId: serviceUuid,
-                characteristicId: characteristicUuid,
-                deviceId: event.deviceId);
-            foundDeviceWaitingToConnect = false;
+            debugPrint("Connected");
             connected = true;
             emit(BleConnected());
             break;
@@ -99,6 +99,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         // Can add various state state updates on disconnect
         case DeviceConnectionState.disconnected:
           {
+            debugPrint("Disconnected");
+            connected = false;
             break;
           }
         default:
