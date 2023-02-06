@@ -3,8 +3,10 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:location_permissions/location_permissions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:app_settings/app_settings.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 part 'ble_event.dart';
 
@@ -40,11 +42,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     bool permGranted = false;
     scanStarted = true;
     emit(BleScan());
-    //TODO: Rework Permissions here
-    PermissionStatus permission;
     if (Platform.isAndroid) {
-      permission = await LocationPermissions().requestPermissions();
-      if (permission == PermissionStatus.granted) permGranted = true;
+      permGranted = await Permission.location.request().isGranted;
+      //await Permission.nearbyWifiDevices.request();
     } else if (Platform.isIOS) {
       permGranted = true;
     }
@@ -71,6 +71,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   void stopScan() async {
     await scanStream.cancel();
     scanStarted = false;
+    devices.clear(); // Should it clear ?
     emit(BleStop());
   }
 
@@ -105,5 +106,23 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         default:
       }
     });
+  }
+
+  // This Function checks if location is enabled or not
+  Future<bool> checkDeviceLocationIsOn() async {
+    bool x = await Permission.locationWhenInUse.serviceStatus.isEnabled;
+    emit(BleConnected());
+    return x;
+  }
+
+  // This Function is used to enable bluetooth
+  startBlue() {
+    if (Platform.isAndroid) {
+      const AndroidIntent(
+        action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
+      ).launch().catchError((e) => AppSettings.openBluetoothSettings());
+    } else {
+      AppSettings.openBluetoothSettings();
+    }
   }
 }

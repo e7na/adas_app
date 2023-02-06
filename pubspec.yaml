@@ -32,13 +32,15 @@ dependencies:
     sdk: flutter
 
   flutter_reactive_ble: ^5.0.3
-  bloc: ^8.1.0
+  bloc: ^8.1.1
   flutter_bloc: ^8.1.1
   dynamic_color: ^1.6.2
   cupertino_icons: ^1.0.5
-  location_permissions: ^4.0.1
   shared_preferences: ^2.0.17
   easy_localization: ^3.0.1
+  android_intent_plus: ^3.1.5
+  app_settings: ^4.2.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -82,9 +82,15 @@ class _ScanPageState extends State<ScanPage> {
                                     B.devices[index].rssi,
                                     primary);
                               })
-                          : Container(),
+                          : SizedBox(
+                              height: 500,
+                              child: Center(
+                                  child: Text(
+                                "Scan Not Started",
+                                style: TextStyle(color: primary),
+                              ))),
                     ]),
-                    bottomSheet: Container(
+                    bottomNavigationBar: Container(
                       color: Theme.of(context).colorScheme.surfaceVariant,
                       height: 60,
                       child: Row(
@@ -94,8 +100,21 @@ class _ScanPageState extends State<ScanPage> {
                             width: 100,
                             child: ElevatedButton(
                               // If the scan HAS started, it should be disabled.
-                              onPressed:
-                                  B.scanStarted ? B.stopScan : B.startScan,
+                              onPressed: B.scanStarted
+                                  ? B.stopScan
+                                  : () async {
+                                      if (await B.checkDeviceLocationIsOn() !=
+                                          true) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Enable Location Service First"),
+                                        ));
+                                      } else {
+                                        B.startBlue();
+                                        B.startScan();
+                                      }
+                                    },
                               child: Icon(
                                   B.scanStarted ? Icons.cancel : Icons.search),
                             ),
