@@ -46,20 +46,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
     return status.entries
         .map((e) => e.value.isGranted)
-        .reduce((value, element) => false);
+        .reduce((accumulator, element) => accumulator && element);
   }
 
   void startScan() async {
     // Platform permissions handling stuff
     bool permGranted = false;
-    scanStarted = true;
-    emit(BleScan());
     if (Platform.isAndroid) {
       permGranted = await checkPermissions();
       //await Permission.nearbyWifiDevices.request();
     } else if (Platform.isIOS) {
       permGranted = true;
     }
+    scanStarted = true;
+    emit(BleScan());
     // Main scanning logic happens here
     if (permGranted) {
       currentLog = 'Start ble discovery';

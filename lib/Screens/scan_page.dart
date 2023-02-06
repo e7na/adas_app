@@ -126,6 +126,7 @@ class TheScaffold extends StatelessWidget {
                               content: Text("Enable Location Service First"),
                             ));
                           } else {
+                            B.checkPermissions();
                             B.startBlue();
                             B.startScan();
                           }
