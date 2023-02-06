@@ -48,30 +48,37 @@ class _ScanPageState extends State<ScanPage> {
                             .colorScheme
                             .surfaceVariant
                             .withOpacity(0.6),
-                    body: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 20),
-                            child: Text(
-                              "Title".tr(),
-                              style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          ListTile(
-                            title: Text(
-                              "T1".tr(),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                          B.devices.isNotEmpty ? bleTile(B.devices.first.name, B.devices.first.id, B.devices.first.rssi): Container(),
-                        ]),
+                    body: ListView(children: [
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 20),
+                        child: Text(
+                          "Title".tr(),
+                          style: const TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(
+                          "T1".tr(),
+                          style: const TextStyle(fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      B.devices.isNotEmpty
+                          ? ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: B.devices.length,
+                              itemBuilder: (context, index) {
+                                return bleTile(B.devices[index].name,
+                                    B.devices[index].id, B.devices[index].rssi);
+                              })
+                          : Container(),
+                    ]),
                     bottomSheet: Container(
                       color: Theme.of(context).colorScheme.surfaceVariant,
                       height: 60,
