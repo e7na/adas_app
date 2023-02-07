@@ -143,11 +143,11 @@ class TheScaffold extends StatelessWidget {
                 ),
               ),
               // This would be for what we want to do after connecting
-              SizedBox(
+              const SizedBox(
                 width: 100,
                 child: ElevatedButton(
-                  onPressed: B.connected ? () {} : null,
-                  child: const Icon(Icons.arrow_forward),
+                  onPressed: null,
+                  child: Icon(Icons.arrow_forward),
                 ),
               ),
             ],

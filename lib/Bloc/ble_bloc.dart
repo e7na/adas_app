@@ -15,8 +15,8 @@ part 'ble_state.dart';
 class BleBloc extends Bloc<BleEvent, BleState> {
   // Some state management stuff
   bool scanStarted = false;
-  bool connected = false;
   bool locationService = false;
+  bool connected = false;
   final devices = <DiscoveredDevice>[];
   String currentLog = "";
 
@@ -46,8 +46,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     ].request());
   }
 
+  // Main scanning logic happens here
   void startScan() async {
-    // Main scanning logic happens here
     scanStarted = true;
     currentLog = 'Start ble discovery';
     scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen((device) {
@@ -70,12 +70,13 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     emit(BleStop());
   }
 
+  //establish connection with device
   void connectToDevice(int index) {
     DiscoveredDevice device = devices[index];
     // Let's listen to our connection so we can make updates on a state change
     Stream<ConnectionStateUpdate> currentConnectionStream = flutterReactiveBle.connectToDevice(
       id: device.id,
-      connectionTimeout: const Duration(seconds: 2),
+      connectionTimeout: const Duration(seconds: 5),
     );
     currentConnectionStream.listen((event) {
       switch (event.connectionState) {
@@ -89,10 +90,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
           {
             debugPrint("Connected");
             connected = true;
-            emit(BleConnected());
             break;
           }
-        // Can add various state state updates on disconnect
+        // Can add various state updates on disconnect
         case DeviceConnectionState.disconnected:
           {
             debugPrint("Disconnected");

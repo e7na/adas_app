@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_ble/Bloc/ble_bloc.dart';
 
 Widget bleTile(String bName, uuid, rssi, color, index) {
+  bool isConnected = false;
   return BlocConsumer<BleBloc, BleState>(
-    listener: (context, state) {
-    },
+    listener: (context, state) {},
     builder: (context, state) {
       var B = BleBloc.get(context);
       return ListTile(
@@ -17,8 +17,14 @@ Widget bleTile(String bName, uuid, rssi, color, index) {
         ),
         subtitle: Text("$uuid"),
         trailing: ElevatedButton(
-            child: const Icon(Icons.bluetooth_searching),
-            onPressed: () => B.connectToDevice(index)),
+            child: Icon(isConnected ? Icons.bluetooth_connected : Icons.bluetooth_searching),
+            onPressed: () async {
+              B.connectToDevice(index);
+              // pure fol7 ahead
+              //await Future.delayed(const Duration(seconds: 5));
+              //isConnected = B.connected;
+              //debugPrint("$isConnected");
+            }),
       );
     },
   );
