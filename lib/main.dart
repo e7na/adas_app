@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:reactive_ble/Screens/scan_page.dart';
+import 'package:blue/Screens/scan_page.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:reactive_ble/Data/theme.dart';
+import 'package:blue/Data/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
       return MaterialApp(
-        title: 'BLE',
+        title: 'Blue',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: lightColorScheme ?? defaultLightColorScheme,

@@ -1,4 +1,4 @@
-package com.moazsalem.reactive_ble
+package com.moazsalem.blue
 
 import io.flutter.embedding.android.FlutterActivity
 

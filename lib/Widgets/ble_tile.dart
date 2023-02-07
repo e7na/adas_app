@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reactive_ble/Bloc/ble_bloc.dart';
+import 'package:blue/Bloc/ble_bloc.dart';
 
 Widget bleTile(String bName, uuid, rssi, color, index) {
   bool isConnected = false;

@@ -1,4 +1,4 @@
-name: reactive_ble
+name: blue
 description: A starting point for the graduation project app.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
