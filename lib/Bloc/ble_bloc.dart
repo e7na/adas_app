@@ -71,24 +71,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   void connectToDevice(int index) {
-    debugPrint('Outside');
     DiscoveredDevice device = devices[index];
     // Let's listen to our connection so we can make updates on a state change
-    Stream<ConnectionStateUpdate> currentConnectionStream =
-        flutterReactiveBle.connectToAdvertisingDevice(
+    Stream<ConnectionStateUpdate> currentConnectionStream = flutterReactiveBle.connectToDevice(
       id: device.id,
-      prescanDuration: const Duration(seconds: 5),
-      connectionTimeout: const Duration(seconds: 2), withServices: [],
+      connectionTimeout: const Duration(seconds: 2),
     );
     currentConnectionStream.listen((event) {
-      debugPrint('Inside');
       switch (event.connectionState) {
         case DeviceConnectionState.connecting:
           {
             debugPrint('Connecting');
             break;
           }
-      // We're connected and good to go!
+        // We're connected and good to go!
         case DeviceConnectionState.connected:
           {
             debugPrint("Connected");
