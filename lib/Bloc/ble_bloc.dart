@@ -115,9 +115,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // This should remove the devices from chosen devices list
   bool deviceRemove({required BleDevice device}) {
     chosenDevices.removeWhere((element) => element.id == device.id);
-    somethingChosen = chosenDevices.isNotEmpty ? true : false;
-    emit(BleAddDevice());
-    debugPrint("Num of Devices Chosen ${chosenDevices.length}");
+    somethingChosen = chosenDevices.isNotEmpty; // ? true : false;
+    debugPrint("Num of Chosen Devices ${chosenDevices.length}");
     return false;
   }
 
