@@ -99,8 +99,12 @@ class TheScaffold extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: B.devices.length,
                   itemBuilder: (context, index) {
-                    return bleTile(B.devices[index].name, B.devices[index].id,
-                        B.devices[index].rssi, primary, index);
+                    return bleTile(
+                        name: B.devices[index].name,
+                        uuid: B.devices[index].id,
+                        rssi: B.devices[index].rssi,
+                        color: primary,
+                        index: index);
                   })
               : SizedBox(
                   height: 500,
@@ -117,7 +121,7 @@ class TheScaffold extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(
-                width: 100,
+                width: 140,
                 child: ElevatedButton(
                   // start scan or stop it.
                   onPressed: B.scanStarted
@@ -134,20 +138,12 @@ class TheScaffold extends StatelessWidget {
                   child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
                 ),
               ),
-              const SizedBox(
-                width: 100,
+              SizedBox(
+                width: 140,
                 child: ElevatedButton(
                   // If the scan HAS started, it should be disabled.
-                  onPressed: null,
-                  child: Icon(Icons.save),
-                ),
-              ),
-              // This would be for what we want to do after connecting
-              const SizedBox(
-                width: 100,
-                child: ElevatedButton(
-                  onPressed: null,
-                  child: Icon(Icons.arrow_forward),
+                  onPressed: B.somethingChosen ? B.saveDevices : null,
+                  child: const Icon(Icons.save),
                 ),
               ),
             ],

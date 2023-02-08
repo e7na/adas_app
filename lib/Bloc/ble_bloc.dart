@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../Data/Models/device_model.dart';
 
 part 'ble_event.dart';
 
@@ -16,7 +18,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Some state management stuff
   bool scanStarted = false;
   bool locationService = false;
+  bool somethingChosen = false;
   bool connected = false;
+  int numDevices = 0;
+  List<BleDevice> chosenDevices = [];
   final devices = <DiscoveredDevice>[];
   String currentLog = "";
 
@@ -68,6 +73,47 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     scanStarted = false;
     devices.clear(); // Should it clear ?
     emit(BleStop());
+  }
+
+  // This should add the device the final chosen list
+  bool deviceAdd({required BleDevice device}) {
+    numDevices++;
+    chosenDevices.add(device);
+    somethingChosen = true;
+    debugPrint("Num of Devices Saved ${chosenDevices.length}");
+    return true;
+  }
+
+  // This should add the device the final chosen list
+  bool deviceRemove({required BleDevice device}) {
+    numDevices--;
+    chosenDevices.removeWhere((element) => element.id == device.id);
+    somethingChosen = chosenDevices.isNotEmpty ? true : false;
+    debugPrint("Num of Devices Saved ${chosenDevices.length}");
+    return false;
+  }
+
+
+  // This saves the final chosen list to Shared Preferences
+  void saveDevices() async {
+    await scanStream.cancel();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt("NumDevices", numDevices);
+    String names = "";
+    String ids = "";
+    // get each all names/ids in a comma separated single string
+    for (int i = 0; i < chosenDevices.length; i++) {
+      names += chosenDevices[i].name;
+      ids += chosenDevices[i].id;
+      // add comma if not last name/id
+      if (i < chosenDevices.length - 1) {
+        names += ",";
+        ids += ",";
+      }
+    }
+    // Store Them in Shared Preferences
+    await prefs.setString("IDs", ids);
+    await prefs.setString("Names", names);
   }
 
   //establish connection with device
