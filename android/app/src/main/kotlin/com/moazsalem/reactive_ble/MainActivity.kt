@@ -1,4 +1,4 @@
-package com.moazsalem.blue
+package com.e7na.blue
 
 import io.flutter.embedding.android.FlutterActivity
 
