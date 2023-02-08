@@ -99,7 +99,7 @@ class TheScaffold extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: B.devices.length,
                   itemBuilder: (context, index) {
-                    return bleTile(
+                    return BleTile(
                         name: B.devices[index].name,
                         uuid: B.devices[index].id,
                         rssi: B.devices[index].rssi,

@@ -20,7 +20,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool locationService = false;
   bool somethingChosen = false;
   bool connected = false;
-  int numDevices = 0;
   List<BleDevice> chosenDevices = [];
   final devices = <DiscoveredDevice>[];
   String currentLog = "";
@@ -77,7 +76,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // This should add the device the final chosen list
   bool deviceAdd({required BleDevice device}) {
-    numDevices++;
     chosenDevices.add(device);
     somethingChosen = true;
     debugPrint("Num of Devices Saved ${chosenDevices.length}");
@@ -86,21 +84,19 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // This should add the device the final chosen list
   bool deviceRemove({required BleDevice device}) {
-    numDevices--;
     chosenDevices.removeWhere((element) => element.id == device.id);
     somethingChosen = chosenDevices.isNotEmpty ? true : false;
     debugPrint("Num of Devices Saved ${chosenDevices.length}");
     return false;
   }
 
-
   // This saves the final chosen list to Shared Preferences
   void saveDevices() async {
-    await scanStream.cancel();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt("NumDevices", numDevices);
     String names = "";
     String ids = "";
+    await scanStream.cancel();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt("NumDevices", chosenDevices.length);
     // get each all names/ids in a comma separated single string
     for (int i = 0; i < chosenDevices.length; i++) {
       names += chosenDevices[i].name;

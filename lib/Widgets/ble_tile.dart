@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 
-class bleTile extends StatefulWidget {
-  String name;
-  String uuid;
-  int rssi;
-  Color color;
-  int index;
+class BleTile extends StatefulWidget {
+  final String name;
+  final String uuid;
+  final int rssi;
+  final Color color;
+  final int index;
 
-  bleTile(
+  const BleTile(
       {Key? key,
       required this.name,
       required this.uuid,
@@ -20,10 +20,10 @@ class bleTile extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<bleTile> createState() => _bleTileState();
+  State<BleTile> createState() => _BleTileState();
 }
 
-class _bleTileState extends State<bleTile> {
+class _BleTileState extends State<BleTile> {
   late bool isRemove;
 
   @override
