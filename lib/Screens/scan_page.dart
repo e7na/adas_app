@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
 
@@ -9,11 +10,16 @@ class ScanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.white,
-      child: theScaffold(
-        context: context,
-      ),
+    return BlocConsumer<BleBloc, BleState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return ColoredBox(
+          color: Colors.white,
+          child: theScaffold(
+            context: context,
+          ),
+        );
+      },
     );
   }
 }
@@ -45,7 +51,7 @@ Widget theScaffold({
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            "Title".tr(),
+            "ScanTitle".tr(),
             style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
           ),
         ),

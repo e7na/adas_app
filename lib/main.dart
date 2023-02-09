@@ -1,3 +1,4 @@
+import 'package:blue/Screens/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,20 +7,25 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Screens/scan_page.dart';
 import 'package:blue/Data/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final int numDevices = prefs.getInt('NumDevices') ?? 0;
   runApp(EasyLocalization(
       useOnlyLangCode: true,
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: const MyApp()));
+      child: MyApp(numDevices: numDevices)));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final int numDevices;
+
+  const MyApp({super.key, required this.numDevices});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class MyApp extends StatelessWidget {
                   localizationsDelegates: context.localizationDelegates,
                   supportedLocales: context.supportedLocales,
                   locale: context.locale,
-                  home: const ScanPage(),
+                  home: numDevices > 0 ? const MainPage() : const ScanPage(),
                 );
               }));
         },
