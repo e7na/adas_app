@@ -52,7 +52,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   // Scanning logic happens here
-  void startScan() async {
+  startScan() async {
     ble.status == BleStatus.poweredOff ? await startBlue() : null;
     scanStarted = true;
     currentLog = 'Start ble discovery';
@@ -69,7 +69,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   // Stop scanning for devices
-  void stopScan() async {
+  stopScan() async {
     await scanStream.cancel();
     scanStarted = false;
     devices.clear(); // Should it clear ?
@@ -80,7 +80,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool deviceAdd({required BleDevice device}) {
     chosenDevices.add(device);
     somethingChosen = true;
-    debugPrint("Num of Devices Saved ${chosenDevices.length}");
+    debugPrint("Num of Devices Chosen ${chosenDevices.length}");
     return true;
   }
 
@@ -88,12 +88,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool deviceRemove({required BleDevice device}) {
     chosenDevices.removeWhere((element) => element.id == device.id);
     somethingChosen = chosenDevices.isNotEmpty ? true : false;
-    debugPrint("Num of Devices Saved ${chosenDevices.length}");
+    debugPrint("Num of Devices Chosen ${chosenDevices.length}");
     return false;
   }
 
   // This saves the chosen devices list to Shared Preferences
-  void saveDevices() async {
+  saveDevices() async {
     String names = "";
     String ids = "";
     await scanStream.cancel();
@@ -116,7 +116,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // Extract selected devices from shared prefs into a list
   // This will get called at the main page and every time the app is opened after the first scan
-  void getDevices() async {
+  getDevices() async {
+    finalDevices = [];
     final prefs = await SharedPreferences.getInstance();
     //get stored values from SharedPreferences
     int numDevices = prefs.getInt("NumDevices")!;
@@ -128,10 +129,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       //now we will have a list of the car devices called finalDevices
       finalDevices.add(BleDevice(name: names[i], id: ids[i]));
     }
+    emit(GetDevices());
   }
 
   //establish connection with device
-  void connectToDevice(int index) {
+  connectToDevice(int index) {
     DiscoveredDevice device = devices[index];
     // Let's listen to our connection so we can make updates on a state change
     Stream<ConnectionStateUpdate> currentConnectionStream = ble.connectToDevice(
@@ -165,9 +167,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   // This Function is used to enable bluetooth
-  Future startBlue() async {
+  startBlue() async {
     if (Platform.isAndroid) {
-      await const AndroidIntent(
+      const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
       ).launch().catchError((e) => AppSettings.openBluetoothSettings());
       await Future.delayed(const Duration(seconds: 2));

@@ -13,6 +13,6 @@ class BleError extends BleState {}
 
 class BleStop extends BleState {}
 
-class BleFound extends BleState {}
+class GetDevices extends BleState {}
 
 class BleConnected extends BleState {}

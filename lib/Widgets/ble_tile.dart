@@ -6,7 +6,7 @@ class BleTile extends StatefulWidget {
   final String name;
   final String uuid;
   final int rssi;
-  final Color color;
+  final Color primary;
   final int index;
 
   const BleTile(
@@ -14,7 +14,7 @@ class BleTile extends StatefulWidget {
       required this.name,
       required this.uuid,
       required this.rssi,
-      required this.color,
+      required this.primary,
       required this.index})
       : super(key: key);
 
@@ -38,7 +38,7 @@ class _BleTileState extends State<BleTile> {
     var B = BleBloc.get(context);
     return ListTile(
       leading: Text("${widget.rssi}",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: widget.color)),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: widget.primary)),
       title: Text(
         widget.name == "" ? "No Name" : widget.name,
         style: const TextStyle(fontWeight: FontWeight.w600),
@@ -48,8 +48,12 @@ class _BleTileState extends State<BleTile> {
           child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
           onPressed: () async {
             isRemove
-                ? {isRemove = B.deviceRemove(device: device)}
-                : {isRemove = B.deviceAdd(device: device)};
+                ? setState(() {
+                    isRemove = B.deviceRemove(device: device);
+                  })
+                : setState(() {
+                    isRemove = B.deviceAdd(device: device);
+                  });
           }),
     );
   }

@@ -1,13 +1,32 @@
+import 'package:blue/Screens/scan_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
+import 'package:blue/Widgets/ble_tile.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    BleBloc.get(context).getDevices();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return theScaffold(context: context);
+    return BlocConsumer<BleBloc, BleState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return theScaffold(context: context);
+      },
+    );
   }
 }
 
@@ -40,8 +59,19 @@ Widget theScaffold({
               physics: const NeverScrollableScrollPhysics(),
               itemCount: B.finalDevices.length,
               itemBuilder: (context, index) {
-                return const Placeholder();
-              })
+                // This is only to Test not the real widget
+                return BleTile(
+                    name: B.finalDevices[index].name,
+                    uuid: B.finalDevices[index].id,
+                    rssi: 0,
+                    primary: primary,
+                    index: index);
+              }),
+          // This won't Exist later
+          ElevatedButton(
+              onPressed: () => Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) => const ScanPage())),
+              child: const Text("Go Back")),
         ],
       ));
 }

@@ -1,3 +1,4 @@
+import 'package:blue/Screens/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,7 +73,7 @@ Widget theScaffold({
                       name: B.devices[index].name,
                       uuid: B.devices[index].id,
                       rssi: B.devices[index].rssi,
-                      color: primary,
+                      primary: primary,
                       index: index);
                 })
             : SizedBox(
@@ -110,7 +111,12 @@ Widget theScaffold({
               width: 140,
               child: ElevatedButton(
                 // If a device is chosen, it is be enabled.
-                onPressed: B.somethingChosen ? B.saveDevices : null,
+                onPressed: B.somethingChosen
+                    ? () {
+                        B.saveDevices().whenComplete(() => Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => const MainPage())));
+                      }
+                    : null,
                 child: const Icon(Icons.save),
               ),
             ),
