@@ -1,7 +1,6 @@
-import 'package:blue/Data/Models/device_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
+import 'package:blue/Data/Models/device_model.dart';
 
 class BleTile extends StatefulWidget {
   final String name;
@@ -36,27 +35,22 @@ class _BleTileState extends State<BleTile> {
   Widget build(BuildContext context) {
     BleDevice device =
         BleDevice(name: widget.name == "" ? "No Name" : widget.name, id: widget.uuid);
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        var B = BleBloc.get(context);
-        return ListTile(
-          leading: Text("${widget.rssi}",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: widget.color)),
-          title: Text(
-            widget.name == "" ? "No Name" : widget.name,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Text(widget.uuid),
-          trailing: ElevatedButton(
-              child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
-              onPressed: () async {
-                isRemove
-                    ? {isRemove = B.deviceRemove(device: device)}
-                    : {isRemove = B.deviceAdd(device: device)};
-              }),
-        );
-      },
+    var B = BleBloc.get(context);
+    return ListTile(
+      leading: Text("${widget.rssi}",
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: widget.color)),
+      title: Text(
+        widget.name == "" ? "No Name" : widget.name,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(widget.uuid),
+      trailing: ElevatedButton(
+          child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
+          onPressed: () async {
+            isRemove
+                ? {isRemove = B.deviceRemove(device: device)}
+                : {isRemove = B.deviceAdd(device: device)};
+          }),
     );
   }
 }

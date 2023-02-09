@@ -1,5 +1,7 @@
 {
-  "Title": "Scan for Devices",
-  "T1" : "Start Scanning by Pressing the Search Icon from the Bottom Bar.",
-  "T2" : "Connect To the Cars Devices Then Press the Save Icon from the Bottom Bar."
+  "ScanTitle": "Scan for Devices",
+  "MainTitle": "Main Screen",
+  "T1" : "Start the Scan by Pressing the Search Icon from the Bottom Bar.",
+  "T2" : "Choose the Cars Devices, then Press the Save Icon from the Bottom Bar.",
+  "Start Scan" : "Start Scan to See Results"
 }

@@ -2,36 +2,36 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Data/Models/device_model.dart';
+import 'package:blue/Data/Models/device_model.dart';
 
 part 'ble_event.dart';
 
 part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
+
   // Some state management stuff
   bool scanStarted = false;
   bool locationService = false;
   bool somethingChosen = false;
   bool connected = false;
+  String currentLog = "";
+
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
   final devices = <DiscoveredDevice>[];
-  String currentLog = "";
 
   // Bluetooth related variables
   final ble = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> scanStream;
-
-  // These are the UUIDs of the cars device/s??
-  final Uuid serviceUuid = Uuid.parse("75C276C3-8F97-20BC-A143-B354244886D4");
-  final Uuid characteristicUuid = Uuid.parse("6ACF4F08-CC9D-D495-6B41-AA7E60C4E8A6");
 
   static BleBloc get(context) => BlocProvider.of(context);
 
@@ -51,7 +51,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     ].request());
   }
 
-  // Main scanning logic happens here
+  // Scanning logic happens here
   void startScan() async {
     ble.status == BleStatus.poweredOff ? await startBlue() : null;
     scanStarted = true;
@@ -68,7 +68,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     emit(BleError());
   }
 
-  // Simple function to stop searching for devices
+  // Stop scanning for devices
   void stopScan() async {
     await scanStream.cancel();
     scanStarted = false;
@@ -76,7 +76,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     emit(BleStop());
   }
 
-  // This should add the device the final chosen list
+  // This should add the device the chosen devices list
   bool deviceAdd({required BleDevice device}) {
     chosenDevices.add(device);
     somethingChosen = true;
@@ -84,7 +84,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return true;
   }
 
-  // This should add the device the final chosen list
+  // This should remove the devices from chosen devices list
   bool deviceRemove({required BleDevice device}) {
     chosenDevices.removeWhere((element) => element.id == device.id);
     somethingChosen = chosenDevices.isNotEmpty ? true : false;
@@ -92,7 +92,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return false;
   }
 
-  // This saves the final chosen list to Shared Preferences
+  // This saves the chosen devices list to Shared Preferences
   void saveDevices() async {
     String names = "";
     String ids = "";
@@ -114,6 +114,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     await prefs.setString("Names", names);
   }
 
+  // Extract selected devices from shared prefs into a list
   // This will get called at the main page and every time the app is opened after the first scan
   void getDevices() async {
     final prefs = await SharedPreferences.getInstance();
