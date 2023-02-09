@@ -21,11 +21,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool somethingChosen = false;
   bool connected = false;
   List<BleDevice> chosenDevices = [];
+  List<BleDevice> finalDevices = [];
   final devices = <DiscoveredDevice>[];
   String currentLog = "";
 
   // Bluetooth related variables
-  final flutterReactiveBle = FlutterReactiveBle();
+  final ble = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> scanStream;
 
   // These are the UUIDs of the cars device/s??
@@ -52,9 +53,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // Main scanning logic happens here
   void startScan() async {
+    ble.status == BleStatus.poweredOff ? await startBlue() : null;
     scanStarted = true;
     currentLog = 'Start ble discovery';
-    scanStream = flutterReactiveBle.scanForDevices(withServices: []).listen((device) {
+    scanStream = ble.scanForDevices(withServices: []).listen((device) {
       final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
       if (knownDeviceIndex >= 0) {
         devices[knownDeviceIndex] = device;
@@ -112,11 +114,26 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     await prefs.setString("Names", names);
   }
 
+  // This will get called at the main page and every time the app is opened after the first scan
+  void getDevices() async {
+    final prefs = await SharedPreferences.getInstance();
+    //get stored values from SharedPreferences
+    int numDevices = prefs.getInt("NumDevices")!;
+    //Split names/ids into a list of strings
+    List<String> names = prefs.getString("Names")!.split(",");
+    List<String> ids = prefs.getString("IDs")!.split(",");
+    // separate into ble devices
+    for (int i = 0; i < numDevices; i++) {
+      //now we will have a list of the car devices called finalDevices
+      finalDevices.add(BleDevice(name: names[i], id: ids[i]));
+    }
+  }
+
   //establish connection with device
   void connectToDevice(int index) {
     DiscoveredDevice device = devices[index];
     // Let's listen to our connection so we can make updates on a state change
-    Stream<ConnectionStateUpdate> currentConnectionStream = flutterReactiveBle.connectToDevice(
+    Stream<ConnectionStateUpdate> currentConnectionStream = ble.connectToDevice(
       id: device.id,
       connectionTimeout: const Duration(seconds: 5),
     );
@@ -147,11 +164,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   // This Function is used to enable bluetooth
-  startBlue() {
+  Future startBlue() async {
     if (Platform.isAndroid) {
-      const AndroidIntent(
+      await const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
       ).launch().catchError((e) => AppSettings.openBluetoothSettings());
+      await Future.delayed(const Duration(seconds: 2));
     } else {
       AppSettings.openBluetoothSettings();
     }

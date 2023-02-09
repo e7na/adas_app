@@ -131,7 +131,6 @@ class TheScaffold extends StatelessWidget {
                           if (B.locationService == false) {
                             scaffoldMsg();
                           } else {
-                            B.startBlue();
                             B.startScan();
                           }
                         },

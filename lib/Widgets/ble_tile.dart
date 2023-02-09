@@ -34,7 +34,8 @@ class _BleTileState extends State<BleTile> {
 
   @override
   Widget build(BuildContext context) {
-    BleDevice device = BleDevice(widget.name == "" ? "No Name" : widget.name, widget.uuid);
+    BleDevice device =
+        BleDevice(name: widget.name == "" ? "No Name" : widget.name, id: widget.uuid);
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {

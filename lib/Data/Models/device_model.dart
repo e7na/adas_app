@@ -2,5 +2,6 @@
 class BleDevice {
   String name;
   String id;
-  BleDevice(this.name,this.id);
+
+  BleDevice({required this.name, required this.id});
 }
