@@ -1,9 +1,10 @@
-import 'package:blue/Screens/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
+import 'package:blue/Data/Models/device_model.dart';
+import 'package:blue/Screens/main_page.dart';
 
 //This page is shown only once when the app is first started to select the cars devices.
 class ScanPage extends StatelessWidget {
@@ -70,10 +71,11 @@ Widget theScaffold({
                 itemCount: B.devices.length,
                 itemBuilder: (context, index) {
                   return BleTile(
-                      name: B.devices[index].name,
-                      uuid: B.devices[index].id,
+                      device: BleDevice(
+                        name: B.devices[index].name,
+                        id: B.devices[index].id,
+                      ),
                       rssi: B.devices[index].rssi,
-                      primary: primary,
                       index: index);
                 })
             : SizedBox(

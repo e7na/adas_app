@@ -1,9 +1,10 @@
-import 'package:blue/Screens/scan_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
+import 'package:blue/Data/Models/device_model.dart';
+import 'package:blue/Screens/scan_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -61,10 +62,11 @@ Widget theScaffold({
               itemBuilder: (context, index) {
                 // This is only to Test not the real widget
                 return BleTile(
-                    name: B.finalDevices[index].name,
-                    uuid: B.finalDevices[index].id,
+                    device: BleDevice(
+                      name: B.finalDevices[index].name,
+                      id: B.finalDevices[index].id,
+                    ),
                     rssi: 0,
-                    primary: primary,
                     index: index);
               }),
           // This won't Exist later

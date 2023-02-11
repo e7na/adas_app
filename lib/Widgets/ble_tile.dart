@@ -3,19 +3,11 @@ import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Data/Models/device_model.dart';
 
 class BleTile extends StatefulWidget {
-  final String name;
-  final String uuid;
+  final BleDevice device;
   final int rssi;
-  final Color primary;
   final int index;
 
-  const BleTile(
-      {Key? key,
-      required this.name,
-      required this.uuid,
-      required this.rssi,
-      required this.primary,
-      required this.index})
+  const BleTile({Key? key, required this.device, required this.rssi, required this.index})
       : super(key: key);
 
   @override
@@ -33,26 +25,25 @@ class _BleTileState extends State<BleTile> {
 
   @override
   Widget build(BuildContext context) {
-    BleDevice device =
-        BleDevice(name: widget.name == "" ? "No Name" : widget.name, id: widget.uuid);
     var B = BleBloc.get(context);
+    Color primary = Theme.of(context).colorScheme.primary;
     return ListTile(
       leading: Text("${widget.rssi}",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: widget.primary)),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: primary)),
       title: Text(
-        widget.name == "" ? "No Name" : widget.name,
+        widget.device.name == "" ? "No Name" : widget.device.name,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text(widget.uuid),
+      subtitle: Text(widget.device.id),
       trailing: ElevatedButton(
           child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
           onPressed: () async {
             isRemove
                 ? setState(() {
-                    isRemove = B.deviceRemove(device: device);
+                    isRemove = B.deviceRemove(device: widget.device);
                   })
                 : setState(() {
-                    isRemove = B.deviceAdd(device: device);
+                    isRemove = B.deviceAdd(device: widget.device);
                   });
           }),
     );
