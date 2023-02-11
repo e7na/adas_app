@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
-import 'package:blue/Widgets/ble_tile.dart';
+import 'package:blue/Widgets/device_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/scan_page.dart';
 
@@ -61,13 +62,14 @@ Widget theScaffold({
               itemCount: B.finalDevices.length,
               itemBuilder: (context, index) {
                 // This is only to Test not the real widget
-                return BleTile(
-                    device: BleDevice(
-                      name: B.finalDevices[index].name,
-                      id: B.finalDevices[index].id,
-                    ),
-                    rssi: 0,
-                    index: index);
+                return DeviceTile(
+                  device: BleDevice(
+                    name: B.finalDevices[index].name,
+                    id: B.finalDevices[index].id,
+                  ),
+                  rssi: 0,
+                  status: DeviceConnectionState.disconnected,
+                );
               }),
           // This won't Exist later
           ElevatedButton(
