@@ -12,28 +12,50 @@ class DeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String statusString = "$status".split(".")[1].toUpperCase();
+    Color primary = Theme.of(context).colorScheme.primary;
+    TextStyle data = TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: primary);
     return Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           initiallyExpanded: true,
-          title: Text(device.name),
+          title: Text(
+            device.name,
+          ),
           children: [
             ListTile(
                 title: const Text("ID"),
                 trailing: Text(
                   device.id,
+                  style: data,
                 )),
             ListTile(
-                title: const Text("Rssi"),
+                title: const Text("RSSI"),
                 trailing: Text(
                   "$rssi",
+                  style: data,
                 )),
             ListTile(
-                title: const Text("Status"),
+                title: const Text("STATUS"),
                 trailing: Text(
-                  "$status".split(".")[1].toUpperCase(),
+                  statusString,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: getStatusColor(context: context, statusString: statusString)),
                 ))
           ],
         ));
   }
+}
+
+Color getStatusColor({required statusString, required context}) {
+  Color color;
+  if (statusString == "disconnected".toUpperCase()) {
+    color = Theme.of(context).colorScheme.error;
+  } else if (statusString == "connected".toUpperCase()) {
+    color = Theme.of(context).colorScheme.primary;
+  } else {
+    color = Theme.of(context).colorScheme.onBackground;
+  }
+  return color;
 }

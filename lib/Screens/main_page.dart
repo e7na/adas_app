@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/device_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
-import 'package:blue/Screens/scan_page.dart';
+import 'package:blue/Screens/settings_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -40,42 +40,68 @@ Widget theScaffold({
   Color surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
 
   return Scaffold(
-      backgroundColor: B.brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.background
-          : surfaceVariant.withOpacity(0.6),
-      body: ListView(
-        children: [
-          const SizedBox(
-            height: 40,
+    backgroundColor: B.brightness == Brightness.dark
+        ? Theme.of(context).colorScheme.background
+        : surfaceVariant.withOpacity(0.6),
+    body: ListView(
+      children: [
+        const SizedBox(
+          height: 30,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "MainTitle".tr(),
+                style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+              ),
+              IconButton(
+                  onPressed: () => Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+                  icon: Icon(
+                    Icons.settings,
+                    color: primary,
+                  ))
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              "MainTitle".tr(),
-              style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+        ),
+        ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: B.finalDevices.length,
+            itemBuilder: (context, index) {
+              // This is only to Test not the real widget
+              return DeviceTile(
+                device: BleDevice(
+                  name: B.finalDevices[index].name,
+                  id: B.finalDevices[index].id,
+                ),
+                rssi: 0,
+                status: DeviceConnectionState.disconnected,
+              );
+            }),
+      ],
+    ),
+    bottomNavigationBar: Container(
+      color: surfaceVariant,
+      height: 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // This would be used for reconnecting if needed else it will be removed
+          SizedBox(
+            width: 300,
+            child: ElevatedButton(
+              // start scan or stop it.
+              onPressed: () {},
+              child: const Icon(Icons.refresh),
             ),
           ),
-          ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: B.finalDevices.length,
-              itemBuilder: (context, index) {
-                // This is only to Test not the real widget
-                return DeviceTile(
-                  device: BleDevice(
-                    name: B.finalDevices[index].name,
-                    id: B.finalDevices[index].id,
-                  ),
-                  rssi: 0,
-                  status: DeviceConnectionState.disconnected,
-                );
-              }),
-          // This won't Exist later
-          ElevatedButton(
-              onPressed: () => Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) => const ScanPage())),
-              child: const Text("Go Back")),
         ],
-      ));
+      ),
+    ),
+  );
 }
