@@ -32,7 +32,7 @@ class DeviceTile extends StatelessWidget {
             ListTile(
                 title: const Text("RSSI"),
                 trailing: Text(
-                  "$rssi",
+                  rssi == 0 ? "Not Found" : "$rssi",
                   style: data,
                 )),
             ListTile(

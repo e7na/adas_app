@@ -23,10 +23,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool locationService = false;
   bool somethingChosen = false;
   bool connected = false;
+  bool addedToStreams = false;
   String currentLog = "";
 
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
+  List<Stream<ConnectionStateUpdate>> finalDevicesStreams = [];
   final devices = <DiscoveredDevice>[];
 
   // Bluetooth related variables
@@ -96,7 +98,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   saveDevices() async {
     String names = "";
     String ids = "";
-    await scanStream.cancel();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt("NumDevices", chosenDevices.length);
     // get each all names/ids in a comma separated single string
@@ -117,6 +118,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Extract selected devices from shared prefs into a list
   // This will get called at the main page and every time the app is opened after the first scan
   getDevices() async {
+    //To get Rssi Values when app starts
+    startScan();
+
     finalDevices = [];
     final prefs = await SharedPreferences.getInstance();
     //get stored values from SharedPreferences
@@ -129,13 +133,63 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       //now we will have a list of the car devices called finalDevices
       finalDevices.add(BleDevice(name: names[i], id: ids[i]));
     }
+    // await connectToAllDevice();
     emit(GetDevices());
+  }
+
+  //establish connection with all chosen devices
+  connectToAllDevice() {
+    // To Disconnect we can use currentConnectionStream.cancel()
+    if (addedToStreams == false) {
+      // for (BleDevice device in finalDevices) {
+      //   finalDevicesStreams.add(ble.connectToAdvertisingDevice(
+      //     id: device.id,
+      //     connectionTimeout: const Duration(seconds: 5),
+      //     withServices: [],
+      //     prescanDuration: const Duration(seconds: 5),
+      //   ));
+      // }
+      for (BleDevice device in finalDevices) {
+        finalDevicesStreams.add(ble.connectToDevice(
+          id: device.id,
+          connectionTimeout: const Duration(seconds: 5),
+        ));
+      }
+    }
+    for (var stream in finalDevicesStreams) {
+      stream.listen((event) {
+        switch (event.connectionState) {
+          case DeviceConnectionState.connecting:
+            {
+              debugPrint('Connecting');
+              break;
+            }
+          // We're connected and good to go!
+          case DeviceConnectionState.connected:
+            {
+              debugPrint("Connected");
+              connected = true;
+              break;
+            }
+          // Can add various state updates on disconnect
+          case DeviceConnectionState.disconnected:
+            {
+              debugPrint("Disconnected");
+              connected = false;
+              break;
+            }
+          default:
+        }
+      });
+    }
+    addedToStreams = true;
   }
 
   //establish connection with device
   connectToDevice(int index) {
-    DiscoveredDevice device = devices[index];
+    BleDevice device = finalDevices[index];
     // Let's listen to our connection so we can make updates on a state change
+    // To Disconnect we can use currentConnectionStream.cancel()
     Stream<ConnectionStateUpdate> currentConnectionStream = ble.connectToDevice(
       id: device.id,
       connectionTimeout: const Duration(seconds: 5),
@@ -144,20 +198,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       switch (event.connectionState) {
         case DeviceConnectionState.connecting:
           {
-            debugPrint('Connecting');
+            debugPrint('Connecting $index');
             break;
           }
         // We're connected and good to go!
         case DeviceConnectionState.connected:
           {
-            debugPrint("Connected");
+            debugPrint("Connected $index");
             connected = true;
             break;
           }
         // Can add various state updates on disconnect
         case DeviceConnectionState.disconnected:
           {
-            debugPrint("Disconnected");
+            debugPrint("Disconnected $index");
             connected = false;
             break;
           }
