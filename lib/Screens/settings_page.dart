@@ -12,7 +12,12 @@ class SettingsPage extends StatelessWidget {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return theScaffold(context: context);
+        return ColoredBox(
+          color: Colors.white,
+          child: theScaffold(
+            context: context,
+          ),
+        );
       },
     );
   }
@@ -60,8 +65,11 @@ Widget theScaffold({
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60.0),
             child: ElevatedButton(
-                onPressed: () => Navigator.of(context)
-                    .pushReplacement(MaterialPageRoute(builder: (context) => const ScanPage())),
+                onPressed: () => {
+                      B.chosenDevices = [],
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const ScanPage()))
+                    },
                 child: const Text("Reset Devices")),
           ),
         ],

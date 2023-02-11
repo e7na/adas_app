@@ -109,6 +109,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         names += ",";
         ids += ",";
       }
+      somethingChosen = false;
     }
     // Store Them in Shared Preferences
     await prefs.setString("IDs", ids);
@@ -120,7 +121,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   getDevices() async {
     //To get Rssi Values when app starts
     startScan();
-
     finalDevices = [];
     final prefs = await SharedPreferences.getInstance();
     //get stored values from SharedPreferences

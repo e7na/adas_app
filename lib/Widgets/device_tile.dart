@@ -20,7 +20,7 @@ class DeviceTile extends StatelessWidget {
         child: ExpansionTile(
           initiallyExpanded: true,
           title: Text(
-            device.name,
+            device.name == "" ? "No Name" : device.name,
           ),
           children: [
             ListTile(

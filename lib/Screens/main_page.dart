@@ -26,7 +26,12 @@ class _MainPageState extends State<MainPage> {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return theScaffold(context: context);
+        return ColoredBox(
+          color: Colors.white,
+          child: theScaffold(
+            context: context,
+          ),
+        );
       },
     );
   }
@@ -48,10 +53,7 @@ Widget theScaffold({
     ));
   }
 
-//ToDo: Change This
-  return B.finalDevices.isEmpty
-      ? const Center(child: CircularProgressIndicator())
-      : Scaffold(
+  return Scaffold(
           backgroundColor: B.brightness == Brightness.dark
               ? Theme.of(context).colorScheme.background
               : surfaceVariant.withOpacity(0.6),
