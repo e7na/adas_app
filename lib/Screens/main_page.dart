@@ -64,10 +64,14 @@ Widget theScaffold({
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "MainTitle".tr(),
-                      style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+                    SizedBox(
+                      height: 48,
+                      child: Text(
+                        "MainTitle".tr(),
+                        style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+                      ),
                     ),
                     IconButton(
                         onPressed: () => Navigator.of(context)
@@ -127,10 +131,10 @@ Widget theScaffold({
                     child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
                   ),
                 ),
+                // This will be to disconnect or to reconnect
                 const SizedBox(
                   width: 140,
                   child: ElevatedButton(
-                    // If a device is chosen, it is be enabled.
                     onPressed: null,
                     child: Icon(Icons.refresh),
                   ),
