@@ -59,7 +59,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Scanning logic happens here
   startScan() async {
     if (ble.status != BleStatus.ready) {
-      ble.status == BleStatus.poweredOff ? await startBlue() : null;
+      await startBlue();
       if (ble.status == BleStatus.locationServicesDisabled) {
         Fluttertoast.showToast(
             msg: "T3".tr(),
@@ -69,7 +69,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
             backgroundColor: surfaceVariant,
             textColor: primary,
             fontSize: 16.0);
-      } else {
+      } else if (ble.status != BleStatus.locationServicesDisabled) {
         startScan();
       }
     } else {
@@ -241,7 +241,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // This Function is used to enable bluetooth
   startBlue() async {
     if (Platform.isAndroid) {
-      const AndroidIntent(
+      await const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
       ).launch().catchError((e) => AppSettings.openBluetoothSettings());
       await Future.delayed(const Duration(seconds: 2));

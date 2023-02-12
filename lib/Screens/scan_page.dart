@@ -89,9 +89,8 @@ Widget theScaffold({
                 // start scan or stop it.
                 onPressed: B.scanStarted
                     ? B.stopScan
-                    : () async {
-                        await B.requestPermissions();
-                        B.startScan();
+                    : () {
+                        B.requestPermissions().whenComplete(() => B.startScan());
                       },
                 child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
               ),
