@@ -85,21 +85,24 @@ Widget theScaffold({
               itemCount: B.finalDevices.length,
               itemBuilder: (context, index) {
                 int rssi = 0;
-                DeviceConnectionState deviceState = DeviceConnectionState.disconnected;
+                DeviceConnectionState? deviceState;
+                if (B.finalDevicesStates.length > index) {
+                  deviceState = B.finalDevicesStates[index];
+                }
                 if (B.scanStarted) {
                   Iterable<DiscoveredDevice> dDevice =
                       B.devices.where((d) => d.id == B.finalDevices[index].id);
                   dDevice.isNotEmpty ? rssi = dDevice.first.rssi : null;
                 }
                 //ToDo: Change This
-                //B.connectToDevice(index);
+                B.connectToDevice(index);
                 return DeviceTile(
                     device: BleDevice(
                       name: B.finalDevices[index].name,
                       id: B.finalDevices[index].id,
                     ),
                     rssi: rssi,
-                    status: deviceState);
+                    status: deviceState ?? DeviceConnectionState.disconnected);
               }),
         ],
       ),
