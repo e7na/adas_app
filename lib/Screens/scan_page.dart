@@ -30,22 +30,13 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
-  Color primary = Theme.of(context).colorScheme.primary;
-  Color surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
-  scaffoldMsg() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        "T3".tr(),
-        style: TextStyle(color: primary),
-      ),
-      backgroundColor: surfaceVariant,
-    ));
-  }
+  B.primary = Theme.of(context).colorScheme.primary;
+  B.surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
+  B.background = Theme.of(context).colorScheme.background;
 
   return Scaffold(
-      backgroundColor: B.brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.background
-          : surfaceVariant.withOpacity(0.6),
+      backgroundColor:
+          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
       body: ListView(children: [
         const SizedBox(
           height: 40,
@@ -54,7 +45,7 @@ Widget theScaffold({
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             "ScanTitle".tr(),
-            style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+            style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
           ),
         ),
         ListTile(
@@ -83,11 +74,11 @@ Widget theScaffold({
                 child: Center(
                     child: Text(
                   "Start Scan".tr(),
-                  style: TextStyle(color: primary),
+                  style: TextStyle(color: B.primary),
                 ))),
       ]),
       bottomNavigationBar: Container(
-        color: surfaceVariant,
+        color: B.surfaceVariant,
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,11 +91,7 @@ Widget theScaffold({
                     ? B.stopScan
                     : () async {
                         await B.requestPermissions();
-                        if (B.locationService == false) {
-                          scaffoldMsg();
-                        } else {
-                          B.startScan();
-                        }
+                        B.startScan();
                       },
                 child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
               ),

@@ -19,6 +19,8 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     BleBloc.get(context).getDevices();
+    //To get Rssi Values
+    BleBloc.get(context).startScan();
   }
 
   @override
@@ -41,107 +43,94 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
-  Color primary = Theme.of(context).colorScheme.primary;
-  Color surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
-  scaffoldMsg() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        "T3".tr(),
-        style: TextStyle(color: primary),
-      ),
-      backgroundColor: surfaceVariant,
-    ));
-  }
+  B.primary = Theme.of(context).colorScheme.primary;
+  B.surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
+  B.background = Theme.of(context).colorScheme.background;
 
   return Scaffold(
-          backgroundColor: B.brightness == Brightness.dark
-              ? Theme.of(context).colorScheme.background
-              : surfaceVariant.withOpacity(0.6),
-          body: ListView(
-            children: [
-              const SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 48,
-                      child: Text(
-                        "MainTitle".tr(),
-                        style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    IconButton(
-                        onPressed: () => Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
-                        icon: Icon(
-                          Icons.settings,
-                          color: primary,
-                        ))
-                  ],
-                ),
-              ),
-              ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: B.finalDevices.length,
-                  itemBuilder: (context, index) {
-                    int rssi = 0;
-                    DeviceConnectionState deviceState = DeviceConnectionState.disconnected;
-                    if (B.scanStarted) {
-                      Iterable<DiscoveredDevice> dDevice =
-                          B.devices.where((d) => d.id == B.finalDevices[index].id);
-                      dDevice.isNotEmpty ? rssi = dDevice.first.rssi : null;
-                    }
-                    //ToDo: Change This
-                    //B.connectToDevice(index);
-                    return DeviceTile(
-                        device: BleDevice(
-                          name: B.finalDevices[index].name,
-                          id: B.finalDevices[index].id,
-                        ),
-                        rssi: rssi,
-                        status: deviceState);
-                  }),
-            ],
+      backgroundColor:
+          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
+      body: ListView(
+        children: [
+          const SizedBox(
+            height: 30,
           ),
-          bottomNavigationBar: Container(
-            color: surfaceVariant,
-            height: 60,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 140,
-                  child: ElevatedButton(
-                    // start scan or stop it.
-                    onPressed: B.scanStarted
-                        ? B.stopScan
-                        : () async {
-                            await B.requestPermissions();
-                            if (B.locationService == false) {
-                              scaffoldMsg();
-                            } else {
-                              B.startScan();
-                            }
-                          },
-                    child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
+                  height: 48,
+                  child: Text(
+                    "MainTitle".tr(),
+                    style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
                   ),
                 ),
-                // This will be to disconnect or to reconnect
-                const SizedBox(
-                  width: 140,
-                  child: ElevatedButton(
-                    onPressed: null,
-                    child: Icon(Icons.refresh),
-                  ),
-                ),
+                IconButton(
+                    onPressed: () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+                    icon: Icon(
+                      Icons.settings,
+                      color: B.primary,
+                    ))
               ],
             ),
-          ));
+          ),
+          ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: B.finalDevices.length,
+              itemBuilder: (context, index) {
+                int rssi = 0;
+                DeviceConnectionState deviceState = DeviceConnectionState.disconnected;
+                if (B.scanStarted) {
+                  Iterable<DiscoveredDevice> dDevice =
+                      B.devices.where((d) => d.id == B.finalDevices[index].id);
+                  dDevice.isNotEmpty ? rssi = dDevice.first.rssi : null;
+                }
+                //ToDo: Change This
+                //B.connectToDevice(index);
+                return DeviceTile(
+                    device: BleDevice(
+                      name: B.finalDevices[index].name,
+                      id: B.finalDevices[index].id,
+                    ),
+                    rssi: rssi,
+                    status: deviceState);
+              }),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        color: B.surfaceVariant,
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 140,
+              child: ElevatedButton(
+                // start scan or stop it.
+                onPressed: B.scanStarted
+                    ? B.stopScan
+                    : () async {
+                        await B.requestPermissions();
+                        B.startScan();
+                      },
+                child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
+              ),
+            ),
+            // This will be to disconnect or to reconnect
+            const SizedBox(
+              width: 140,
+              child: ElevatedButton(
+                onPressed: null,
+                child: Icon(Icons.refresh),
+              ),
+            ),
+          ],
+        ),
+      ));
 }

@@ -27,10 +27,9 @@ class _BleTileState extends State<BleTile> {
   @override
   Widget build(BuildContext context) {
     var B = BleBloc.get(context);
-    Color primary = Theme.of(context).colorScheme.primary;
     return ListTile(
       leading: Text("${widget.rssi}",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: primary)),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: B.primary)),
       title: Text(
         widget.device.name == "" ? "No Name".tr() : widget.device.name,
         style: const TextStyle(fontWeight: FontWeight.w600),

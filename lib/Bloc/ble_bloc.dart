@@ -1,12 +1,14 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blue/Data/Models/device_model.dart';
@@ -17,6 +19,9 @@ part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
   var brightness = SchedulerBinding.instance.window.platformBrightness;
+  late Color primary;
+  late Color surfaceVariant;
+  late Color background;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -43,8 +48,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // Permissions handling stuff
   Future<Map<Permission, PermissionStatus>> requestPermissions() async {
-    locationService = await Permission.locationWhenInUse.serviceStatus.isEnabled;
-    emit(BleScan());
     return (await [
       Permission.location,
       Permission.bluetoothScan,
@@ -55,19 +58,34 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // Scanning logic happens here
   startScan() async {
-    ble.status == BleStatus.poweredOff ? await startBlue() : null;
-    scanStarted = true;
-    currentLog = 'Start ble discovery';
-    scanStream = ble.scanForDevices(withServices: []).listen((device) {
-      final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
-      if (knownDeviceIndex >= 0) {
-        devices[knownDeviceIndex] = device;
+    if (ble.status != BleStatus.ready) {
+      ble.status == BleStatus.poweredOff ? await startBlue() : null;
+      if (ble.status == BleStatus.locationServicesDisabled) {
+        Fluttertoast.showToast(
+            msg: "T3".tr(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: surfaceVariant,
+            textColor: primary,
+            fontSize: 16.0);
       } else {
-        devices.add(device);
+        startScan();
       }
-      emit(BleAddDevice());
-    }, onError: (Object e) => currentLog = 'Device scan fails with error: $e');
-    emit(BleError());
+    } else {
+      scanStarted = true;
+      currentLog = 'Start ble discovery';
+      scanStream = ble.scanForDevices(withServices: []).listen((device) {
+        final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
+        if (knownDeviceIndex >= 0) {
+          devices[knownDeviceIndex] = device;
+        } else {
+          devices.add(device);
+        }
+        emit(BleAddDevice());
+      }, onError: (Object e) => currentLog = 'Device scan fails with error: $e');
+      emit(BleError());
+    }
   }
 
   // Stop scanning for devices
@@ -82,6 +100,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool deviceAdd({required BleDevice device}) {
     chosenDevices.add(device);
     somethingChosen = true;
+    emit(BleAddDevice());
     debugPrint("Num of Devices Chosen ${chosenDevices.length}");
     return true;
   }
@@ -90,6 +109,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool deviceRemove({required BleDevice device}) {
     chosenDevices.removeWhere((element) => element.id == device.id);
     somethingChosen = chosenDevices.isNotEmpty ? true : false;
+    emit(BleAddDevice());
     debugPrint("Num of Devices Chosen ${chosenDevices.length}");
     return false;
   }
@@ -119,8 +139,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Extract selected devices from shared prefs into a list
   // This will get called at the main page and every time the app is opened after the first scan
   getDevices() async {
-    //To get Rssi Values when app starts
-    startScan();
     finalDevices = [];
     final prefs = await SharedPreferences.getInstance();
     //get stored values from SharedPreferences

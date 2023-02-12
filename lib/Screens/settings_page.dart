@@ -27,13 +27,10 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
-  Color primary = Theme.of(context).colorScheme.primary;
-  Color surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
 
   return Scaffold(
-      backgroundColor: B.brightness == Brightness.dark
-          ? Theme.of(context).colorScheme.background
-          : surfaceVariant.withOpacity(0.6),
+      backgroundColor:
+          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
       body: ListView(
         children: [
           const SizedBox(
@@ -48,13 +45,13 @@ Widget theScaffold({
                   onPressed: () => Navigator.of(context).pop(),
                   icon: Icon(
                     Icons.arrow_back,
-                    color: primary,
+                    color: B.primary,
                   )),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   "SettingsTitle".tr(),
-                  style: TextStyle(color: primary, fontSize: 30, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
