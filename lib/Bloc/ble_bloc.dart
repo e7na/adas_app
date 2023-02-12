@@ -32,8 +32,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
-  List<Stream<ConnectionStateUpdate>> finalDevicesStreams = [];
-  List<DeviceConnectionState> finalDevicesStates = [];
+  Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
+  Map finalDevicesStates = <String, DeviceConnectionState>{};
   final devices = <DiscoveredDevice>[];
 
   // Bluetooth related variables
@@ -156,28 +156,24 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   }
 
   //establish connection with device
-  connectToDevice(int index) {
-    BleDevice device = finalDevices[index];
-    // To Disconnect we can use currentConnectionStream.cancel()
-    if (finalDevicesStreams.length <= index) {
-      finalDevicesStreams.add(ble.connectToDevice(
-        id: device.id,
-        connectionTimeout: const Duration(seconds: 5),
-      ));
-    } else {
-      finalDevicesStreams[index] = ble.connectToDevice(
-        id: device.id,
-        connectionTimeout: const Duration(seconds: 5),
-      );
-    }
+  connectToDevice(BleDevice device) {
+    // Connect to device with id
+    finalDevicesStreams[device.id] = ble.connectToDevice(
+      id: device.id,
+      connectionTimeout: const Duration(seconds: 1),
+    );
     // Let's listen to our connection so we can make updates on a state change
-    finalDevicesStreams[index].listen((event) {
-      if (finalDevicesStates.length <= index) {
-        finalDevicesStates.add(event.connectionState);
-      } else {
-        finalDevicesStates[index] = event.connectionState;
-      }
+    finalDevicesStreams[device.id].listen((event) {
+      finalDevicesStates[device.id] = event.connectionState;
+      debugPrint("${device.id} ${event.connectionState}");
+      emit(BleConnected());
     });
+  }
+
+  //disconnect from device
+  disconnectDevice(BleDevice device) {
+    finalDevicesStreams[device.id].currentConnectionStream.cancel();
+    finalDevicesStates[device.id] = DeviceConnectionState.disconnected;
   }
 
   // This Function is used to enable bluetooth

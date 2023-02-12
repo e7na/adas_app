@@ -25,6 +25,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    connect(BleBloc.get(context));
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
@@ -46,7 +47,6 @@ Widget theScaffold({
   B.primary = Theme.of(context).colorScheme.primary;
   B.surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
   B.background = Theme.of(context).colorScheme.background;
-
   return Scaffold(
       backgroundColor:
           B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
@@ -87,15 +87,13 @@ Widget theScaffold({
                 int rssi = 0;
                 DeviceConnectionState? deviceState;
                 if (B.finalDevicesStates.length > index) {
-                  deviceState = B.finalDevicesStates[index];
+                  deviceState = B.finalDevicesStates[B.finalDevices[index].id];
                 }
                 if (B.scanStarted) {
                   Iterable<DiscoveredDevice> dDevice =
                       B.devices.where((d) => d.id == B.finalDevices[index].id);
                   dDevice.isNotEmpty ? rssi = dDevice.first.rssi : null;
                 }
-                //ToDo: Change This
-                B.connectToDevice(index);
                 return DeviceTile(
                     device: BleDevice(
                       name: B.finalDevices[index].name,
@@ -126,14 +124,21 @@ Widget theScaffold({
               ),
             ),
             // This will be to disconnect or to reconnect
-            const SizedBox(
+            SizedBox(
               width: 140,
               child: ElevatedButton(
-                onPressed: null,
-                child: Icon(Icons.refresh),
+                onPressed: () => connect(B),
+                child: const Icon(Icons.refresh),
               ),
             ),
           ],
         ),
       ));
+}
+
+connect(var B) async {
+  await Future.delayed(const Duration(seconds: 5));
+  for (BleDevice device in B.finalDevices) {
+    B.connectToDevice(device);
+  }
 }
