@@ -2,7 +2,17 @@
   "ScanTitle": "Scan for Devices",
   "MainTitle": "Car Devices",
   "SettingsTitle": "Settings",
-  "T1" : "Start the Scan by Pressing the Search Icon from the Bottom Bar.",
-  "T2" : "Choose the Cars Devices, then Press the Save Icon from the Bottom Bar.",
-  "Start Scan" : "Start Scan to See Results"
+  "T1": "Start the Scan by Pressing the Search Icon from the Bottom Bar.",
+  "T2": "Choose the Cars Devices, then Press the Save Icon from the Bottom Bar.",
+  "T3": "Enable Location Service From Your Device First",
+  "Start Scan": "Start Scan to See Results",
+  "No Name": "No Name",
+  "ID": "ID",
+  "RSSI": "RSSI",
+  "STATUS": "STATUS",
+  "Not Found": "Not Found",
+  "CONNECTING": "Connecting",
+  "CONNECTED": "Connected",
+  "DISCONNECTED": "Disconnected",
+  "Reset Devices": "Reset Devices"
 }

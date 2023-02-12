@@ -70,7 +70,7 @@ Widget theScaffold({
                       Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) => const ScanPage()))
                     },
-                child: const Text("Reset Devices")),
+                child: Text("Reset Devices".tr())),
           ),
         ],
       ));

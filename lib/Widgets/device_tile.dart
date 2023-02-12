@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -20,25 +21,25 @@ class DeviceTile extends StatelessWidget {
         child: ExpansionTile(
           initiallyExpanded: true,
           title: Text(
-            device.name == "" ? "No Name" : device.name,
+            device.name == "" ? "No Name".tr() : device.name,
           ),
           children: [
             ListTile(
-                title: const Text("ID"),
+                title: Text("ID".tr()),
                 trailing: Text(
                   device.id,
                   style: data,
                 )),
             ListTile(
-                title: const Text("RSSI"),
+                title: Text("RSSI".tr()),
                 trailing: Text(
-                  rssi == 0 ? "Not Found" : "$rssi",
+                  rssi == 0 ? "Not Found".tr() : "$rssi",
                   style: data,
                 )),
             ListTile(
-                title: const Text("STATUS"),
+                title: Text("STATUS".tr()),
                 trailing: Text(
-                  statusString,
+                  statusString.tr(),
                   style: TextStyle(
                       fontSize: 16,
                       color: getStatusColor(context: context, statusString: statusString)),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Data/Models/device_model.dart';
@@ -31,7 +32,7 @@ class _BleTileState extends State<BleTile> {
       leading: Text("${widget.rssi}",
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: primary)),
       title: Text(
-        widget.device.name == "" ? "No Name" : widget.device.name,
+        widget.device.name == "" ? "No Name".tr() : widget.device.name,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       subtitle: Text(widget.device.id),

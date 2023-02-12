@@ -46,7 +46,7 @@ Widget theScaffold({
   scaffoldMsg() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
-        "Enable Location Service First",
+        "T3".tr(),
         style: TextStyle(color: primary),
       ),
       backgroundColor: surfaceVariant,
