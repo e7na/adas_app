@@ -38,7 +38,17 @@ Widget theScaffold({
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0, automaticallyImplyLeading: false),
       body: SamsungUiScrollEffect(
-          expandedTitle: Text("ScanTitle".tr(), style: const TextStyle(fontSize: 32)),
+          expandedTitle: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("ScanTitle".tr(), style: const TextStyle(fontSize: 32)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
+                child: Text(B.scanStarted ? "T2".tr() : "T1".tr(),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+              )
+            ],
+          ),
           collapsedTitle: Text("ScanTitle".tr(), style: const TextStyle(fontSize: 24)),
           backgroundColor: theme.background,
           elevation: 1,
@@ -57,15 +67,6 @@ Widget theScaffold({
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: ListTile(
-                      title: Text(
-                        B.scanStarted ? "T2".tr() : "T1".tr(),
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                      ),
-                    ),
-                  ),
                   B.devices.isNotEmpty
                       ? ListView.builder(
                           padding: EdgeInsets.zero,
