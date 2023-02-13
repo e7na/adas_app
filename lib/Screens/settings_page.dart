@@ -3,6 +3,7 @@ import 'package:blue/Screens/scan_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -30,25 +31,37 @@ Widget theScaffold({
   ColorScheme theme = Theme.of(context).colorScheme;
 
   return Scaffold(
-      appBar: AppBar(
-          title: Text(
-        "SettingsTitle".tr(),
-      )),
-      body: ListView(
-        children: [
-          const SizedBox(
-            height: 20,
+      appBar: AppBar(toolbarHeight: 0),
+      body: SamsungUiScrollEffect(
+          expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
+          collapsedTitle: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 24)),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60.0),
-            child: ElevatedButton(
-                onPressed: () => {
-                      B.chosenDevices = [],
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => const ScanPage()))
-                    },
-                child: Text("Reset Devices".tr())),
-          ),
-        ],
-      ));
+          backgroundColor: theme.background,
+          elevation: 1,
+          expandedHeight: 300,
+          children: [
+            ListView(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                  child: ElevatedButton(
+                      onPressed: () => {
+                            B.chosenDevices = [],
+                            Navigator.of(context).pop(),
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) => const ScanPage()))
+                          },
+                      child: Text("Reset Devices".tr())),
+                ),
+              ],
+            )
+          ]));
 }

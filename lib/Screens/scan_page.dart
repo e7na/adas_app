@@ -5,6 +5,7 @@ import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/main_page.dart';
+import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 
 //This page is shown only once when the app is first started to select the cars devices.
 class ScanPage extends StatelessWidget {
@@ -34,46 +35,53 @@ Widget theScaffold({
   B.theme = theme;
 
   return Scaffold(
-      appBar: AppBar(
-          title: Text(
-            "ScanTitle".tr(),
-          ),
-          automaticallyImplyLeading: false),
-      body: ListView(children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: ListTile(
-            title: Text(
-              B.scanStarted ? "T2".tr() : "T1".tr(),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-            ),
-          ),
-        ),
-        B.devices.isNotEmpty
-            ? ListView.builder(
+      appBar: AppBar(toolbarHeight: 0, automaticallyImplyLeading: false),
+      body: SamsungUiScrollEffect(
+          expandedTitle: Text("ScanTitle".tr(), style: const TextStyle(fontSize: 32)),
+          collapsedTitle: Text("ScanTitle".tr(), style: const TextStyle(fontSize: 24)),
+          backgroundColor: theme.background,
+          elevation: 1,
+          expandedHeight: 300,
+          children: [
+            ListView(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: B.devices.length,
-                itemBuilder: (context, index) {
-                  return BleTile(
-                      device: BleDevice(
-                        name: B.devices[index].name,
-                        id: B.devices[index].id,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        B.scanStarted ? "T2".tr() : "T1".tr(),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                       ),
-                      rssi: B.devices[index].rssi,
-                      index: index);
-                })
-            : SizedBox(
-                height: 500,
-                child: Center(
-                    child: Text(
-                  "Start Scan".tr(),
-                  style: TextStyle(color: theme.primary),
-                ))),
-      ]),
+                    ),
+                  ),
+                  B.devices.isNotEmpty
+                      ? ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: B.devices.length,
+                          itemBuilder: (context, index) {
+                            return BleTile(
+                                device: BleDevice(
+                                  name: B.devices[index].name,
+                                  id: B.devices[index].id,
+                                ),
+                                rssi: B.devices[index].rssi,
+                                index: index);
+                          })
+                      : SizedBox(
+                          height: 350,
+                          child: Center(
+                              child: Text(
+                            "Start Scan".tr(),
+                            style: TextStyle(color: theme.primary),
+                          ))),
+                ])
+          ]),
       bottomNavigationBar: Container(
-        color: theme.surfaceVariant,
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

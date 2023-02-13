@@ -43,6 +43,7 @@ dependencies:
   permission_handler: ^10.2.0
   fluttertoast: ^8.1.3
   flex_color_scheme: ^6.1.2
+  samsung_ui_scroll_effect: ^0.0.2
 
 dev_dependencies:
   flutter_test:

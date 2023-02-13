@@ -397,6 +397,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
+  samsung_ui_scroll_effect:
+    dependency: "direct main"
+    description:
+      name: samsung_ui_scroll_effect
+      sha256: "0fc54fa141fd4832905235492747a401033bbfc772be364a6ff747096f78b5c4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   shared_preferences:
     dependency: "direct main"
     description:

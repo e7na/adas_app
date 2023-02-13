@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
                   title: 'Blue',
                   debugShowCheckedModeBanner: false,
                   theme: FlexThemeData.light(
-                    scheme: FlexScheme.aquaBlue,
+                    scheme: FlexScheme.materialHc,
                     appBarElevation: 1,
                     useMaterial3: true,
                     surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                     visualDensity: FlexColorScheme.comfortablePlatformDensity,
                   ),
                   darkTheme: FlexThemeData.dark(
-                    scheme: FlexScheme.aquaBlue,
+                    scheme: FlexScheme.deepPurple,
                     appBarElevation: 1,
                     useMaterial3: true,
                     surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
