@@ -14,5 +14,6 @@
   "CONNECTING": "جاري الاتصال",
   "CONNECTED": "متصل",
   "DISCONNECTED": "غير متصل",
-  "Reset Devices": "اعادة تعين الاجهزة"
+  "Reset Devices": "اعادة تعين الاجهزة",
+  "Current Theme": "الثيم الحالي"
 }

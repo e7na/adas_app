@@ -51,7 +51,14 @@ Widget theScaffold({
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
         expandedTitle: Text("MainTitle".tr(), style: const TextStyle(fontSize: 32)),
-        collapsedTitle: Text("MainTitle".tr(), style: const TextStyle(fontSize: 24)),
+        collapsedTitle: Padding(
+          padding: const EdgeInsets.only(right: 12.0, left: 0),
+          child: Row(
+            children: [
+              Text("MainTitle".tr(), style: const TextStyle(fontSize: 24)),
+            ],
+          ),
+        ),
         backgroundColor: theme.background,
         elevation: 1,
         expandedHeight: 300,

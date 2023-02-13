@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:blue/Services/app_color.dart';
 
@@ -44,7 +45,7 @@ class ThemePopupMenu extends StatelessWidget {
       child: ListTile(
         contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
         title: Text(
-          'Current Theme: ${AppColor.customSchemes[schemeIndex].name}',
+          '${"Current Theme".tr()}: ${AppColor.customSchemes[schemeIndex].name}',
         ),
         subtitle: Text(AppColor.customSchemes[schemeIndex].description),
         trailing: Icon(

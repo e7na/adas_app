@@ -14,5 +14,6 @@
   "CONNECTING": "Connecting",
   "CONNECTED": "Connected",
   "DISCONNECTED": "Disconnected",
-  "Reset Devices": "Reset Devices"
+  "Reset Devices": "Reset Devices",
+  "Current Theme": "Current Theme"
 }

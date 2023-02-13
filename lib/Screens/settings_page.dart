@@ -30,14 +30,19 @@ Widget theScaffold({
 }) {
   var B = BleBloc.get(context);
   ColorScheme theme = Theme.of(context).colorScheme;
+  String lang = context.locale.toString();
 
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
           expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
-            child: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 24)),
+            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: lang == "ar" ? 6 : 0),
+            child: Row(
+              children: [
+                Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 24)),
+              ],
+            ),
           ),
           backgroundColor: theme.background,
           elevation: 1,
