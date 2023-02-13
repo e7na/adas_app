@@ -44,40 +44,24 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
-  B.primary = Theme.of(context).colorScheme.primary;
-  B.surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
-  B.background = Theme.of(context).colorScheme.background;
+  ColorScheme theme = Theme.of(context).colorScheme;
+  B.theme = theme;
   return Scaffold(
-      backgroundColor:
-          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
+      appBar: AppBar(
+        title: Text(
+          "MainTitle".tr(),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+              icon: const Icon(
+                Icons.settings,
+              ))
+        ],
+      ),
       body: ListView(
         children: [
-          const SizedBox(
-            height: 30,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 48,
-                  child: Text(
-                    "MainTitle".tr(),
-                    style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
-                  ),
-                ),
-                IconButton(
-                    onPressed: () => Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
-                    icon: Icon(
-                      Icons.settings,
-                      color: B.primary,
-                    ))
-              ],
-            ),
-          ),
           ListView.builder(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
@@ -104,12 +88,22 @@ Widget theScaffold({
               }),
         ],
       ),
-      bottomNavigationBar: Container(
-        color: B.surfaceVariant,
+      bottomNavigationBar: SizedBox(
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // This will be to disconnect or to reconnect
+            SizedBox(
+              width: 140,
+              child: ElevatedButton(
+                onPressed: () => connect(B),
+                child: Icon(
+                  Icons.refresh,
+                  color: theme.onSurfaceVariant,
+                ),
+              ),
+            ),
             SizedBox(
               width: 140,
               child: ElevatedButton(
@@ -120,15 +114,10 @@ Widget theScaffold({
                         await B.requestPermissions();
                         B.startScan();
                       },
-                child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
-              ),
-            ),
-            // This will be to disconnect or to reconnect
-            SizedBox(
-              width: 140,
-              child: ElevatedButton(
-                onPressed: () => connect(B),
-                child: const Icon(Icons.refresh),
+                child: Icon(
+                  B.scanStarted ? Icons.cancel : Icons.search,
+                  color: theme.onSurfaceVariant,
+                ),
               ),
             ),
           ],

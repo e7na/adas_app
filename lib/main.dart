@@ -1,4 +1,5 @@
 import 'package:blue/Screens/main_page.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +7,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Screens/scan_page.dart';
-import 'package:blue/Data/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -50,13 +50,21 @@ class MyApp extends StatelessWidget {
                 return MaterialApp(
                   title: 'Blue',
                   debugShowCheckedModeBanner: false,
-                  theme: ThemeData(
-                    colorScheme: lightColorScheme ?? defaultLightColorScheme,
+                  theme: FlexThemeData.light(
+                    scheme: FlexScheme.aquaBlue,
+                    appBarElevation: 1,
                     useMaterial3: true,
+                    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+                    blendLevel: 24,
+                    visualDensity: FlexColorScheme.comfortablePlatformDensity,
                   ),
-                  darkTheme: ThemeData(
-                    colorScheme: darkColorScheme ?? defaultDarkColorScheme,
+                  darkTheme: FlexThemeData.dark(
+                    scheme: FlexScheme.aquaBlue,
+                    appBarElevation: 1,
                     useMaterial3: true,
+                    surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
+                    blendLevel: 24,
+                    visualDensity: FlexColorScheme.comfortablePlatformDensity,
                   ),
                   localizationsDelegates: context.localizationDelegates,
                   supportedLocales: context.supportedLocales,

@@ -14,8 +14,8 @@ class DeviceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String statusString = "$status".split(".")[1].toUpperCase();
-    Color primary = Theme.of(context).colorScheme.primary;
-    TextStyle data = TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: primary);
+    ColorScheme theme = Theme.of(context).colorScheme;
+    TextStyle data = TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: theme.primary);
     return Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
@@ -42,21 +42,21 @@ class DeviceTile extends StatelessWidget {
                   statusString.tr(),
                   style: TextStyle(
                       fontSize: 16,
-                      color: getStatusColor(context: context, statusString: statusString)),
+                      color: getStatusColor(theme: theme, statusString: statusString)),
                 ))
           ],
         ));
   }
 }
 
-Color getStatusColor({required statusString, required context}) {
+Color getStatusColor({required statusString, required ColorScheme theme}) {
   Color color;
   if (statusString == "disconnected".toUpperCase()) {
-    color = Theme.of(context).colorScheme.error;
+    color = theme.error;
   } else if (statusString == "connected".toUpperCase()) {
-    color = Theme.of(context).colorScheme.primary;
+    color = theme.primary;
   } else {
-    color = Theme.of(context).colorScheme.onBackground;
+    color = theme.onBackground;
   }
   return color;
 }

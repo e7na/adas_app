@@ -30,28 +30,23 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
-  B.primary = Theme.of(context).colorScheme.primary;
-  B.surfaceVariant = Theme.of(context).colorScheme.surfaceVariant;
-  B.background = Theme.of(context).colorScheme.background;
+  ColorScheme theme = Theme.of(context).colorScheme;
+  B.theme = theme;
 
   return Scaffold(
-      backgroundColor:
-          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
-      body: ListView(children: [
-        const SizedBox(
-          height: 40,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            "ScanTitle".tr(),
-            style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
-          ),
-        ),
-        ListTile(
+      appBar: AppBar(
           title: Text(
-            B.scanStarted ? "T2".tr() : "T1".tr(),
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+            "ScanTitle".tr(),
+          ),
+          automaticallyImplyLeading: false),
+      body: ListView(children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: ListTile(
+            title: Text(
+              B.scanStarted ? "T2".tr() : "T1".tr(),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+            ),
           ),
         ),
         B.devices.isNotEmpty
@@ -74,11 +69,11 @@ Widget theScaffold({
                 child: Center(
                     child: Text(
                   "Start Scan".tr(),
-                  style: TextStyle(color: B.primary),
+                  style: TextStyle(color: theme.primary),
                 ))),
       ]),
       bottomNavigationBar: Container(
-        color: B.surfaceVariant,
+        color: theme.surfaceVariant,
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -92,7 +87,10 @@ Widget theScaffold({
                     : () {
                         B.requestPermissions().whenComplete(() => B.startScan());
                       },
-                child: Icon(B.scanStarted ? Icons.cancel : Icons.search),
+                child: Icon(
+                  B.scanStarted ? Icons.cancel : Icons.search,
+                  color: theme.onSurfaceVariant,
+                ),
               ),
             ),
             SizedBox(
@@ -105,7 +103,9 @@ Widget theScaffold({
                             MaterialPageRoute(builder: (context) => const MainPage())));
                       }
                     : null,
-                child: const Icon(Icons.save),
+                child: const Icon(
+                  Icons.save,
+                ),
               ),
             ),
           ],

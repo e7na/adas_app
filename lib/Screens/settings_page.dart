@@ -27,35 +27,15 @@ Widget theScaffold({
   required BuildContext context,
 }) {
   var B = BleBloc.get(context);
+  ColorScheme theme = Theme.of(context).colorScheme;
 
   return Scaffold(
-      backgroundColor:
-          B.brightness == Brightness.dark ? B.background : B.surfaceVariant.withOpacity(0.6),
+      appBar: AppBar(
+          title: Text(
+        "SettingsTitle".tr(),
+      )),
       body: ListView(
         children: [
-          const SizedBox(
-            height: 40,
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: B.primary,
-                  )),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  "SettingsTitle".tr(),
-                  style: TextStyle(color: B.primary, fontSize: 30, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
-          ),
           const SizedBox(
             height: 20,
           ),

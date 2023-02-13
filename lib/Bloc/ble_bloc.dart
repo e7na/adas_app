@@ -19,9 +19,7 @@ part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
   var brightness = SchedulerBinding.instance.window.platformBrightness;
-  late Color primary;
-  late Color surfaceVariant;
-  late Color background;
+  late ColorScheme theme;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -63,11 +61,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       if (ble.status == BleStatus.locationServicesDisabled) {
         Fluttertoast.showToast(
             msg: "T3".tr(),
-            toastLength: Toast.LENGTH_SHORT,
+            toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: surfaceVariant,
-            textColor: primary,
+            backgroundColor: theme.secondary,
+            textColor: theme.onSecondary,
             fontSize: 16.0);
       } else if (ble.status != BleStatus.locationServicesDisabled) {
         startScan();
@@ -92,7 +90,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   stopScan() async {
     await scanStream.cancel();
     scanStarted = false;
-    devices.clear(); // Should it clear ?
+    //devices.clear(); // Should it clear ?
     emit(BleStop());
   }
 
