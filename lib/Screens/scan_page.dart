@@ -1,3 +1,4 @@
+import 'package:blue/Screens/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,6 +43,14 @@ Widget theScaffold({
           backgroundColor: theme.background,
           elevation: 1,
           expandedHeight: 300,
+          actions: [
+            IconButton(
+                onPressed: () => Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+                icon: const Icon(
+                  Icons.settings,
+                ))
+          ],
           children: [
             ListView(
                 padding: EdgeInsets.zero,
@@ -81,7 +90,7 @@ Widget theScaffold({
                           ))),
                 ])
           ]),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

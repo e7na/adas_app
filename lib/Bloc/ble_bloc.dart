@@ -13,6 +13,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blue/Data/Models/device_model.dart';
 
+import '../Services/theme_controller.dart';
+
 part 'ble_event.dart';
 
 part 'ble_state.dart';
@@ -20,6 +22,7 @@ part 'ble_state.dart';
 class BleBloc extends Bloc<BleEvent, BleState> {
   var brightness = SchedulerBinding.instance.window.platformBrightness;
   late ColorScheme theme;
+  late ThemeController themeController;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -184,5 +187,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     } else {
       AppSettings.openBluetoothSettings();
     }
+  }
+
+  themeChanged() {
+    emit(ThemeChanged());
   }
 }

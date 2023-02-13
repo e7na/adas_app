@@ -16,3 +16,5 @@ class BleStop extends BleState {}
 class GetDevices extends BleState {}
 
 class BleConnected extends BleState {}
+
+class ThemeChanged extends BleState {}

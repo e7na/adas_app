@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
+import '../Widgets/theme_popup_menu.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -47,20 +48,29 @@ Widget theScaffold({
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                  child: ElevatedButton(
-                      onPressed: () => {
-                            B.chosenDevices = [],
-                            Navigator.of(context).pop(),
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (context) => const ScanPage()))
-                          },
-                      child: Text("Reset Devices".tr())),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: ThemePopupMenu(
+                    schemeIndex: B.themeController.schemeIndex,
+                    onChanged: (value) {
+                      B.themeController.setSchemeIndex(value);
+                      B.themeChanged();
+                    },
+                  ),
                 ),
+                B.finalDevices.isEmpty
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                        child: ElevatedButton(
+                            onPressed: () => {
+                                  B.chosenDevices = [],
+                                  Navigator.of(context).pop(),
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (context) => const ScanPage()))
+                                },
+                            child: Text("Reset Devices".tr())),
+                      ),
               ],
             )
           ]));
