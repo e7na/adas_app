@@ -1,19 +1,18 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blue/Data/Models/device_model.dart';
-
-import '../Services/theme_controller.dart';
+import 'package:blue/Services/flex_colors/theme_controller.dart';
 
 part 'ble_event.dart';
 
@@ -21,6 +20,7 @@ part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
   var brightness = SchedulerBinding.instance.window.platformBrightness;
+  late Box box;
   late ColorScheme theme;
   late ThemeController themeController;
 
@@ -119,8 +119,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   saveDevices() async {
     String names = "";
     String ids = "";
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt("NumDevices", chosenDevices.length);
+    box.put("NumDevices", chosenDevices.length);
     // get each all names/ids in a comma separated single string
     for (int i = 0; i < chosenDevices.length; i++) {
       names += chosenDevices[i].name;
@@ -133,20 +132,19 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       somethingChosen = false;
     }
     // Store Them in Shared Preferences
-    await prefs.setString("IDs", ids);
-    await prefs.setString("Names", names);
+    box.put("IDs", ids);
+    box.put("Names", names);
   }
 
   // Extract selected devices from shared prefs into a list
   // This will get called at the main page and every time the app is opened after the first scan
   getDevices() async {
     finalDevices = [];
-    final prefs = await SharedPreferences.getInstance();
     //get stored values from SharedPreferences
-    int numDevices = prefs.getInt("NumDevices")!;
+    int numDevices = box.get("NumDevices")!;
     //Split names/ids into a list of strings
-    List<String> names = prefs.getString("Names")!.split(",");
-    List<String> ids = prefs.getString("IDs")!.split(",");
+    List<String> names = box.get("Names")!.split(",");
+    List<String> ids = box.get("IDs")!.split(",");
     // separate into ble devices
     for (int i = 0; i < numDevices; i++) {
       //now we will have a list of the car devices called finalDevices
@@ -180,7 +178,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // This Function is used to enable bluetooth
   startBlue() async {
     if (Platform.isAndroid) {
-      await const AndroidIntent(
+      const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
       ).launch().catchError((e) => AppSettings.openBluetoothSettings());
       await Future.delayed(const Duration(seconds: 2));

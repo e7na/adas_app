@@ -1,33 +1,32 @@
-import 'package:blue/Screens/main_page.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:blue/Screens/main_page.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Screens/scan_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'Services/app_color.dart';
-import 'Services/theme_controller.dart';
-import 'Services/theme_service.dart';
-import 'Services/theme_service_prefs.dart';
+import 'Services/flex_colors/app_color.dart';
+import 'Services/flex_colors/theme_controller.dart';
+import 'Services/flex_colors/theme_service.dart';
+import 'Services/flex_colors/theme_service_hive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
-  final int numDevices = prefs.getInt('NumDevices') ?? 0;
-  // The ThemeServiceHive constructor requires a box name, the others do not.
-// The box name is just a file name for the file that stores the settings.
-  final ThemeService themeService = ThemeServicePrefs();
-// Initialize the theme service.
+  await Hive.initFlutter();
+  Box box = await Hive.openBox("bleBox");
+  final int numDevices = box.get('NumDevices') ?? 0;
+  // The box name is just a file name for the file that stores the settings.
+  final ThemeService themeService = ThemeServiceHive('flex_colors_box');
+  // Initialize the theme service.
   await themeService.init();
-// Create a ThemeController that uses the ThemeService.
+  // Create a ThemeController that uses the ThemeService.
   final ThemeController themeController = ThemeController(themeService);
-// Load preferred theme settings, while the app is loading, before MaterialApp
-// is created, this prevents a theme change when the app is first displayed.
+  // Load preferred theme settings, while the app is loading, before MaterialApp
+  // is created, this prevents a theme change when the app is first displayed.
   await themeController.loadAll();
 // Run the app and pass in the ThemeController. The app listens to the
 // ThemeController for changes.
@@ -36,14 +35,20 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: MyApp(numDevices: numDevices, themeController: themeController)));
+      child: MyApp(
+        numDevices: numDevices,
+        themeController: themeController,
+        box: box,
+      )));
 }
 
 class MyApp extends StatelessWidget {
   final int numDevices;
+  final Box box;
   final ThemeController themeController;
 
-  const MyApp({super.key, required this.numDevices, required this.themeController});
+  const MyApp(
+      {super.key, required this.numDevices, required this.themeController, required this.box});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +58,7 @@ class MyApp extends StatelessWidget {
         listener: (context, state) {},
         builder: (context, state) {
           var B = BleBloc.get(context);
+          B.box = box;
           B.themeController = themeController;
           var theme = B.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
           return AnnotatedRegion<SystemUiOverlayStyle>(

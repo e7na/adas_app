@@ -1,6 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-
 import 'theme_controller.dart';
 
 /// Static App color schemes used in examples 4 & 5.

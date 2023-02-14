@@ -1,7 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:blue/Data/Models/device_model.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:blue/Data/Models/device_model.dart';
+
 
 class DeviceTile extends StatelessWidget {
   final BleDevice device;

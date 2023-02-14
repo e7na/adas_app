@@ -1,6 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:blue/Services/app_color.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:blue/Services/flex_colors/app_color.dart';
 
 // Widget used to change the used AppColor.customSchemes[index] in example 4.
 class ThemePopupMenu extends StatelessWidget {

@@ -1,12 +1,12 @@
-import 'package:blue/Screens/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/main_page.dart';
-import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
+import 'package:blue/Screens/settings_page.dart';
 
 //This page is shown only once when the app is first started to select the cars devices.
 class ScanPage extends StatelessWidget {

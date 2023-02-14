@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/device_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/settings_page.dart';
-import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
