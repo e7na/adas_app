@@ -8,6 +8,8 @@ import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/main_page.dart';
 import 'package:blue/Screens/settings_page.dart';
 
+late BleBloc B;
+
 //This page is shown only once when the app is first started to select the cars devices.
 class ScanPage extends StatelessWidget {
   const ScanPage({Key? key}) : super(key: key);
@@ -17,6 +19,8 @@ class ScanPage extends StatelessWidget {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
+        B = BleBloc.get(context);
+        B.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -31,10 +35,6 @@ class ScanPage extends StatelessWidget {
 Widget theScaffold({
   required BuildContext context,
 }) {
-  var B = BleBloc.get(context);
-  ColorScheme theme = Theme.of(context).colorScheme;
-  B.theme = theme;
-
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0, automaticallyImplyLeading: false),
       body: SamsungUiScrollEffect(
@@ -57,7 +57,7 @@ Widget theScaffold({
               ],
             ),
           ),
-          backgroundColor: theme.background,
+          backgroundColor: B.theme.background,
           elevation: 1,
           expandedHeight: 300,
           actions: [
@@ -94,7 +94,7 @@ Widget theScaffold({
                           child: Center(
                               child: Text(
                             "Start Scan".tr(),
-                            style: TextStyle(color: theme.primary),
+                            style: TextStyle(color: B.theme.primary),
                           ))),
                 ])
           ]),
@@ -114,7 +114,7 @@ Widget theScaffold({
                       },
                 child: Icon(
                   B.scanStarted ? Icons.cancel : Icons.search,
-                  color: theme.onSurfaceVariant,
+                  color: B.theme.onSurfaceVariant,
                 ),
               ),
             ),

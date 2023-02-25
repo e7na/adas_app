@@ -28,8 +28,8 @@ void main() async {
   // Load preferred theme settings, while the app is loading, before MaterialApp
   // is created, this prevents a theme change when the app is first displayed.
   await themeController.loadAll();
-// Run the app and pass in the ThemeController. The app listens to the
-// ThemeController for changes.
+  // Run the app and pass in the ThemeController. The app listens to the
+  // ThemeController for changes.
   runApp(EasyLocalization(
       useOnlyLangCode: true,
       supportedLocales: const [Locale('en'), Locale('ar')],

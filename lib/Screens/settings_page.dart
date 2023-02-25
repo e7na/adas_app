@@ -6,6 +6,9 @@ import 'package:blue/Widgets/theme_popup_menu.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Screens/scan_page.dart';
 
+late BleBloc B;
+late String lang;
+
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
@@ -14,6 +17,9 @@ class SettingsPage extends StatelessWidget {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
+        B = BleBloc.get(context);
+        B.theme = Theme.of(context).colorScheme;
+        lang = context.locale.toString();
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -28,10 +34,6 @@ class SettingsPage extends StatelessWidget {
 Widget theScaffold({
   required BuildContext context,
 }) {
-  var B = BleBloc.get(context);
-  ColorScheme theme = Theme.of(context).colorScheme;
-  String lang = context.locale.toString();
-
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
@@ -44,7 +46,7 @@ Widget theScaffold({
               ],
             ),
           ),
-          backgroundColor: theme.background,
+          backgroundColor: B.theme.background,
           elevation: 1,
           expandedHeight: 300,
           children: [

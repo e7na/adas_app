@@ -8,6 +8,8 @@ import 'package:blue/Widgets/device_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Screens/settings_page.dart';
 
+late BleBloc B;
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -19,17 +21,19 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    BleBloc.get(context).getDevices();
+    B = BleBloc.get(context);
+    B.getDevices();
     //To get Rssi Values
-    BleBloc.get(context).startScan();
+    B.startScan();
+    connect(B);
   }
 
   @override
   Widget build(BuildContext context) {
-    connect(BleBloc.get(context));
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
+        B.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -44,9 +48,6 @@ class _MainPageState extends State<MainPage> {
 Widget theScaffold({
   required BuildContext context,
 }) {
-  var B = BleBloc.get(context);
-  ColorScheme theme = Theme.of(context).colorScheme;
-  B.theme = theme;
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
@@ -59,7 +60,7 @@ Widget theScaffold({
             ],
           ),
         ),
-        backgroundColor: theme.background,
+        backgroundColor: B.theme.background,
         elevation: 1,
         expandedHeight: 300,
         actions: [
@@ -113,7 +114,7 @@ Widget theScaffold({
                       },
                 child: Icon(
                   B.scanStarted ? Icons.cancel : Icons.search,
-                  color: theme.onSurfaceVariant,
+                  color: B.theme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -124,7 +125,7 @@ Widget theScaffold({
                 onPressed: () => connect(B),
                 child: Icon(
                   Icons.bluetooth_connected_rounded,
-                  color: theme.primary,
+                  color: B.theme.primary,
                 ),
               ),
             ),
@@ -134,7 +135,6 @@ Widget theScaffold({
 }
 
 connect(var B) async {
-  await Future.delayed(const Duration(seconds: 5));
   for (BleDevice device in B.finalDevices) {
     B.connectToDevice(device);
   }

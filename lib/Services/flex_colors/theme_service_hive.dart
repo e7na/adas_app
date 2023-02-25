@@ -91,10 +91,10 @@ class ThemeServiceHive implements ThemeService {
   Future<T> load<T>(String key, T defaultValue) async {
     try {
       final T loaded = _hiveBox.get(key, defaultValue: defaultValue) as T;
-      if (_debug) {
-        debugPrint('Hive type   : $key as ${defaultValue.runtimeType}');
-        debugPrint('Hive loaded : $key as $loaded with ${loaded.runtimeType}');
-      }
+      // if (_debug) {
+      //   debugPrint('Hive type   : $key as ${defaultValue.runtimeType}');
+      //   debugPrint('Hive loaded : $key as $loaded with ${loaded.runtimeType}');
+      // }
       return loaded;
     } catch (e) {
       debugPrint('Hive load (get) ERROR');
