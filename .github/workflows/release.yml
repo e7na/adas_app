@@ -33,6 +33,7 @@ jobs:
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
+          echo "app_ver=$app_ver" >>$GITHUB_ENV
 
           flutter pub get
           flutter build apk --release
@@ -70,6 +71,7 @@ jobs:
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
+          echo "app_ver=$app_ver" >>$GITHUB_ENV
 
           flutter pub get
           flutter build apk --release --split-per-abi
@@ -109,6 +111,7 @@ jobs:
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
+          echo "app_ver=$app_ver" >>$GITHUB_ENV
 
           flutter pub get
           flutter build apk --debug
@@ -143,6 +146,6 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "release/*"
+          artifacts: "release/*/*"
           tag: ${{ env.app_ver }}
           # token: ${{ secrets.GITHUB_TOKEN }}
