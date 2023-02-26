@@ -5,7 +5,7 @@ on:
 env:
   # app_ver: none
   A-SDK_PATH: /opt/android-sdk-linux
-  TOOL_PATH: /opt/hostedtoolcache/flutter
+  # TOOL_PATH: /opt/hostedtoolcache/flutter
   PUB_PATH: .pub-cache
   BUILD_PATH: |
     build/*
@@ -17,11 +17,11 @@ jobs:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
-      - name: fluttertools cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.TOOL_PATH }}
-          key: tools-cache
+      # - name: fluttertools cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.TOOL_PATH }}
+      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
@@ -50,7 +50,7 @@ jobs:
 
           flutter build apk --release
           (cd ./build/app/outputs/flutter-apk/ &&
-            mv ./app-release.apk ./"ble-$app_ver.apk"
+            mv ./app-release.apk ./"ble-$app_ver-universal.apk"
           )
         shell: bash
       - name: upload build artifacts
@@ -65,11 +65,11 @@ jobs:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
-      - name: fluttertools cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.TOOL_PATH }}
-          key: tools-cache
+      # - name: fluttertools cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.TOOL_PATH }}
+      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
@@ -114,11 +114,11 @@ jobs:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
-      - name: fluttertools cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.TOOL_PATH }}
-          key: tools-cache
+      # - name: fluttertools cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.TOOL_PATH }}
+      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
