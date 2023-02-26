@@ -16,8 +16,13 @@ jobs:
       - name: environment setup
         uses: actions/cache@v3
         with:
-          path: ${{ env.cache_path }}
+          path: $PUB_CACHE
           key: ${{ runner.os }}-pub-cache
+      - name: cache android sdk????
+        uses: actions/cache@v3
+        with:
+          path: /opt/android-sdk-linux
+          key: android-sdk
       - run: |
           #!/bin/bash#
           app_ver=$(grep 'version:' pubspec.yaml)
@@ -39,6 +44,11 @@ jobs:
         with:
           path: ${{ env.cache_path }}
           key: ${{ runner.os }}-pub-cache
+      - name: cache android sdk????
+        uses: actions/cache@v3
+        with:
+          path: /opt/android-sdk-linux
+          key: android-sdk
       - run: |
           #!/bin/bash#
           flutter build apk --release
@@ -62,6 +72,11 @@ jobs:
         with:
           path: ${{ env.cache_path }}
           key: ${{ runner.os }}-pub-cache
+      - name: cache android sdk????
+        uses: actions/cache@v3
+        with:
+          path: /opt/android-sdk-linux
+          key: android-sdk
       - run: |
           #!/bin/bash#
           flutter build apk --release --split-per-abi
@@ -87,6 +102,11 @@ jobs:
         with:
           path: ${{ env.cache_path }}
           key: ${{ runner.os }}-pub-cache
+      - name: cache android sdk????
+        uses: actions/cache@v3
+        with:
+          path: /opt/android-sdk-linux
+          key: android-sdk
       - run: |
           #!/bin/bash#
           flutter build apk --debug
