@@ -5,7 +5,7 @@ on:
 env:
   # app_ver: none
   A-SDK_PATH: /opt/android-sdk-linux
-  TOOL_PATH: /opt/hostedtoolcache
+  TOOL_PATH: /opt/hostedtoolcache/flutter*
   PUB_PATH: .pub-cache
   BUILD_PATH: |
     build/*
@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: tool-cache
+          key: hostedtool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -106,7 +106,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: tool-cache
+          key: hostedtool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -168,7 +168,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: tool-cache
+          key: hostedtool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -203,15 +203,15 @@ jobs:
       - build-universal
       - build-split
     steps:
-      - uses: actions/checkout@v3
-      - run: |
-          # grabbing app version
-          app_ver=$(grep 'version:' pubspec.yaml)
-          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
-          echo "$app_ver"
-          echo "app_ver=$app_ver" >>$GITHUB_ENV
-          mkdir ./release
-        shell: bash
+      # - uses: actions/checkout@v3
+      # - run: |
+      #     # grabbing app version
+      #     app_ver=$(grep 'version:' pubspec.yaml)
+      #     app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+      #     echo "$app_ver"
+      #     echo "app_ver=$app_ver" >>$GITHUB_ENV
+      #     mkdir ./release
+        # shell: bash
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v3
         with:
@@ -220,5 +220,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "release/*/*.apk"
-          tag: ${{ env.app_ver }}
           # token: ${{ secrets.GITHUB_TOKEN }}
