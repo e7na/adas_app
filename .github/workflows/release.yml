@@ -3,54 +3,38 @@ on:
   push:
     branches: [main, devops]
 env:
-  app_ver: none
-  cache_path: $PUB_CACHE
+  # app_ver: none
+  android_cache: /opt/android-sdk-linux
+  flutter_cache: /opt/hostedtoolcache/flutter
+  pub_cache: ~/.pub-cache
 jobs:
-
-  setup-env:
-    runs-on: ubuntu-22.04
-    container:
-      image: cirrusci/flutter:3.7.3
-    steps:
-      - uses: actions/checkout@v3
-      - name: environment setup
-        uses: actions/cache@v3
-        with:
-          path: $PUB_CACHE
-          key: ${{ runner.os }}-pub-cache
-      - name: cache android sdk????
-        uses: actions/cache@v3
-        with:
-          path: /opt/android-sdk-linux
-          key: android-sdk
-      - run: |
-          #!/bin/bash#
-          app_ver=$(grep 'version:' pubspec.yaml)
-          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
-          echo "$app_ver"
-          echo "app_ver=$app_ver" >>$GITHUB_ENV
-          echo "cache_path=$PUB_CACHE" >>$GITHUB_ENV
-
-          flutter pub get
-
   build-universal:
     runs-on: ubuntu-22.04
-    needs: setup-env
     container:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
-          path: ${{ env.cache_path }}
-          key: ${{ runner.os }}-pub-cache
+          path: ${{ env.flutter_cache }}
+          key: ${{ runner.os }}-flutter-cache
       - name: cache android sdk????
         uses: actions/cache@v3
         with:
-          path: /opt/android-sdk-linux
+          path: ${{ env.android_cache }}
           key: android-sdk
+      - name: pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.pub_cache }}
+          key: pub-cache
       - run: |
-          #!/bin/bash#
+          #!/bin/bash
+          app_ver=$(grep 'version:' pubspec.yaml)
+          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+          echo "$app_ver"
+
+          flutter pub get
           flutter build apk --release
           (cd ./build/app/outputs/flutter-apk/ &&
             mv ./app-release.apk ./"ble-$app_ver.apk"
@@ -63,22 +47,31 @@ jobs:
 
   build-split:
     runs-on: ubuntu-22.04
-    needs: setup-env
     container:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
-          path: ${{ env.cache_path }}
-          key: ${{ runner.os }}-pub-cache
+          path: ${{ env.flutter_cache }}
+          key: ${{ runner.os }}-flutter-cache
       - name: cache android sdk????
         uses: actions/cache@v3
         with:
-          path: /opt/android-sdk-linux
+          path: ${{ env.android_cache }}
           key: android-sdk
+      - name: pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.pub_cache }}
+          key: pub-cache
       - run: |
           #!/bin/bash#
+          app_ver=$(grep 'version:' pubspec.yaml)
+          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+          echo "$app_ver"
+
+          flutter pub get
           flutter build apk --release --split-per-abi
           (cd ./build/app/outputs/flutter-apk/ && {
             mv ./app-arm64-v8a-release.apk ./"ble-$app_ver-arm64-v8a.apk"
@@ -93,22 +86,31 @@ jobs:
 
   build-debug:
     runs-on: ubuntu-22.04
-    needs: setup-env
     container:
       image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
-          path: ${{ env.cache_path }}
-          key: ${{ runner.os }}-pub-cache
+          path: ${{ env.flutter_cache }}
+          key: ${{ runner.os }}-flutter-cache
       - name: cache android sdk????
         uses: actions/cache@v3
         with:
-          path: /opt/android-sdk-linux
+          path: ${{ env.android_cache }}
           key: android-sdk
+      - name: pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.pub_cache }}
+          key: pub-cache
       - run: |
           #!/bin/bash#
+          app_ver=$(grep 'version:' pubspec.yaml)
+          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+          echo "$app_ver"
+
+          flutter pub get
           flutter build apk --debug
           (cd ./build/app/outputs/flutter-apk/ &&
             mv ./app-debug.apk ./"ble-$app_ver-debug.apk"
@@ -126,11 +128,21 @@ jobs:
       - build-universal
       - build-split
     steps:
+      - uses: actions/checkout@v3
+      - run: |
+          #!/bin/bash
+          app_ver=$(grep 'version:' pubspec.yaml)
+          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+          echo "$app_ver"
+          echo "app_ver=$app_ver" >>$GITHUB_ENV
+          mkdir ./release
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: release
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "*"
+          artifacts: "release/*"
           tag: ${{ env.app_ver }}
           # token: ${{ secrets.GITHUB_TOKEN }}
