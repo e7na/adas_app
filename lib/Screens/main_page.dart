@@ -113,7 +113,7 @@ Widget theScaffold({
                         B.startScan();
                       },
                 child: Icon(
-                  B.scanStarted ? Icons.cancel : Icons.search,
+                  B.scanStarted ? Icons.cancel : Icons.location_on,
                   color: B.theme.onSurfaceVariant,
                 ),
               ),

@@ -60,7 +60,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Scanning logic happens here
   startScan() async {
     if (ble.status != BleStatus.ready) {
-      await startBlue();
+      if ({BleStatus.poweredOff, BleStatus.unauthorized, BleStatus.unknown}.contains(ble.status)) {
+        await startBlue().whenComplete(() async {
+          // wait for BleStatus to change
+          await Future.delayed(const Duration(seconds: 1));
+        });
+      }
       if (ble.status == BleStatus.locationServicesDisabled) {
         Fluttertoast.showToast(
             msg: "T3".tr(),
@@ -70,7 +75,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
             backgroundColor: theme.secondary,
             textColor: theme.onSecondary,
             fontSize: 16.0);
-      } else if (ble.status != BleStatus.locationServicesDisabled) {
+      }
+      if (ble.status != BleStatus.poweredOff && ble.status != BleStatus.locationServicesDisabled) {
         startScan();
       }
     } else {
