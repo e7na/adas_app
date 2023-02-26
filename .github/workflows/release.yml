@@ -5,11 +5,12 @@ on:
 env:
   # app_ver: none
   A-SDK_PATH: /opt/android-sdk-linux
-  # TOOL_PATH: /opt/hostedtoolcache/flutter
+  TOOL_PATH: /opt/hostedtoolcache
   PUB_PATH: .pub-cache
   BUILD_PATH: |
     build/*
     !build/app/outputs
+    android/.gradle
 jobs:
   build-universal:
     runs-on: ubuntu-18.04
@@ -40,6 +41,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
+      - name: hostedtoolcache cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.TOOL_PATH }}
+          key: tool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -96,6 +102,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
+      - name: hostedtoolcache cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.TOOL_PATH }}
+          key: tool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -153,6 +164,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
+      - name: hostedtoolcache cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.TOOL_PATH }}
+          key: tool-cache
       - name: build cache
         uses: actions/cache@v3
         with:
