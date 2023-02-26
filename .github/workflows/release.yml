@@ -29,7 +29,6 @@ jobs:
           path: ${{ env.pub_cache }}
           key: pub-cache
       - run: |
-          #!/bin/bash
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
@@ -40,6 +39,7 @@ jobs:
           (cd ./build/app/outputs/flutter-apk/ &&
             mv ./app-release.apk ./"ble-$app_ver.apk"
           )
+        shell: bash
       - name: upload build artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -67,7 +67,6 @@ jobs:
           path: ${{ env.pub_cache }}
           key: pub-cache
       - run: |
-          #!/bin/bash#
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
@@ -80,6 +79,7 @@ jobs:
             mv ./app-armeabi-v7a-release.apk ./"ble-$app_ver-armeabi-v7a.apk"
             mv ./app-x86_64-release.apk ./"ble-$app_ver-x86_64.apk"
           })
+        shell: bash
       - name: upload build artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -107,7 +107,6 @@ jobs:
           path: ${{ env.pub_cache }}
           key: pub-cache
       - run: |
-          #!/bin/bash#
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
@@ -118,6 +117,7 @@ jobs:
           (cd ./build/app/outputs/flutter-apk/ &&
             mv ./app-debug.apk ./"ble-$app_ver-debug.apk"
           )
+        shell: bash
       - name: upload build artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -133,12 +133,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          #!/bin/bash
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
           echo "$app_ver"
           echo "app_ver=$app_ver" >>$GITHUB_ENV
           mkdir ./release
+        shell: bash
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v3
         with:
@@ -146,6 +146,6 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "release/*/*"
+          artifacts: "release/*/*.apk"
           tag: ${{ env.app_ver }}
           # token: ${{ secrets.GITHUB_TOKEN }}
