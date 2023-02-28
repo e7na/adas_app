@@ -15,7 +15,7 @@ env:
     !build/app/outputs
     !build/app/outputs/*
 jobs:
-  build-universal:
+  build-release:
     runs-on: ubuntu-22.04
     # container:
     # image: cirrusci/flutter:3.7.3
