@@ -5,9 +5,7 @@ import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Widgets/theme_popup_menu.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Screens/scan_page.dart';
-
-late BleBloc B;
-late String lang;
+import 'package:blue/main.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -17,9 +15,7 @@ class SettingsPage extends StatelessWidget {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
-        B = BleBloc.get(context);
         B.theme = Theme.of(context).colorScheme;
-        lang = context.locale.toString();
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -39,7 +35,7 @@ Widget theScaffold({
       body: SamsungUiScrollEffect(
           expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
-            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: lang == "ar" ? 6 : 0),
+            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
             child: Row(
               children: [
                 Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 24)),

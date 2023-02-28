@@ -12,6 +12,7 @@
   "STATUS": "الحالة",
   "Not Found": "لم يتم ايجادة",
   "CONNECTING": "جاري الاتصال",
+  "DISCONNECTING": "جاري الغاء الاتصال",
   "CONNECTED": "متصل",
   "DISCONNECTED": "غير متصل",
   "Reset Devices": "اعادة تعين الاجهزة",

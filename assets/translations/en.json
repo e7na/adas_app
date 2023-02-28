@@ -12,6 +12,7 @@
   "STATUS": "STATUS",
   "Not Found": "Not Found",
   "CONNECTING": "Connecting",
+  "DISCONNECTING": "Disconnecting",
   "CONNECTED": "Connected",
   "DISCONNECTED": "Disconnected",
   "Reset Devices": "Reset Devices",

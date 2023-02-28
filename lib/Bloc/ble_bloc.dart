@@ -19,10 +19,11 @@ part 'ble_event.dart';
 part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
-  var brightness = SchedulerBinding.instance.window.platformBrightness;
+  Brightness brightness = SchedulerBinding.instance.window.platformBrightness;
   late Box box;
   late ColorScheme theme;
   late ThemeController themeController;
+  late String lang;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -31,15 +32,14 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool addedToStreams = false;
   String currentLog = "";
 
+  // Bluetooth related variables
+  final ble = FlutterReactiveBle();
+  late StreamSubscription<DiscoveredDevice> scanStream;
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
   Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
   Map finalDevicesStates = <String, DeviceConnectionState>{};
   final devices = <DiscoveredDevice>[];
-
-  // Bluetooth related variables
-  final ble = FlutterReactiveBle();
-  late StreamSubscription<DiscoveredDevice> scanStream;
 
   static BleBloc get(context) => BlocProvider.of(context);
 
@@ -59,6 +59,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // Scanning logic happens here
   startScan() async {
+    //  First Check if bluetooth is on
     if (ble.status != BleStatus.ready) {
       if ({BleStatus.poweredOff, BleStatus.unauthorized, BleStatus.unknown}.contains(ble.status)) {
         await startBlue().whenComplete(() async {
@@ -66,6 +67,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
           await Future.delayed(const Duration(seconds: 1));
         });
       }
+      // then if location is on
       if (ble.status == BleStatus.locationServicesDisabled) {
         Fluttertoast.showToast(
             msg: "T3".tr(),
@@ -76,9 +78,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
             textColor: theme.onSecondary,
             fontSize: 16.0);
       }
+      // if both are on, invoke the function again
       if (ble.status != BleStatus.poweredOff && ble.status != BleStatus.locationServicesDisabled) {
         startScan();
       }
+      // if every thing is ready start scanning
     } else {
       scanStarted = true;
       currentLog = 'Start ble discovery';
@@ -107,20 +111,17 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool deviceAdd({required BleDevice device}) {
     chosenDevices.add(device);
     somethingChosen = true;
-    emit(BleAddDevice());
-    debugPrint("Num of Devices Chosen ${chosenDevices.length}");
     return true;
   }
 
   // This should remove the devices from chosen devices list
   bool deviceRemove({required BleDevice device}) {
     chosenDevices.removeWhere((element) => element.id == device.id);
-    somethingChosen = chosenDevices.isNotEmpty; // ? true : false;
-    debugPrint("Num of Chosen Devices ${chosenDevices.length}");
+    somethingChosen = chosenDevices.isNotEmpty;
     return false;
   }
 
-  // This saves the chosen devices list to Shared Preferences
+  // This saves the chosen devices list to the Hive Box
   saveDevices() async {
     String names = "";
     String ids = "";
@@ -136,16 +137,16 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       }
       somethingChosen = false;
     }
-    // Store Them in Shared Preferences
+    // Store Them in the Hive Box
     box.put("IDs", ids);
     box.put("Names", names);
   }
 
-  // Extract selected devices from shared prefs into a list
+  // Extract selected devices from the Hive Box into a list
   // This will get called at the main page and every time the app is opened after the first scan
   getDevices() async {
     finalDevices = [];
-    //get stored values from SharedPreferences
+    //get stored values from the Hive Box
     int numDevices = box.get("NumDevices")!;
     //Split names/ids into a list of strings
     List<String> names = box.get("Names")!.split(",");
@@ -192,7 +193,12 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
   }
 
+  // change state stuff
   themeChanged() {
     emit(ThemeChanged());
+  }
+
+  isRemoveChanged() {
+    emit(BleAddDevice());
   }
 }
