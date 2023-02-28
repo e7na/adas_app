@@ -187,7 +187,9 @@ jobs:
           export PATH="$PATH":"$PUB_CACHE/bin" 
           flutter pub get
           flutter build apk --debug
+          ls #!DELETE ME
           (cd ./build/app/outputs/flutter-apk/ &&
+            ls #!DELETE ME &&
             mv ./app-debug.apk ./"ble-$app_ver-debug.apk"
           )
         shell: bash
