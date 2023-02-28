@@ -1,7 +1,9 @@
+import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-SystemUiOverlayStyle systemUI({required Brightness theme}) {
+SystemUiOverlayStyle systemUI({required BleBloc B}) {
+  Brightness theme = B.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
   return SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: theme,
@@ -9,6 +11,6 @@ SystemUiOverlayStyle systemUI({required Brightness theme}) {
     statusBarBrightness: theme,
     // For iOS (dark icons)
     // systemNavigationBarIconBrightness: theme,
-    // systemNavigationBarColor: surfaceVariant,
+    // systemNavigationBarColor: B.theme.surfaceVariant,
   );
 }
