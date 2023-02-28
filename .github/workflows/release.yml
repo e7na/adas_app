@@ -5,7 +5,7 @@ on:
     tags:
       - "*"
 env:
-  A-SDK_PATH: /opt/android-sdk-linux
+  # A-SDK_PATH: /opt/android-sdk-linux
   flutter-version: "3.7.3"
   TOOL_PATH: /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
   PUB_PATH: .pub-cache
@@ -29,11 +29,11 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.flutter-version }}
-      - name: android sdk cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.A-SDK_PATH }}
-          key: android-sdk
+      # - name: android sdk cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.A-SDK_PATH }}
+      #     key: android-sdk
       - name: pub cache
         uses: actions/cache@v3
         with:
@@ -85,11 +85,11 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.7.3"
-      - name: android sdk cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.A-SDK_PATH }}
-          key: android-sdk
+      # - name: android sdk cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.A-SDK_PATH }}
+      #     key: android-sdk
       - name: pub cache
         uses: actions/cache@v3
         with:
@@ -142,11 +142,11 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.7.3"
-      - name: android sdk cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.A-SDK_PATH }}
-          key: android-sdk
+      # - name: android sdk cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.A-SDK_PATH }}
+      #     key: android-sdk
       - name: pub cache
         uses: actions/cache@v3
         with:
@@ -207,5 +207,5 @@ jobs:
       - name: Push them to releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "./*/*.apk"
+          artifacts: "release/*/*.apk"
           # token: ${{ secrets.GITHUB_TOKEN }}
