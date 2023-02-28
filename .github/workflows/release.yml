@@ -51,38 +51,27 @@ jobs:
 
           export PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache
           export PATH="$PATH":"$PUB_CACHE/bin"
+          
+          mkdir artifacts && {
+            ARTIFACTS_PATH="$GITHUB_WORKSPACE/artifacts"
+            echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >>$GITHUB_ENV
+          }
 
-          REPO_PATH="$PWD"
-          REPO_DIR="$(dirname "$REPO_PATH")"
-          REPO_BASE="$(basename "$REPO_PATH")"
+          ## build
 
-          echo "ARTIFACTS_PATH=$REPO_DIR/artifacts" >>$GITHUB_ENV
-
-          cd .. || exit 1  # assuming we have access to the parent dir!
-
-          mkdir artifacts
-          cp -r "$REPO_BASE" "$REPO_BASE-split" # &
-          # cp -r "$REPO_BASE" "$REPO_BASE-debug" &
-
-          ## build apks
-
-          (cd "$REPO_BASE-split" && {
-            flutter pub get
-            flutter build apk --release --split-per-abi
-            (cd ./build/app/outputs/flutter-apk/ && {
-              mv ./app-arm64-v8a-release.apk "$REPO_DIR/artifacts/ble-$app_ver-arm64-v8a.apk"
-              mv ./app-armeabi-v7a-release.apk "$REPO_DIR/artifacts/ble-$app_ver-armeabi-v7a.apk"
-              mv ./app-x86_64-release.apk "$REPO_DIR/artifacts/ble-$app_ver-x86_64.apk"
-            })
-          }) # \
-          # & # RUNNING THE TWO BUILDS IN PARALLEL, THIS F'S UP THE LOGS!!!
-          (cd "$REPO_BASE" && {
-            flutter pub get
-            flutter build apk --release
-            (cd ./build/app/outputs/flutter-apk/ &&
-              mv ./app-release.apk $REPO_DIR/artifacts/"ble-$app_ver-universal.apk"
-            )
+          flutter pub get
+          
+          flutter build apk --release --split-per-abi
+          (cd ./build/app/outputs/flutter-apk/ && {
+            mv ./app-arm64-v8a-release.apk "$ARTIFACTS_PATH/ble-$app_ver-arm64-v8a.apk"
+            mv ./app-armeabi-v7a-release.apk "$ARTIFACTS_PATH/ble-$app_ver-armeabi-v7a.apk"
+            mv ./app-x86_64-release.apk "$ARTIFACTS_PATH/ble-$app_ver-x86_64.apk"
           })
+
+          flutter build apk --release
+          (cd ./build/app/outputs/flutter-apk/ &&
+            mv ./app-release.apk "$ARTIFACTS_PATH/ble-$app_ver-universal.apk"
+          )
         shell: bash
 
       - name: Upload build artifacts to releases
