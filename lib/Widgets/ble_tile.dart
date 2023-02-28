@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Data/Models/device_model.dart';
-import 'package:blue/main.dart';
+import 'package:blue/Screens/setter_page.dart';
 
 class BleTile extends StatefulWidget {
   final BleDevice device;

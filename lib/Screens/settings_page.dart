@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Widgets/theme_popup_menu.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
-import 'package:blue/Screens/scan_page.dart';
-import 'package:blue/main.dart';
+import 'scan_page.dart';
+import 'setter_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ Widget theScaffold({
               ],
             ),
           ),
-          backgroundColor: B.theme.background,
+          backgroundColor: Theme.of(context).colorScheme.background,
           elevation: 1,
           expandedHeight: 300,
           children: [

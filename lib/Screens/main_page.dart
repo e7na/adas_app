@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,8 +6,8 @@ import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/device_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
-import 'package:blue/Screens/settings_page.dart';
-import 'package:blue/main.dart';
+import 'settings_page.dart';
+import 'setter_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -18,8 +17,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  bool loading = true;
-
   @override
   void initState() {
     super.initState();
@@ -29,12 +26,6 @@ class _MainPageState extends State<MainPage> {
     B.startScan();
     //Connect to devices on start up
     connect(B);
-    // to get theme from context
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      B.theme = Theme.of(context).colorScheme;
-      loading = false;
-      B.themeChanged();
-    });
   }
 
   @override
@@ -42,14 +33,12 @@ class _MainPageState extends State<MainPage> {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return loading
-            ? const Center(child: CircularProgressIndicator())
-            : ColoredBox(
-                color: Colors.white,
-                child: theScaffold(
-                  context: context,
-                ),
-              );
+        return ColoredBox(
+          color: Colors.white,
+          child: theScaffold(
+            context: context,
+          ),
+        );
       },
     );
   }
@@ -70,7 +59,7 @@ Widget theScaffold({
             ],
           ),
         ),
-        backgroundColor: B.theme.background,
+        backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 1,
         expandedHeight: 300,
         actions: [
