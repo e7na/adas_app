@@ -13,7 +13,7 @@ env:
     android
     build
   ENV_SETUP_SCRIPT: |
-    ## environment setup
+    # environment setup
 
     app_ver=$(grep 'version:' pubspec.yaml)
     app_ver=$(echo "${app_ver/'version:'/}" | xargs)
@@ -71,7 +71,7 @@ jobs:
           rm -rf ./build/app/outputs/apk # remove dupe apk dir
         shell: bash
 
-      - name: Upload build artifacts to action
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: split-${{ env.app_ver }}
