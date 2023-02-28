@@ -7,7 +7,8 @@ on:
 env:
   # app_ver: none
   A-SDK_PATH: /opt/android-sdk-linux
-  TOOL_PATH: /opt/hostedtoolcache/flutter*
+  flutter-version: "3.7.3"
+  TOOL_PATH: /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
   PUB_PATH: .pub-cache
   BUILD_PATH: |
     build/*
@@ -27,7 +28,7 @@ jobs:
           cache: "gradle"
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.7.3"
+          flutter-version: ${{ env.flutter-version }}
       # - name: fluttertools cache
       #   uses: actions/cache@v3
       #   with:
@@ -186,8 +187,9 @@ jobs:
           export PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache
           export PATH="$PATH":"$PUB_CACHE/bin" 
           flutter pub get
+          ls ./build/app/outputs/flutter-apk/ #!DELETE ME
           flutter build apk --debug
-          ls #!DELETE ME
+          ls ./build/app/outputs/flutter-apk/ #!DELETE ME
           (cd ./build/app/outputs/flutter-apk/ &&
             ls #!DELETE ME &&
             mv ./app-debug.apk ./"ble-$app_ver-debug.apk"
