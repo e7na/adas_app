@@ -12,6 +12,7 @@ env:
   BUILD_PATH: |
     android
     build
+    .dart_tool
 jobs:
   build-release:
     runs-on: ubuntu-22.04
