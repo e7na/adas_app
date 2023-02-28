@@ -1,3 +1,6 @@
+# secrets
+*.jks
+
 # Miscellaneous
 *.class
 *.log
