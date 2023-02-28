@@ -5,15 +5,15 @@ on:
     tags:
       - "*"
 env:
-  # app_ver: none
   A-SDK_PATH: /opt/android-sdk-linux
   flutter-version: "3.7.3"
   TOOL_PATH: /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
   PUB_PATH: .pub-cache
   BUILD_PATH: |
+    android/.gradle
     build/*
     !build/app/outputs
-    android/.gradle
+    !build/app/outputs/*
 jobs:
   build-universal:
     runs-on: ubuntu-22.04
@@ -29,11 +29,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.flutter-version }}
-      # - name: fluttertools cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.TOOL_PATH }}
-      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
@@ -44,11 +39,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
-      - name: hostedtoolcache cache
+      - name: flutter_tools cache
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: hostedtool-cache
+          key: flutter_tools-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -90,11 +85,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.7.3"
-      # - name: fluttertools cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.TOOL_PATH }}
-      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
@@ -105,11 +95,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
-      - name: hostedtoolcache cache
+      - name: flutter_tools cache
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: hostedtool-cache
+          key: flutter_tools-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -152,11 +142,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.7.3"
-      # - name: fluttertools cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.TOOL_PATH }}
-      #     key: tools-cache
       - name: android sdk cache
         uses: actions/cache@v3
         with:
@@ -167,11 +152,11 @@ jobs:
         with:
           path: ${{ env.PUB_PATH }}
           key: pub-cache
-      - name: hostedtoolcache cache
+      - name: flutter_tools cache
         uses: actions/cache@v3
         with:
           path: ${{ env.TOOL_PATH }}
-          key: hostedtool-cache
+          key: flutter_tools-cache
       - name: build cache
         uses: actions/cache@v3
         with:
@@ -187,11 +172,8 @@ jobs:
           export PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache
           export PATH="$PATH":"$PUB_CACHE/bin" 
           flutter pub get
-          ls ./build/app/outputs/flutter-apk/ #!DELETE ME
           flutter build apk --debug
-          ls ./build/app/outputs/flutter-apk/ #!DELETE ME
           (cd ./build/app/outputs/flutter-apk/ &&
-            ls #!DELETE ME &&
             mv ./app-debug.apk ./"ble-$app_ver-debug.apk"
           )
         shell: bash
@@ -225,5 +207,5 @@ jobs:
       - name: Push them to releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "release/*/*.apk"
+          artifacts: "./*/*.apk"
           # token: ${{ secrets.GITHUB_TOKEN }}
