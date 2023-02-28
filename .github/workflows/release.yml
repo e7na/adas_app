@@ -10,12 +10,26 @@ env:
   # TOOL_PATH: /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
   PUB_PATH: .pub-cache
   BUILD_PATH: |
-    android/.gradle
-    build/*
-    !build/app/outputs
-    !build/app/outputs/*
+    android
+    build
+  ENV_SETUP_SCRIPT: |
+    ## environment setup
+
+    app_ver=$(grep 'version:' pubspec.yaml)
+    app_ver=$(echo "${app_ver/'version:'/}" | xargs)
+    echo "$app_ver"
+    echo "app_ver=$app_ver" >>$GITHUB_ENV
+
+    export PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache
+    export PATH="$PATH":"$PUB_CACHE/bin"
+
+    mkdir artifacts && {
+      ARTIFACTS_PATH="$GITHUB_WORKSPACE/artifacts"
+      echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >>$GITHUB_ENV
+    }
+
 jobs:
-  build-release:
+  build-split:
     runs-on: ubuntu-22.04
     # container:
     # image: cirrusci/flutter:3.7.3
@@ -39,28 +53,61 @@ jobs:
         with:
           path: ${{ env.BUILD_PATH }}
           key: build-cache
+
+      - run: ${{ env.ENV_SETUP_SCRIPT }}
+        shell: bash
       - run: |
-          # build release apks
-
-          ## environment setup
-
-          app_ver=$(grep 'version:' pubspec.yaml)
-          app_ver=$(echo "${app_ver/'version:'/}" | xargs)
-          echo "$app_ver"
-          echo "app_ver=$app_ver" >>$GITHUB_ENV
-
-          export PUB_CACHE=$GITHUB_WORKSPACE/.pub-cache
-          export PATH="$PATH":"$PUB_CACHE/bin"
-          
-          mkdir artifacts && {
-            ARTIFACTS_PATH="$GITHUB_WORKSPACE/artifacts"
-            echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >>$GITHUB_ENV
-          }
-
-          ## build
+          # build split-abi apks
 
           flutter pub get
-          
+
+          flutter build apk --release --split-per-abi
+          (cd ./build/app/outputs/flutter-apk/ && {
+            mv ./app-arm64-v8a-release.apk "$ARTIFACTS_PATH/ble-$app_ver-arm64-v8a.apk"
+            mv ./app-armeabi-v7a-release.apk "$ARTIFACTS_PATH/ble-$app_ver-armeabi-v7a.apk"
+            mv ./app-x86_64-release.apk "$ARTIFACTS_PATH/ble-$app_ver-x86_64.apk"
+          })
+
+          rm -rf ./build/app/outputs/apk # remove dupe apk dir
+        shell: bash
+
+      - name: Upload build artifacts to action
+        uses: actions/upload-artifact@v3
+        with:
+          name: split-${{ env.app_ver }}
+          path: ${{ env.ARTIFACTS_PATH }}/*.apk
+
+  build-universal:
+    runs-on: ubuntu-22.04
+    # container:
+    # image: cirrusci/flutter:3.7.3
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "11"
+          cache: "gradle"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter-version }}
+      - name: pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PUB_PATH }}
+          key: pub-cache
+      - name: build cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.BUILD_PATH }}
+          key: build-cache
+      - run: ${{ env.ENV_SETUP_SCRIPT }}
+        shell: bash
+      - run: |
+          # build universal apk
+
+          flutter pub get
+
           flutter build apk --release --split-per-abi
           (cd ./build/app/outputs/flutter-apk/ && {
             mv ./app-arm64-v8a-release.apk "$ARTIFACTS_PATH/ble-$app_ver-arm64-v8a.apk"
@@ -72,18 +119,29 @@ jobs:
           (cd ./build/app/outputs/flutter-apk/ &&
             mv ./app-release.apk "$ARTIFACTS_PATH/ble-$app_ver-universal.apk"
           )
-        shell: bash
 
-      - name: Upload build artifacts to releases
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: ${{ env.ARTIFACTS_PATH }}/*.apk
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          rm -rf ./build/app/outputs/apk # remove dupe apk dir
+        shell: bash
 
       - name: Upload build artifacts to action
         uses: actions/upload-artifact@v3
         with:
-          name: v${{ env.app_ver }}
+          name: universal-${{ env.app_ver }}
           path: ${{ env.ARTIFACTS_PATH }}/*.apk
 
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-22.04
+    needs:
+      - build-universal
+      - build-split
+    steps:
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release
+      - name: Upload workflow artifacts to current release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release/*/*.apk"
+          # token: ${{ secrets.GITHUB_TOKEN }}
