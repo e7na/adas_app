@@ -74,8 +74,8 @@ jobs:
               mv ./app-armeabi-v7a-release.apk "$REPO_DIR/artifacts/ble-$app_ver-armeabi-v7a.apk"
               mv ./app-x86_64-release.apk "$REPO_DIR/artifacts/ble-$app_ver-x86_64.apk"
             })
-          }) \
-          & # RUNNING THE TWO BUILDS IN PARALLEL, THIS F'S UP THE LOGS!!!
+          }) # \
+          # & # RUNNING THE TWO BUILDS IN PARALLEL, THIS F'S UP THE LOGS!!!
           (cd "$REPO_BASE" && {
             flutter pub get
             flutter build apk --release
