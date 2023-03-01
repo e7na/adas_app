@@ -42,7 +42,8 @@ Widget theScaffold({
               ],
             ),
           ),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor:
+              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           children: [
@@ -61,6 +62,17 @@ Widget theScaffold({
                     },
                   ),
                 ),
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: SwitchListTile(
+                      title: Text("Dynamic Colors".tr()),
+                      subtitle: Text("T4".tr()),
+                      value: B.box.get("isDynamic") ?? false,
+                      onChanged: (bool value) {
+                        B.box.put("isDynamic", value);
+                        B.themeChanged();
+                      },
+                    )),
                 B.finalDevices.isEmpty
                     ? Container()
                     : Padding(

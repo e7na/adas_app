@@ -16,5 +16,7 @@
   "CONNECTED": "Connected",
   "DISCONNECTED": "Disconnected",
   "Reset Devices": "Reset Devices",
-  "Current Theme": "Current Theme"
+  "Current Theme": "Current Theme",
+  "Dynamic Colors": "Dynamic Colors",
+  "T4": "Use systems theme, this will only work as intended on android 12+"
 }

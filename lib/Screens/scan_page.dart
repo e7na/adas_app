@@ -54,7 +54,8 @@ Widget theScaffold({
               ],
             ),
           ),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor:
+              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           actions: [
@@ -91,7 +92,10 @@ Widget theScaffold({
                           child: Center(
                               child: Text(
                             "Start Scan".tr(),
-                            style: TextStyle(color: B.theme.primary),
+                            style: TextStyle(
+                                color: B.brightness == Brightness.light
+                                    ? B.theme.primary
+                                    : Colors.white),
                           ))),
                 ])
           ]),

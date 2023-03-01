@@ -9,6 +9,7 @@ import 'Services/flex_colors/theme_service.dart';
 import 'Services/flex_colors/theme_service_hive.dart';
 import 'package:blue/Screens/setter_page.dart';
 import 'Data/flex_themes.dart';
+import 'Data/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,8 +55,17 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
                 title: 'Blue',
                 debugShowCheckedModeBanner: false,
-                theme: flexTheme(mode: "light", themeController: themeController),
-                darkTheme: flexTheme(mode: "dark", themeController: themeController),
+                theme: flexTheme(
+                    mode: "light",
+                    themeController: themeController,
+                    dScheme: lightColorScheme ?? defaultLightColorScheme,
+                    isDynamic: box.get("isDynamic") ?? false),
+                darkTheme: flexTheme(
+                  mode: "dark",
+                  themeController: themeController,
+                  dScheme: darkColorScheme ?? defaultDarkColorScheme,
+                  isDynamic: box.get("isDynamic") ?? false,
+                ),
                 themeMode: themeController.themeMode,
                 localizationsDelegates: context.localizationDelegates,
                 supportedLocales: context.supportedLocales,

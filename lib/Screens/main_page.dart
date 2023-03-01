@@ -59,7 +59,8 @@ Widget theScaffold({
             ],
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor:
+            B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
         elevation: 1,
         expandedHeight: 300,
         actions: [
