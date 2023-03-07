@@ -86,7 +86,11 @@ Widget theScaffold({
                 if (B.scanStarted) {
                   Iterable<DiscoveredDevice> dDevice =
                       B.devices.where((d) => d.id == B.finalDevices[index].id);
-                  dDevice.isNotEmpty ? rssi = dDevice.first.rssi : null;
+                  dDevice.isNotEmpty
+                      ? rssi = dDevice.first.rssi != 0
+                          ? B.averageRssi(rssi: dDevice.first.rssi, id: B.finalDevices[index].id)
+                          : 0
+                      : 0;
                 }
                 return DeviceTile(
                     device: BleDevice(

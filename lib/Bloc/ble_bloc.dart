@@ -38,6 +38,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late StreamSubscription<DiscoveredDevice> scanStream;
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
+  Map<String, List<int>> rssiValues = {};
   Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
   Map finalDevicesStates = <String, DeviceConnectionState>{};
   final devices = <DiscoveredDevice>[];
@@ -58,6 +59,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     ].request());
   }
 
+  // TODO: Separate Home page scan from Scan page scan
   // Scanning logic happens here
   startScan() async {
     //  First Check if bluetooth is on
@@ -91,10 +93,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
         if (knownDeviceIndex >= 0) {
           devices[knownDeviceIndex] = device;
+          emit(BleScan());
         } else {
           devices.add(device);
+          emit(BleAddDevice());
         }
-        emit(BleAddDevice());
       }, onError: (Object e) => currentLog = 'Device scan fails with error: $e');
       emit(BleError());
     }
@@ -104,7 +107,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   stopScan() async {
     await scanStream.cancel();
     scanStarted = false;
-    //devices.clear(); // Should it clear ?
+    devices.clear(); // Should it clear ?
     emit(BleStop());
   }
 
@@ -122,17 +125,36 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return false;
   }
 
+  // This should be correctly tuned
   // Simple algorithm to estimate distance
   String estimateDistance({required int rssi}) {
     // Environmental factor, a constant between 2 and 4
-    int N = 2;
+    int N = 4;
     // Signal broadcast power at 1m (Tx Power)
-    int P = -50; // This should be correctly calculated
+    int P = -60;
     // Estimated distance in meters
     late num D;
     // The Equation to estimate distance
     D = pow(10, ((P - rssi) / (10 * N)));
     return D.toStringAsFixed(2);
+  }
+
+  // A Function to stabilize rssi values by averaging them by count? -> should be by time
+  int averageRssi({required int rssi, required String id}) {
+    int average = 0;
+    // Get list from map -> This is to have more than one device
+    List<int> allRssi = rssiValues[id] ?? [];
+    allRssi.length < 10 ? allRssi.add(rssi) : null;
+    // add all list items p = previous , c = current
+    int sum = allRssi.fold(0, (p, c) => p + c);
+    // average and round, rssi is an int value
+    sum != 0 ? average = (sum / allRssi.length).round() : null;
+    // if length exceeded reset list with the average as first item
+    allRssi.length >= 10 ? allRssi = [average] : null;
+    // put new list in map
+    rssiValues[id] = allRssi;
+    // print("rssi: $rssi % average: $average");
+    return average;
   }
 
   // This saves the chosen devices list to the Hive Box
