@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -119,6 +120,19 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     chosenDevices.removeWhere((element) => element.id == device.id);
     somethingChosen = chosenDevices.isNotEmpty;
     return false;
+  }
+
+  // Simple algorithm to estimate distance
+  String estimateDistance({required int rssi}) {
+    // Environmental factor, a constant between 2 and 4
+    int N = 2;
+    // Signal broadcast power at 1m (Tx Power)
+    int P = -50; // This should be correctly calculated
+    // Estimated distance in meters
+    late num D;
+    // The Equation to estimate distance
+    D = pow(10, ((P - rssi) / (10 * N)));
+    return D.toStringAsFixed(2);
   }
 
   // This saves the chosen devices list to the Hive Box

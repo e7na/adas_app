@@ -6,9 +6,10 @@ import 'package:blue/Data/Models/device_model.dart';
 class DeviceTile extends StatelessWidget {
   final BleDevice device;
   final int rssi;
+  final String distance;
   final DeviceConnectionState status;
 
-  const DeviceTile({Key? key, required this.device, required this.rssi, required this.status})
+  const DeviceTile({Key? key, required this.device, required this.rssi, required this.distance, required this.status})
       : super(key: key);
 
   @override
@@ -34,6 +35,12 @@ class DeviceTile extends StatelessWidget {
                 title: Text("RSSI".tr()),
                 trailing: Text(
                   rssi == 0 ? "Not Found".tr() : "$rssi",
+                  style: data,
+                )),
+            ListTile(
+                title: Text("DISTANCE".tr()),
+                trailing: Text(
+                  rssi == 0 ? "Not Calculated".tr() : "$distance ${"M".tr()}",
                   style: data,
                 )),
             ListTile(

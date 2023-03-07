@@ -25,7 +25,7 @@ class _MainPageState extends State<MainPage> {
     //To get Rssi Values
     B.startScan();
     //Connect to devices on start up
-    connect(B);
+    // connect(B);
   }
 
   @override
@@ -94,6 +94,7 @@ Widget theScaffold({
                       id: B.finalDevices[index].id,
                     ),
                     rssi: rssi,
+                    distance: B.estimateDistance(rssi: rssi),
                     status: deviceState ?? DeviceConnectionState.disconnected);
               }),
         ],
