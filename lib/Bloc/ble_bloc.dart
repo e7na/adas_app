@@ -31,6 +31,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool locationService = false;
   bool somethingChosen = false;
   bool addedToStreams = false;
+  bool timerStarted = false;
   String currentLog = "";
 
   // Bluetooth related variables
@@ -139,22 +140,38 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return D.toStringAsFixed(2);
   }
 
-  // A Function to stabilize rssi values by averaging them by count? -> should be by time
+  // A Function to stabilize rssi values by averaging them every specified amount of time
   int averageRssi({required int rssi, required String id}) {
+    // start timer for 5 seconds then reset list
+    timerStarted ? null : scheduleTimeout(5 * 1000); // 5 seconds
     int average = 0;
     // Get list from map -> This is to have more than one device
     List<int> allRssi = rssiValues[id] ?? [];
-    allRssi.length < 10 ? allRssi.add(rssi) : null;
+    allRssi.add(rssi);
     // add all list items p = previous , c = current
     int sum = allRssi.fold(0, (p, c) => p + c);
     // average and round, rssi is an int value
     sum != 0 ? average = (sum / allRssi.length).round() : null;
-    // if length exceeded reset list with the average as first item
-    allRssi.length >= 10 ? allRssi = [average] : null;
     // put new list in map
     rssiValues[id] = allRssi;
     // print("rssi: $rssi % average: $average");
     return average;
+  }
+
+  // Just A Timer
+  Timer scheduleTimeout([int milliseconds = 10000]) {
+    timerStarted = true;
+    // print("Timer Started");
+    return Timer(Duration(milliseconds: milliseconds), handleTimeout);
+  }
+
+  // Callback Function
+  void handleTimeout() {
+    // Reset all devices
+    rssiValues = {};
+    // to Start Timer Again
+    timerStarted = false;
+    // print("Timer Finished");
   }
 
   // This saves the chosen devices list to the Hive Box
