@@ -98,7 +98,7 @@ Widget theScaffold({
                       id: B.finalDevices[index].id,
                     ),
                     rssi: rssi,
-                    distance: B.estimateDistance(rssi: rssi),
+                    distance: B.calculateDistance(rssi: rssi),
                     status: deviceState ?? DeviceConnectionState.disconnected);
               }),
         ],

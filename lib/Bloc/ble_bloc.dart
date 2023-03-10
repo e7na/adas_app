@@ -140,6 +140,29 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return D.toStringAsFixed(2);
   }
 
+  // More accurate algorithm to estimate distance
+  String calculateDistance({required int rssi, int txPower = -59}) {
+    // -59 is the most common txPower for ble devices but it should be calculated
+    if (rssi == 0) {
+      return (-1.0).toString(); // undefined
+    }
+
+    double ratio = rssi / txPower;
+    if (ratio < 1.0) {
+      return pow(ratio, 10.0).toStringAsFixed(2);
+    } else {
+      double distance = (0.89976) * pow(ratio, 7.7095) + 0.111;
+      if (distance <= 1.0) {
+        return pow(ratio, 10.0).toStringAsFixed(2);
+      } else if (distance > 10) {
+        // Algorithm is not accurate when distance is more than 10m
+        return "> 10";
+      } else {
+        return distance.toStringAsFixed(2);
+      }
+    }
+  }
+
   // A Function to stabilize rssi values by averaging them every specified amount of time
   int averageRssi({required int rssi, required String id}) {
     // start timer for 5 seconds then reset list
