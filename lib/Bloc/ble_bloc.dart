@@ -62,7 +62,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   // TODO: Separate Home page scan from Scan page scan
   // Scanning logic happens here
-  startScan() async {
+  startScan({bool home = false}) async {
     //  First Check if bluetooth is on
     if (ble.status != BleStatus.ready) {
       if ({BleStatus.poweredOff, BleStatus.unauthorized, BleStatus.unknown}.contains(ble.status)) {
@@ -90,7 +90,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     } else {
       scanStarted = true;
       currentLog = 'Start ble discovery';
-      scanStream = ble.scanForDevices(withServices: []).listen((device) {
+      scanStream = ble.scanForDevices(withServices: home ? [] : []).listen((device) {
         final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
         if (knownDeviceIndex >= 0) {
           devices[knownDeviceIndex] = device;
@@ -201,36 +201,59 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   saveDevices() async {
     String names = "";
     String ids = "";
+    String uuids = "";
     box.put("NumDevices", chosenDevices.length);
     // get each all names/ids in a comma separated single string
     for (int i = 0; i < chosenDevices.length; i++) {
       names += chosenDevices[i].name;
       ids += chosenDevices[i].id;
+      // device can have multiple uuids
+      for (int j = 0; j < chosenDevices[i].uuids!.length; j++) {
+        uuids += chosenDevices[i].uuids![j].toString();
+        // add hash if not last uuid
+        if (j < chosenDevices[i].uuids!.length - 1) {
+          uuids += "#";
+        }
+      }
       // add comma if not last name/id
       if (i < chosenDevices.length - 1) {
         names += ",";
         ids += ",";
+        uuids += ",";
       }
       somethingChosen = false;
     }
     // Store Them in the Hive Box
     box.put("IDs", ids);
     box.put("Names", names);
+    box.put("Uuids", uuids);
   }
 
   // Extract selected devices from the Hive Box into a list
   // This will get called at the main page and every time the app is opened after the first scan
   getDevices() async {
+    List<List<Uuid>> uuids = [];
     finalDevices = [];
     //get stored values from the Hive Box
     int numDevices = box.get("NumDevices")!;
     //Split names/ids into a list of strings
     List<String> names = box.get("Names")!.split(",");
     List<String> ids = box.get("IDs")!.split(",");
+    List<String> uuidsString = box.get("Uuids")!.split(",");
+    // split uuids into a list for each device
+    for (int i = 0; i < uuidsString.length; i++) {
+      List<Uuid> uuidsList = [];
+      List<String> list = uuidsString[i].split("#");
+      for (var element in list) {
+        uuidsList.add(Uuid.parse(element));
+      }
+      uuids.add(uuidsList);
+    }
+    debugPrint("$uuids");
     // separate into ble devices
     for (int i = 0; i < numDevices; i++) {
       //now we will have a list of the car devices called finalDevices
-      finalDevices.add(BleDevice(name: names[i], id: ids[i]));
+      finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
     }
     // await connectToAllDevice();
     emit(GetDevices());

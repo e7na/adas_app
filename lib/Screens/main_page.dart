@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     // get list of saved devices
     B.getDevices();
     //To get Rssi Values
-    B.startScan();
+    B.startScan(home: true);
     //Connect to devices on start up
     // connect(B);
   }
@@ -96,6 +96,7 @@ Widget theScaffold({
                     device: BleDevice(
                       name: B.finalDevices[index].name,
                       id: B.finalDevices[index].id,
+                      uuids: B.finalDevices[index].uuids ?? [],
                     ),
                     rssi: rssi,
                     distance: B.calculateDistance(rssi: rssi),
@@ -115,7 +116,7 @@ Widget theScaffold({
                 onPressed: B.scanStarted
                     ? B.stopScan
                     : () async {
-                        B.startScan();
+                        B.startScan(home: true);
                       },
                 child: Icon(
                   B.scanStarted ? Icons.cancel : Icons.location_on,

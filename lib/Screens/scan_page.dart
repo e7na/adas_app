@@ -83,6 +83,7 @@ Widget theScaffold({
                                 device: BleDevice(
                                   name: B.devices[index].name,
                                   id: B.devices[index].id,
+                                  uuids: B.devices[index].serviceUuids ?? [],
                                 ),
                                 rssi: B.devices[index].rssi,
                                 index: index);
