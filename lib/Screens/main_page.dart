@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     // get list of saved devices
     B.getDevices();
     //To get Rssi Values
-    B.startScan(home: true);
+    B.startScan();
     //Connect to devices on start up
     // connect(B);
   }
@@ -116,7 +116,7 @@ Widget theScaffold({
                 onPressed: B.scanStarted
                     ? B.stopScan
                     : () async {
-                        B.startScan(home: true);
+                        B.startScan();
                       },
                 child: Icon(
                   B.scanStarted ? Icons.cancel : Icons.location_on,

@@ -60,9 +60,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     ].request());
   }
 
-  // TODO: Separate Home page scan from Scan page scan
   // Scanning logic happens here
-  startScan({bool home = false}) async {
+  startScan() async {
     //  First Check if bluetooth is on
     if (ble.status != BleStatus.ready) {
       if ({BleStatus.poweredOff, BleStatus.unauthorized, BleStatus.unknown}.contains(ble.status)) {
@@ -90,7 +89,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     } else {
       scanStarted = true;
       currentLog = 'Start ble discovery';
-      scanStream = ble.scanForDevices(withServices: home ? [] : []).listen((device) {
+      // if only one device is the final devices list then scan for that device only, else scan for all
+      scanStream = ble
+          .scanForDevices(withServices: finalDevices.length == 1 ? finalDevices.first.uuids! : [])
+          .listen((device) {
         final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
         if (knownDeviceIndex >= 0) {
           devices[knownDeviceIndex] = device;
@@ -99,8 +101,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
           devices.add(device);
           emit(BleAddDevice());
         }
-      }, onError: (Object e) => currentLog = 'Device scan fails with error: $e');
-      emit(BleError());
+      }, onError: (Object e) {
+        currentLog = 'Device scan fails with error: $e';
+        emit(BleError());
+      });
     }
   }
 
@@ -227,6 +231,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     box.put("IDs", ids);
     box.put("Names", names);
     box.put("Uuids", uuids);
+    stopScan();
   }
 
   // Extract selected devices from the Hive Box into a list
@@ -245,7 +250,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       List<Uuid> uuidsList = [];
       List<String> list = uuidsString[i].split("#");
       for (var element in list) {
-        uuidsList.add(Uuid.parse(element));
+        element != "" ? uuidsList.add(Uuid.parse(element)) : null;
       }
       uuids.add(uuidsList);
     }
