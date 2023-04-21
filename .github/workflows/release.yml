@@ -7,17 +7,16 @@ on:
 env:
   # A-SDK_PATH: /opt/android-sdk-linux
   flutter-version: "3.7.3"
-  FLUTTER_CACHE: |
-    .pub-cache
+  FLUTTER_TOOLS_CACHE: |
     /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
+  PUB_CACHE: |
+    .pub-cache
   BUILD_CACHE: |
     build
     .dart_tool
 jobs:
   build-release:
     runs-on: ubuntu-22.04
-    # container:
-    # image: cirrusci/flutter:3.7.3
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
@@ -28,16 +27,21 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.flutter-version }}
-      - name: pub+fluttertools cache
+      - name: fluttertools cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.FLUTTER_CACHE }}
-          key: pub-cache
+          path: ${{ env.FLUTTER_TOOLS_CACHE }}
+          key: flutter-v3.7.3-tools-cache
+      - name: pub cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: flutter-cache-${{ hashFiles('pubspec.lock') }}
       - name: build cache
         uses: actions/cache@v3
         with:
           path: ${{ env.BUILD_CACHE }}
-          key: build-cache
+          key: build-cache-${{ hashFiles('pubspec.lock') }}
       - run: |
           # build release apks
 
