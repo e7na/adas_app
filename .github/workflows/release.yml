@@ -31,17 +31,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.FLUTTER_TOOLS_CACHE }}
-          key: flutter-v3.7.3-tools-cache
+          key: fluttertools-cache-v3.7.3
+          restore-keys: fluttertools-cache-
       - name: pub cache
         uses: actions/cache@v3
         with:
           path: ${{ env.PUB_CACHE }}
-          key: flutter-cache-${{ hashFiles('pubspec.lock') }}
+          key: pub-cache-${{ hashFiles('pubspec.lock') }}
+          restore-keys: pub-cache-
+
       - name: build cache
         uses: actions/cache@v3
         with:
           path: ${{ env.BUILD_CACHE }}
           key: build-cache-${{ hashFiles('pubspec.lock') }}
+          restore-keys: build-cache-
       - run: |
           # build release apks
 
