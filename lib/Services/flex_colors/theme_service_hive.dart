@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'app_data_dir.dart';
 import 'theme_service.dart';
+
+import 'app_data_dir.dart';
 import 'theme_service_hive_adapters.dart';
 
 // Set the bool flag to true to show debug prints. Even if it is forgotten
@@ -52,10 +53,10 @@ class ThemeServiceHive implements ThemeService {
     // could have used only Hive too, but SharedPreferences is a very popular
     // choice for this type of feature. I wanted to show how it can be
     // used as well. We always show this path info in none release builds.
-    if (!kReleaseMode) {
-      debugPrint(
-          'Hive using storage path: $appDataDir and file name: $boxName');
-    }
+    // if (_debug) {
+    //   debugPrint(
+    //       'Hive using storage path: $appDataDir and file name: $boxName');
+    // }
     // Init the Hive box box giving it the platform usable folder.
     Hive.init(appDataDir);
     // Open the Hive box with passed in name, we just keep it open all the
@@ -78,6 +79,10 @@ class ThemeServiceHive implements ThemeService {
     Hive.registerAdapter(FlexSchemeColorAdapter());
     Hive.registerAdapter(NavigationDestinationLabelBehaviorAdapter());
     Hive.registerAdapter(NavigationRailLabelTypeAdapter());
+    Hive.registerAdapter(FlexSliderIndicatorTypeAdapter());
+    Hive.registerAdapter(ShowValueIndicatorAdapter());
+    Hive.registerAdapter(TabBarIndicatorSizeAdapter());
+    Hive.registerAdapter(AdaptiveThemeAdapter());
   }
 
   // ----------
@@ -91,16 +96,16 @@ class ThemeServiceHive implements ThemeService {
   Future<T> load<T>(String key, T defaultValue) async {
     try {
       final T loaded = _hiveBox.get(key, defaultValue: defaultValue) as T;
-      // if (_debug) {
-      //   debugPrint('Hive type   : $key as ${defaultValue.runtimeType}');
-      //   debugPrint('Hive loaded : $key as $loaded with ${loaded.runtimeType}');
-      // }
+      if (_debug) {
+        // debugPrint('Hive type   : $key as ${defaultValue.runtimeType}');
+        // debugPrint('Hive loaded : $key as $loaded with ${loaded.runtimeType}');
+      }
       return loaded;
     } catch (e) {
-      debugPrint('Hive load (get) ERROR');
-      debugPrint(' Error message ...... : $e');
-      debugPrint(' Store key .......... : $key');
-      debugPrint(' defaultValue ....... : $defaultValue');
+      // debugPrint('Hive load (get) ERROR');
+      // debugPrint(' Error message ...... : $e');
+      // debugPrint(' Store key .......... : $key');
+      // debugPrint(' defaultValue ....... : $defaultValue');
       // If something goes wrong we return the default value.
       return defaultValue;
     }
@@ -116,14 +121,14 @@ class ThemeServiceHive implements ThemeService {
     try {
       await _hiveBox.put(key, value);
       if (_debug) {
-        debugPrint('Hive type   : $key as ${value.runtimeType}');
-        debugPrint('Hive saved  : $key as $value');
+        // debugPrint('Hive type   : $key as ${value.runtimeType}');
+        // debugPrint('Hive saved  : $key as $value');
       }
     } catch (e) {
-      debugPrint('Hive save (put) ERROR');
-      debugPrint(' Error message ...... : $e');
-      debugPrint(' Store key .......... : $key');
-      debugPrint(' Save value ......... : $value');
+      // debugPrint('Hive save (put) ERROR');
+      // debugPrint(' Error message ...... : $e');
+      // debugPrint(' Store key .......... : $key');
+      // debugPrint(' Save value ......... : $value');
     }
   }
 }

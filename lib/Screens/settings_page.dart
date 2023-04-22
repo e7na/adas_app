@@ -33,6 +33,7 @@ Widget theScaffold({
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
+        automaticallyImplyLeading: true,
           expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
             padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),

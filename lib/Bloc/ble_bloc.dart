@@ -25,7 +25,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late ColorScheme theme;
   late ThemeController themeController;
   late String lang;
-
+ 
   // Some state management stuff
   bool scanStarted = false;
   bool locationService = false;
