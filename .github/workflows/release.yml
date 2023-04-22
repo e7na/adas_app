@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.BUILD_CACHE }}
-          key: build-cache-${{ hashFiles('pubspec.lock') }}
+          key: build-cache-${{ hashFiles('**/*') }}
           restore-keys: build-cache-
       - run: |
           # build release apks
