@@ -6,9 +6,9 @@ on:
       - "*"
 env:
   # A-SDK_PATH: /opt/android-sdk-linux
-  flutter-version: "3.7.3"
+  flutter-version: "3.7.10"
   FLUTTER_TOOLS_CACHE: |
-    /opt/hostedtoolcache/flutter/stable-3.7.3-x64/packages/flutter_tools
+    /opt/hostedtoolcache/flutter/stable-3.7.10-x64/packages/flutter_tools
   PUB_CACHE: |
     .pub-cache
   BUILD_CACHE: |
@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.FLUTTER_TOOLS_CACHE }}
-          key: fluttertools-cache-v3.7.3
+          key: fluttertools-cache-v3.7.10
           restore-keys: fluttertools-cache-
       - name: pub cache
         uses: actions/cache@v3
