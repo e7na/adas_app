@@ -9,7 +9,6 @@ env:
   flutter-version: "3.7.10"
   FLUTTER_TOOLS_CACHE: |
     /opt/hostedtoolcache/flutter/stable-3.7.10-x64/packages/flutter_tools
-  PUB_CACHE: .pub-cache
   BUILD_CACHE: |
     build
     .dart_tool
@@ -52,10 +51,8 @@ jobs:
 
           app_ver=$(grep 'version:' pubspec.yaml)
           app_ver=$(echo "${app_ver/'version:'/}" | xargs)
-          echo "$app_ver"
+          echo "v$app_ver"
           echo "app_ver=$app_ver" >>$GITHUB_ENV
-          echo "$PUB_CACHE"
-          export PATH="$PATH":"$PUB_CACHE/bin"
 
           mkdir artifacts && {
             ARTIFACTS_PATH="$GITHUB_WORKSPACE/artifacts"
