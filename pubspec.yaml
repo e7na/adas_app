@@ -42,7 +42,6 @@ dependencies:
   android_intent_plus: ^4.0.1
   app_settings: ^4.2.0
   permission_handler: ^10.3.0
-  fluttertoast: ^8.2.2
   flex_color_scheme: ^7.1.2
   path_provider: ^2.0.15
   samsung_ui_scroll_effect: ^0.0.5

@@ -7,10 +7,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Services/flex_colors/theme_controller.dart';
@@ -20,7 +18,7 @@ part 'ble_event.dart';
 part 'ble_state.dart';
 
 class BleBloc extends Bloc<BleEvent, BleState> {
-  Brightness brightness = SchedulerBinding.instance.window.platformBrightness;
+  Brightness brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
   late Box box;
   late ColorScheme theme;
   late ThemeController themeController;
@@ -72,14 +70,14 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       }
       // then if location is on
       if (ble.status == BleStatus.locationServicesDisabled) {
-        Fluttertoast.showToast(
-            msg: "T3".tr(),
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: theme.secondary,
-            textColor: theme.onSecondary,
-            fontSize: 16.0);
+        // Fluttertoast.showToast(
+        //     msg: "T3".tr(),
+        //     toastLength: Toast.LENGTH_LONG,
+        //     gravity: ToastGravity.BOTTOM,
+        //     timeInSecForIosWeb: 1,
+        //     backgroundColor: theme.secondary,
+        //     textColor: theme.onSecondary,
+        //     fontSize: 16.0);
       }
       // if both are on, invoke the function again
       if (ble.status != BleStatus.poweredOff && ble.status != BleStatus.locationServicesDisabled) {
