@@ -70,14 +70,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       }
       // then if location is on
       if (ble.status == BleStatus.locationServicesDisabled) {
-        // Fluttertoast.showToast(
-        //     msg: "T3".tr(),
-        //     toastLength: Toast.LENGTH_LONG,
-        //     gravity: ToastGravity.BOTTOM,
-        //     timeInSecForIosWeb: 1,
-        //     backgroundColor: theme.secondary,
-        //     textColor: theme.onSecondary,
-        //     fontSize: 16.0);
+        await openLocationSettings();
       }
       // if both are on, invoke the function again
       if (ble.status != BleStatus.poweredOff && ble.status != BleStatus.locationServicesDisabled) {
@@ -292,6 +285,18 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       await Future.delayed(const Duration(seconds: 2));
     } else {
       AppSettings.openBluetoothSettings();
+    }
+  }
+
+  // This Function is used to enable bluetooth
+  openLocationSettings() async {
+    if (Platform.isAndroid) {
+      const AndroidIntent(
+        action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+      ).launch().catchError((e) => AppSettings.openLocationSettings());
+      await Future.delayed(const Duration(seconds: 2));
+    } else {
+      AppSettings.openLocationSettings();
     }
   }
 
