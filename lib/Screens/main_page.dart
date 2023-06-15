@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
+import 'controls_page.dart';
 import 'scan_page.dart';
 import 'setter_page.dart';
 import 'settings_page.dart';
@@ -86,9 +87,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                       onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const MainPage())),
+                          MaterialPageRoute(builder: (context) => const ControlPage())),
                       style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
-                      child: const Text("Websocket")),
+                      child: const Text("Controls")),
                 )
               ],
             ),
