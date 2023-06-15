@@ -5,7 +5,7 @@ import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/ble_tile.dart';
 import 'package:blue/Data/Models/device_model.dart';
-import 'main_page.dart';
+import 'ble_page.dart';
 import 'settings_page.dart';
 import 'setter_page.dart';
 
@@ -128,7 +128,7 @@ Widget theScaffold({
                 onPressed: B.somethingChosen
                     ? () {
                         B.saveDevices().whenComplete(() => Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => const MainPage())));
+                            MaterialPageRoute(builder: (context) => const BLEPage())));
                       }
                     : null,
                 child: const Icon(

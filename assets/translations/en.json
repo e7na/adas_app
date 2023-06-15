@@ -1,6 +1,7 @@
 {
   "ScanTitle": "Scan for Devices",
-  "MainTitle": "Car Devices",
+  "BleTitle": "Car Devices",
+  "MainTitle": "Home",
   "SettingsTitle": "Settings",
   "T1": "Start the Scan by Pressing the Search Icon from the Bottom Bar.",
   "T2": "Choose the Cars Devices, then Press the Save Icon from the Bottom Bar.",
