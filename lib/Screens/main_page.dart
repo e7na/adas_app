@@ -33,6 +33,7 @@ class _MainPageState extends State<MainPage> {
     return BlocConsumer<BleBloc, BleState>(
       listener: (context, state) {},
       builder: (context, state) {
+        B.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
