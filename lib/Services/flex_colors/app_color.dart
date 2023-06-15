@@ -97,6 +97,12 @@ class AppColor {
     brightness: Brightness.light,
     swapOnMaterial3: true,
   );
+  static final FlexSchemeColor _myScheme4Light = FlexSchemeColor.from(
+    primary: const Color(0xFFB61D1D),
+    secondary: const Color(0xFF1145A4),
+    brightness: Brightness.light,
+    swapOnMaterial3: true,
+  );
 
   // These colors are used as default for the customizable colors in
   // example 5, the Themes Playground.
@@ -126,7 +132,7 @@ class AppColor {
     // to a list of FlexSchemeData, where we can bundle each light and dark
     // theme that goes together and give it a name and description too.
     const FlexSchemeData(
-      name: 'Example Midnight',
+      name: 'Midnight',
       description: 'Midnight blue theme, created as an in code example by '
           'using custom color values for all colors in the scheme',
       // FlexSchemeData holds separate defined color schemes for light and
@@ -138,7 +144,7 @@ class AppColor {
     ),
     // Do the same for our second custom scheme.
     FlexSchemeData(
-      name: 'Example Greens',
+      name: 'Greens',
       description: 'Vivid green theme, created as an in code example from one '
           'primary color in light mode and another primary for dark mode',
       light: _myScheme2Light,
@@ -147,7 +153,7 @@ class AppColor {
     // We also do the same for our 3rd custom scheme, BUT we create its matching
     // dark colors, from the light FlexSchemeColor with the toDark method.
     FlexSchemeData(
-      name: 'Example Red & Blue',
+      name: 'Blue',
       description: 'Classic red and blue, created as an in code example from '
           'only light theme mode primary and secondary colors',
       light: _myScheme3Light,
@@ -162,6 +168,23 @@ class AppColor {
       // done before the light theme mode colors are reused as dark theme and
       // desaturated using `whiteBlend` level value.
       dark: _myScheme3Light.defaultError.toDark(30, true),
+    ),
+    FlexSchemeData(
+      name: 'Red & Blue',
+      description: 'Classic red and blue, created as an in code example from '
+          'only light theme mode primary and secondary colors',
+      light: _myScheme4Light,
+      // We create the dark desaturated colors from the light scheme.
+      // The `swapColors` parameter is `true` here. It is new in version 5. It
+      // swaps main and container colors values for the primary its container,
+      // likewise for secondary and tertiary and their containers.
+      //
+      // This is done because in Material 3 light mode, the main color should
+      // be darker or more saturated than the container, but in dark mode it
+      // should be the other way around. By setting the flag to true, this is
+      // done before the light theme mode colors are reused as dark theme and
+      // desaturated using `whiteBlend` level value.
+      dark: _myScheme4Light.defaultError.toDark(30, true),
     ),
     // Use all the built-in FlexColor schemes. This list is a const.
     ...FlexColor.schemesList,

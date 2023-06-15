@@ -19,9 +19,9 @@ ThemeData flexTheme(
       keepSecondary: themeController.keepSecondary,
       keepTertiary: themeController.keepTertiary,
     ),
-    appBarElevation: 1,
+    appBarElevation: 20,
     useMaterial3: true,
-    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+    surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
     blendLevel: 24,
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
   );
@@ -38,7 +38,7 @@ ThemeData flexTheme(
     appBarElevation: 1,
     useMaterial3: true,
     surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
-    blendLevel: 24,
+    blendLevel: 40,
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
   );
   ThemeData dynamicLight = FlexThemeData.light(
