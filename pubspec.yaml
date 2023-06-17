@@ -46,6 +46,7 @@ dependencies:
   path_provider: ^2.0.15
   samsung_ui_scroll_effect: ^0.0.5
   websocket_universal: ^1.0.1
+  flutter_svg: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +75,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/translations/
+    - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

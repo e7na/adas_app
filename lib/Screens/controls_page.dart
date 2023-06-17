@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:websocket_universal/websocket_universal.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
@@ -24,7 +25,7 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
-    _ipController.text = "192.168.1.40";
+    _ipController.text = B.box.get("Ip") ?? "192.168.1.40";
     _portController.text = "8000";
     super.initState();
   }
@@ -86,7 +87,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                     children: [
                       SizedBox(
                         width: 120,
-                        height: 30,
+                        height: 35,
                         child: TextField(
                           controller: _ipController,
                         ),
@@ -94,7 +95,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                       const Text(":", style: TextStyle(fontWeight: FontWeight.bold)),
                       SizedBox(
                         width: 60,
-                        height: 30,
+                        height: 35,
                         child: TextField(
                           textAlign: TextAlign.center,
                           controller: _portController,
@@ -113,6 +114,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   B.stateChanged();
                                 }
                               : () async {
+                                  _ipController.text == B.box.get("Ip")
+                                      ? null
+                                      : B.box.put("Ip", _ipController.text);
                                   var websocketConnectionUri =
                                       'ws://${_ipController.text}:${_portController.text}'
                                       '/websocket';
@@ -178,6 +182,43 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                   ),
                 ),
                 Text("Status: $_status"),
+                Stack(alignment: Alignment.bottomRight, children: [
+                  Column(
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Icon(
+                            Icons.arrow_circle_up_outlined,
+                            size: 40,
+                            color: B.theme.onBackground,
+                          )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(Icons.arrow_circle_left_outlined,
+                                  size: 40, color: B.theme.onBackground)),
+                          SvgPicture.asset(
+                            "assets/images/car.svg",
+                            color: B.theme.onBackground,
+                            height: 200,
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(Icons.arrow_circle_right_outlined,
+                                  size: 40, color: B.theme.onBackground)),
+                        ],
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.all(20),
+                          child:
+                              Icon(Icons.arrow_circle_down, size: 40, color: B.theme.onBackground)),
+                    ],
+                  ),
+                  // TODO: Add speed slider
+                  const Text("Speed : 5")
+                ]),
               ],
             ),
           )
