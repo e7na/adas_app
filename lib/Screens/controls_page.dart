@@ -12,6 +12,7 @@ import 'settings_page.dart';
 TextEditingController _ipController = TextEditingController();
 TextEditingController _portController = TextEditingController();
 String _status = "disconnected";
+List<int> _msg = [48, 48, 48, 53, 48, 48];
 bool _connected = false;
 late dynamic _bytesSocketHandler;
 
@@ -111,6 +112,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   // Disposing webSocket:
                                   _bytesSocketHandler.close();
                                   _connected = false;
+                                  _msg = [48, 48, 48, 53, 48, 48];
                                   B.stateChanged();
                                 }
                               : () async {
@@ -151,29 +153,31 @@ Widget theScaffold({required BuildContext context, numDevices}) {
 
                                   // Listening to server responses:
                                   _bytesSocketHandler.incomingMessagesStream.listen((inMsg) {
-                                    // ignore: avoid_print
-                                    print('> webSocket  got bytes message from server: "$inMsg"');
+                                    _msg = inMsg;
+                                    if (kDebugMode) {
+                                      print('> webSocket  got bytes message from server: "$inMsg"');
+                                    }
                                   });
 
                                   // Listening to outgoing messages:
                                   _bytesSocketHandler.outgoingMessagesStream.listen((inMsg) {
-                                    // ignore: avoid_print
-                                    print('> webSocket sent bytes message to   server: "$inMsg"');
+                                    if (kDebugMode) {
+                                      print('> webSocket sent bytes message to   server: "$inMsg"');
+                                    }
+                                    B.stateChanged();
                                   });
 
                                   // Connecting to server:
                                   final isBytesSocketConnected =
                                       await _bytesSocketHandler.connect();
                                   if (!isBytesSocketConnected) {
-                                    // ignore: avoid_print
-                                    print('Connection to [$websocketConnectionUri] '
-                                        'for bytesSocketHandler '
-                                        'failed for some reason!');
+                                    if (kDebugMode) {
+                                      print('Connection to [$websocketConnectionUri] '
+                                          'for bytesSocketHandler '
+                                          'failed for some reason!');
+                                    }
                                     return;
                                   }
-                                  // final bytesMessage = utf8.encode(textMessageToServer);
-                                  // //textMessageToServer
-                                  // bytesSocketHandler.sendMessage(bytesMessage);
                                 },
                           child: _connected ? const Text("Disconnect") : const Text("Connect"),
                         ),
@@ -181,7 +185,16 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                     ],
                   ),
                 ),
-                Text("Status: $_status"),
+                Row(
+                  children: [
+                    Text("Status".tr()),
+                    const Text(": "),
+                    Text(
+                      _status.toUpperCase().tr(),
+                      style: TextStyle(color: getStatusColor(_status)),
+                    ),
+                  ],
+                ),
                 Stack(alignment: Alignment.bottomRight, children: [
                   Column(
                     children: [
@@ -190,7 +203,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           child: Icon(
                             Icons.arrow_circle_up_outlined,
                             size: 40,
-                            color: B.theme.onBackground,
+                            color: (_msg[1] - 48) > 0 ? Colors.green : B.theme.onBackground,
                           )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -198,7 +211,10 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           Padding(
                               padding: const EdgeInsets.all(8),
                               child: Icon(Icons.arrow_circle_left_outlined,
-                                  size: 40, color: B.theme.onBackground)),
+                                  size: 40,
+                                  color: (_msg[3] - 48) > 0 && (_msg[3] - 48) < 5
+                                      ? Colors.green
+                                      : B.theme.onBackground)),
                           SvgPicture.asset(
                             "assets/images/car.svg",
                             color: B.theme.onBackground,
@@ -207,21 +223,41 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           Padding(
                               padding: const EdgeInsets.all(8),
                               child: Icon(Icons.arrow_circle_right_outlined,
-                                  size: 40, color: B.theme.onBackground)),
+                                  size: 40,
+                                  color: (_msg[3] - 48) > 5 ? Colors.green : B.theme.onBackground)),
                         ],
                       ),
                       Padding(
                           padding: const EdgeInsets.all(20),
-                          child:
-                              Icon(Icons.arrow_circle_down, size: 40, color: B.theme.onBackground)),
+                          child: Icon(Icons.arrow_circle_down,
+                              size: 40,
+                              color: (_msg[2] - 48) > 0 ? Colors.green : B.theme.onBackground)),
                     ],
                   ),
                   // TODO: Add speed slider
-                  const Text("Speed : 5")
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          "Speed : ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? (_msg[2] - 48) : 0 : 0}"),
+                      Text("Weak Light: ${(_msg[5] - 48) > 0 ? "ON" : "OFF"}"),
+                      Text("Strong Light: ${(_msg[4] - 48) > 0 ? "ON" : "OFF"}"),
+                    ],
+                  )
                 ]),
               ],
             ),
           )
         ]),
   );
+}
+
+Color getStatusColor(status) {
+  Color color;
+  status == "connected"
+      ? color = Colors.green
+      : status == "disconnected"
+          ? color = Colors.red
+          : color = B.theme.onBackground;
+  return color;
 }
