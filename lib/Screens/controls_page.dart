@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:gauge_indicator/gauge_indicator.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:websocket_universal/websocket_universal.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
@@ -153,7 +154,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
 
                                   // Listening to server responses:
                                   _bytesSocketHandler.incomingMessagesStream.listen((inMsg) {
-                                    inMsg.length == 6 ? _msg = inMsg :null;
+                                    inMsg.length == 6 ? _msg = inMsg : null;
                                     if (kDebugMode) {
                                       print('> webSocket  got bytes message from server: "$inMsg"');
                                     }
@@ -215,10 +216,28 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   color: (_msg[3] - 48) > 0 && (_msg[3] - 48) < 5
                                       ? Colors.green
                                       : B.theme.onBackground)),
-                          SvgPicture.asset(
-                            "assets/images/car.svg",
-                            color: B.theme.onBackground,
-                            height: 200,
+                          Stack(
+                            children: [
+                              SvgPicture.asset(
+                                "assets/images/car.svg",
+                                colorFilter:
+                                    ColorFilter.mode(B.theme.onBackground, BlendMode.srcIn),
+                                height: 200,
+                              ),
+                              SvgPicture.asset(
+                                "assets/images/headlight.svg",
+                                colorFilter: ColorFilter.mode(
+                                    (_msg[4] - 48) > 0
+                                        ? (_msg[5] - 48) > 0
+                                            ? B.theme.error
+                                            : B.theme.primary
+                                        : (_msg[5] - 48) > 0
+                                            ? Colors.yellow
+                                            : B.theme.onBackground,
+                                    BlendMode.srcIn),
+                                height: 200,
+                              ),
+                            ],
                           ),
                           Padding(
                               padding: const EdgeInsets.all(8),
@@ -234,16 +253,66 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               color: (_msg[2] - 48) > 0 ? Colors.green : B.theme.onBackground)),
                     ],
                   ),
-                  // TODO: Add speed slider
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                          "Speed : ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? (_msg[2] - 48) : 0 : 0}"),
-                      Text("Weak Light: ${(_msg[5] - 48) > 0 ? "ON" : "OFF"}"),
-                      Text("Strong Light: ${(_msg[4] - 48) > 0 ? "ON" : "OFF"}"),
-                    ],
-                  )
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 5),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 90,
+                          width: 90,
+                          child: AnimatedRadialGauge(
+
+                              /// The animation duration.
+                              duration: const Duration(seconds: 1),
+                              curve: Curves.elasticOut,
+                              alignment: Alignment.bottomCenter,
+
+                              /// Gauge value.
+                              value: (_msg[1] - 48) != 1
+                                  ? (_msg[1] - 48) > 0
+                                      ? (_msg[1] - 48)
+                                      : (_msg[2] - 48) > 0
+                                          ? (_msg[2] - 48)
+                                          : 0
+                                  : 0,
+                              progressBar: GaugeRoundedProgressBar(
+                                gradient: GaugeAxisGradient(
+                                  colors: [B.theme.primary, B.theme.error],
+                                ),
+                              ),
+
+                              /// Optionally, you can configure your gauge, providing additional
+                              /// styles and transformers.
+                              axis: GaugeAxis(
+                                /// Provide the [min] and [max] value for the [value] argument.
+                                min: 0,
+                                max: 5,
+
+                                /// Render the gauge as a 180-degree arc.
+                                degrees: 200,
+
+                                /// Set the background color and axis thickness.
+                                style: GaugeAxisStyle(
+                                  thickness: 12,
+                                  background: B.theme.inversePrimary,
+                                ),
+
+                                /// Define the pointer that will indicate the progress.
+                                pointer: NeedlePointer(
+                                  size: const Size(10, 35),
+                                  position: const GaugePointerPosition.center(offset: Offset(0, 8)),
+                                  backgroundColor: B.theme.onBackground,
+                                ),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                              "Speed: ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? (_msg[2] - 48) : 0 : 0}"),
+                        ),
+                      ],
+                    ),
+                  ),
                 ]),
               ],
             ),
