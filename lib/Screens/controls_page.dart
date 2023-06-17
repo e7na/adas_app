@@ -26,7 +26,7 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
-    _ipController.text = B.box.get("Ip") ?? "192.168.1.40";
+    _ipController.text = B.box.get("Ip") ?? "192.168.137.1";
     _portController.text = "8000";
     super.initState();
   }
@@ -153,7 +153,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
 
                                   // Listening to server responses:
                                   _bytesSocketHandler.incomingMessagesStream.listen((inMsg) {
-                                    _msg = inMsg;
+                                    inMsg.length == 6 ? _msg = inMsg :null;
                                     if (kDebugMode) {
                                       print('> webSocket  got bytes message from server: "$inMsg"');
                                     }
