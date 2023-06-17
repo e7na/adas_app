@@ -23,7 +23,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late ColorScheme theme;
   late ThemeController themeController;
   late String lang;
- 
+  
   // Some state management stuff
   bool scanStarted = false;
   bool locationService = false;
@@ -80,7 +80,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     } else {
       scanStarted = true;
       currentLog = 'Start ble discovery';
-      // if only one device is the final devices list then scan for that device only, else scan for all
+      // if only one device is the final devices list then scan for that device only
+      // else scan for all
       scanStream = ble
           .scanForDevices(withServices: finalDevices.length == 1 ? finalDevices.first.uuids! : [])
           .listen((device) {
@@ -303,6 +304,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // change state stuff
   themeChanged() {
     emit(ThemeChanged());
+  }
+
+  stateChanged() {
+    emit(StatusChanged());
   }
 
   isRemoveChanged() {

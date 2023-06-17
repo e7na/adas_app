@@ -858,6 +858,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  websocket_universal:
+    dependency: "direct main"
+    description:
+      name: websocket_universal
+      sha256: "841ce9cdbea1589c932676b31810bcee028ab0e6de49de8d37c6b4f5b8072ddf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   win32:
     dependency: transitive
     description:

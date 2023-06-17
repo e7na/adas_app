@@ -45,6 +45,7 @@ dependencies:
   flex_color_scheme: ^7.1.2
   path_provider: ^2.0.15
   samsung_ui_scroll_effect: ^0.0.5
+  websocket_universal: ^1.0.1
 
 dev_dependencies:
   flutter_test:
