@@ -33,7 +33,7 @@ Widget theScaffold({
   return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
-        automaticallyImplyLeading: true,
+          automaticallyImplyLeading: true,
           expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
             padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
@@ -83,6 +83,10 @@ Widget theScaffold({
                                   B.stopScan(),
                                   B.chosenDevices = [],
                                   B.finalDevices = [],
+                                  B.box.put('NumDevices', 0),
+                                  B.box.put("IDs", ""),
+                                  B.box.put("Names", ""),
+                                  B.box.put("Uuids", ""),
                                   Navigator.of(context).pop(),
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(builder: (context) => const ScanPage()))

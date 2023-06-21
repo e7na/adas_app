@@ -58,13 +58,17 @@ Widget theScaffold({required BuildContext context, numDevices}) {
           padding: const EdgeInsets.only(right: 12.0, left: 0),
           child: Row(
             children: [
-              Text(
-                "ControlTitle".tr(),
-                style: const TextStyle(fontSize: 24),
+              Padding(
+                padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
+                child: Text(
+                  "ControlTitle".tr(),
+                  style: const TextStyle(fontSize: 24),
+                ),
               ),
             ],
           ),
         ),
+        automaticallyImplyLeading: true,
         backgroundColor:
             B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
         elevation: 1,
@@ -180,7 +184,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                     return;
                                   }
                                 },
-                          child: _connected ? const Text("Disconnect") : const Text("Connect"),
+                          child: _connected
+                              ? Text("Disconnect".toUpperCase().tr())
+                              : Text("Connect".toUpperCase().tr()),
                         ),
                       ),
                     ],
@@ -204,7 +210,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           child: Icon(
                             Icons.arrow_circle_up_outlined,
                             size: 40,
-                            color: (_msg[1] - 48) > 0 ? Colors.green : B.theme.onBackground,
+                            color: (_msg[1] - 48) > 0
+                                ? Colors.green.withOpacity((_msg[1] - 48) / 5)
+                                : B.theme.onBackground,
                           )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,14 +222,15 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               child: Icon(Icons.arrow_circle_left_outlined,
                                   size: 40,
                                   color: (_msg[3] - 48) > 0 && (_msg[3] - 48) < 5
-                                      ? Colors.green
+                                      ? Colors.green.withOpacity((-(_msg[3] - 48) + 4) / 4)
                                       : B.theme.onBackground)),
                           Stack(
                             children: [
                               SvgPicture.asset(
                                 "assets/images/car.svg",
-                                colorFilter:
-                                    ColorFilter.mode(B.theme.onBackground, BlendMode.srcIn),
+                                colorFilter: ColorFilter.mode(
+                                    (_msg[0] - 48) == 1 ? Colors.red : B.theme.onBackground,
+                                    BlendMode.srcIn),
                                 height: 200,
                               ),
                               SvgPicture.asset(
@@ -229,11 +238,13 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                 colorFilter: ColorFilter.mode(
                                     (_msg[4] - 48) > 0
                                         ? (_msg[5] - 48) > 0
-                                            ? B.theme.error
+                                            ? Colors.green
                                             : B.theme.primary
                                         : (_msg[5] - 48) > 0
                                             ? Colors.yellow
-                                            : B.theme.onBackground,
+                                            : (_msg[0] - 48) == 1
+                                                ? Colors.red
+                                                : B.theme.onBackground,
                                     BlendMode.srcIn),
                                 height: 200,
                               ),
@@ -243,14 +254,18 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               padding: const EdgeInsets.all(8),
                               child: Icon(Icons.arrow_circle_right_outlined,
                                   size: 40,
-                                  color: (_msg[3] - 48) > 5 ? Colors.green : B.theme.onBackground)),
+                                  color: (_msg[3] - 48) > 5
+                                      ? Colors.green.withOpacity((_msg[3] - 53) / 4)
+                                      : B.theme.onBackground)),
                         ],
                       ),
                       Padding(
                           padding: const EdgeInsets.all(20),
                           child: Icon(Icons.arrow_circle_down,
                               size: 40,
-                              color: (_msg[2] - 48) > 0 ? Colors.green : B.theme.onBackground)),
+                              color: (_msg[2] - 48) > 0
+                                  ? Colors.green.withOpacity((_msg[2] - 48) / 5)
+                                  : B.theme.onBackground)),
                     ],
                   ),
                   Padding(
@@ -308,7 +323,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                              "Speed: ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? (_msg[2] - 48) : 0 : 0}"),
+                              "Speed: ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? -(_msg[2] - 48) : 0 : 0}"),
                         ),
                       ],
                     ),

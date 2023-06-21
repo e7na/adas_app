@@ -32,8 +32,10 @@ class _SetterPageState extends State<SetterPage> {
       B.lang = context.locale.toString();
       B.theme = Theme.of(context).colorScheme;
       B.themeChanged();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const MainPage()));
+      // get list of saved devices
+      B.getDevices();
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => const MainPage()));
     });
   }
 

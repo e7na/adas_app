@@ -3,6 +3,7 @@
   "BleTitle": "Car Devices",
   "MainTitle": "Home",
   "ControlTitle": "Controls",
+  "BLE": "BLE",
   "SettingsTitle": "Settings",
   "T1": "Start the Scan by Pressing the Search Icon from the Bottom Bar.",
   "T2": "Choose the Cars Devices, then Press the Save Icon from the Bottom Bar.",
@@ -17,6 +18,8 @@
   "STATUS": "STATUS",
   "Status": "Status",
   "Not Found": "Not Found",
+  "CONNECT": "Connect",
+  "DISCONNECT": "Disconnect",
   "CONNECTING": "Connecting",
   "DISCONNECTING": "Disconnecting",
   "CONNECTED": "Connected",
@@ -24,5 +27,6 @@
   "Reset Devices": "Reset Devices",
   "Current Theme": "Current Theme",
   "Dynamic Colors": "Dynamic Colors",
-  "T4": "Use systems theme, this will only work as intended on android 12+"
+  "T4": "Use systems theme, this will only work as intended on android 12+",
+  "Speed": "Speed"
 }

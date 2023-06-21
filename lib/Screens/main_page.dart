@@ -17,11 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  late int numDevices;
   @override
   void initState() {
-    // get the number of saved devices
-    numDevices = B.box.get('NumDevices') ?? 0;
     super.initState();
   }
 
@@ -35,7 +32,6 @@ class _MainPageState extends State<MainPage> {
           color: Colors.white,
           child: theScaffold(
             context: context,
-            numDevices: numDevices,
           ),
         );
       },
@@ -43,13 +39,13 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-Widget theScaffold({required BuildContext context, numDevices}) {
+Widget theScaffold({required BuildContext context}) {
   return Scaffold(
     appBar: AppBar(toolbarHeight: 0),
     body: SamsungUiScrollEffect(
         expandedTitle: Text("MainTitle".tr(), style: const TextStyle(fontSize: 32)),
         collapsedTitle: Padding(
-          padding: const EdgeInsets.only(right: 12.0, left: 0),
+          padding: const EdgeInsets.only(right: 20.0, left: 10.0),
           child: Row(
             children: [
               Text("MainTitle".tr(), style: const TextStyle(fontSize: 24)),
@@ -79,17 +75,17 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                   child: ElevatedButton(
                       onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>
-                              numDevices > 0 ? const BLEPage() : const ScanPage())),
+                              B.finalDevices.isNotEmpty ? const BLEPage() : const ScanPage())),
                       style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
-                      child: const Text("BLE")),
+                      child: const Text("BLE").tr()),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const ControlPage())),
+                      onPressed: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) => const ControlPage())),
                       style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
-                      child: const Text("Controls")),
+                      child: const Text("ControlTitle").tr()),
                 )
               ],
             ),

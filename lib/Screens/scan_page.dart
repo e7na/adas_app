@@ -51,10 +51,14 @@ Widget theScaffold({
             padding: const EdgeInsets.only(right: 12.0, left: 0),
             child: Row(
               children: [
-                Text("ScanTitle".tr(), style: const TextStyle(fontSize: 24)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 40.0, right: 50.0),
+                  child: Text("ScanTitle".tr(), style: const TextStyle(fontSize: 24)),
+                ),
               ],
             ),
           ),
+          automaticallyImplyLeading: true,
           backgroundColor:
               B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
           elevation: 1,
