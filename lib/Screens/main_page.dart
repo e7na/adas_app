@@ -56,14 +56,6 @@ Widget theScaffold({required BuildContext context}) {
             B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
         elevation: 1,
         expandedHeight: 300,
-        actions: [
-          IconButton(
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
-              icon: const Icon(
-                Icons.settings,
-              ))
-        ],
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -86,6 +78,14 @@ Widget theScaffold({required BuildContext context}) {
                           .push(MaterialPageRoute(builder: (context) => const ControlPage())),
                       style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
                       child: const Text("ControlTitle").tr()),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      onPressed: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+                      style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
+                      child: const Text("SettingsTitle").tr()),
                 )
               ],
             ),

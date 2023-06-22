@@ -7,6 +7,7 @@ import 'package:gauge_indicator/gauge_indicator.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:websocket_universal/websocket_universal.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
+import 'controller_page.dart';
 import 'setter_page.dart';
 import 'settings_page.dart';
 
@@ -28,7 +29,7 @@ class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
     _ipController.text = B.box.get("Ip") ?? "192.168.137.1";
-    _portController.text = "8000";
+    _portController.text = B.box.get("Port") ?? "8000";
     super.initState();
   }
 
@@ -74,6 +75,12 @@ Widget theScaffold({required BuildContext context, numDevices}) {
         elevation: 1,
         expandedHeight: 300,
         actions: [
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => const ControllerPage())),
+              icon: const Icon(
+                Icons.games,
+              )),
           IconButton(
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
@@ -124,6 +131,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   _ipController.text == B.box.get("Ip")
                                       ? null
                                       : B.box.put("Ip", _ipController.text);
+                                  _portController.text == B.box.get("Port")
+                                      ? null
+                                      : B.box.put("Port", _portController.text);
                                   var websocketConnectionUri =
                                       'ws://${_ipController.text}:${_portController.text}'
                                       '/websocket';
