@@ -13,7 +13,7 @@ import 'settings_page.dart';
 TextEditingController _ipController = TextEditingController();
 TextEditingController _portController = TextEditingController();
 String _status = "disconnected";
-List<int> _msg = [48, 48, 48, 53, 48, 48];
+List<int> _msg = [48, 48, 48, 48, 48, 48, 48];
 bool _connected = false;
 late dynamic _bytesSocketHandler;
 
@@ -117,7 +117,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   // Disposing webSocket:
                                   _bytesSocketHandler.close();
                                   _connected = false;
-                                  _msg = [48, 48, 48, 53, 48, 48];
+                                  _msg = [48, 48, 48, 48, 48, 48, 48];
                                   B.stateChanged();
                                 }
                               : () async {
@@ -158,7 +158,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
 
                                   // Listening to server responses:
                                   _bytesSocketHandler.incomingMessagesStream.listen((inMsg) {
-                                    inMsg.length == 6 ? _msg = inMsg : null;
+                                    inMsg.length >= 5 ? _msg = inMsg : null;
                                     if (kDebugMode) {
                                       print('> webSocket  got bytes message from server: "$inMsg"');
                                     }
@@ -221,8 +221,8 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               padding: const EdgeInsets.all(8),
                               child: Icon(Icons.arrow_circle_left_outlined,
                                   size: 40,
-                                  color: (_msg[3] - 48) > 0 && (_msg[3] - 48) < 5
-                                      ? Colors.green.withOpacity((-(_msg[3] - 48) + 4) / 4)
+                                  color: (_msg[4] - 48) > 0
+                                      ? Colors.green.withOpacity((_msg[4] - 48) / 5)
                                       : B.theme.onBackground)),
                           Stack(
                             children: [
@@ -236,15 +236,19 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               SvgPicture.asset(
                                 "assets/images/headlight.svg",
                                 colorFilter: ColorFilter.mode(
-                                    (_msg[4] - 48) > 0
+                                    _msg.length == 7
                                         ? (_msg[5] - 48) > 0
-                                            ? Colors.green
-                                            : B.theme.primary
-                                        : (_msg[5] - 48) > 0
-                                            ? Colors.yellow
-                                            : (_msg[0] - 48) == 1
-                                                ? Colors.red
-                                                : B.theme.onBackground,
+                                            ? (_msg[6] - 48) > 0
+                                                ? Colors.green
+                                                : B.theme.primary
+                                            : (_msg[6] - 48) > 0
+                                                ? Colors.yellow
+                                                : (_msg[0] - 48) == 1
+                                                    ? Colors.red
+                                                    : B.theme.onBackground
+                                        : (_msg[0] - 48) == 1
+                                            ? Colors.red
+                                            : B.theme.onBackground,
                                     BlendMode.srcIn),
                                 height: 200,
                               ),
@@ -254,8 +258,8 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               padding: const EdgeInsets.all(8),
                               child: Icon(Icons.arrow_circle_right_outlined,
                                   size: 40,
-                                  color: (_msg[3] - 48) > 5
-                                      ? Colors.green.withOpacity((_msg[3] - 53) / 4)
+                                  color: (_msg[3] - 48) > 0
+                                      ? Colors.green.withOpacity((_msg[3] - 48) / 5)
                                       : B.theme.onBackground)),
                         ],
                       ),
