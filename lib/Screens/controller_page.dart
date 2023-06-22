@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,10 +9,11 @@ import 'package:websocket_universal/websocket_universal.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'setter_page.dart';
 
-TextEditingController _ipController = TextEditingController();
-TextEditingController _portController = TextEditingController();
-bool _hlPressed = false;
-bool _llPressed = false;
+late String _ip;
+late String _port;
+List<int> _lastMessage = [0, 0, 0, 0, 0];
+int _hlPressed = 0;
+int _llPressed = 0;
 late dynamic _bytesSocketHandler;
 
 class ControllerPage extends StatefulWidget {
@@ -23,12 +26,13 @@ class ControllerPage extends StatefulWidget {
 class _ControllerPageState extends State<ControllerPage> {
   @override
   void initState() {
-    _ipController.text = B.box.get("Ip") ?? "192.168.137.1";
-    _portController.text = B.box.get("Port") ?? "8000";
+    _ip = B.box.get("Ip") ?? "192.168.137.1";
+    _port = B.box.get("Port") ?? "8000";
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
+    connect();
     super.initState();
   }
 
@@ -37,6 +41,8 @@ class _ControllerPageState extends State<ControllerPage> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    // Disposing webSocket:
+    _bytesSocketHandler.close();
     super.dispose();
   }
 
@@ -76,41 +82,80 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                   children: [
                     Joystick(
                         mode: JoystickMode.horizontal,
-                        listener: (details) {
+                        listener: (details) async {
                           // Most RIGHT returns 0.99 while most LEFT returns -0.99
+                          // Connecting to server:
+                          await _bytesSocketHandler.connect();
+                          _lastMessage[0] = 0;
+                          _lastMessage[3] = details.x > 0 ? (details.x * 5).round() : 0;
+                          _lastMessage[4] = details.x < 0 ? (-details.x * 5).round() : 0;
+                          final bytesMessage =
+                              utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
+                          _bytesSocketHandler.sendMessage(bytesMessage);
+                          await _bytesSocketHandler.disconnect('');
+                          B.stateChanged();
                         }),
                     Column(
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            // Connecting to server:
+                            await _bytesSocketHandler.connect();
+                            _lastMessage = [1, 0, 0, 0, 0];
+                            final bytesMessage =
+                                utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
+                            _bytesSocketHandler.sendMessage(bytesMessage);
+                            await _bytesSocketHandler.disconnect('');
+                            B.stateChanged();
+                          },
                           child: const Text("BRAKES"),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("STOP CAR"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _hlPressed = !_hlPressed;
+                          onPressed: () async {
+                            // Connecting to server:
+                            await _bytesSocketHandler.connect();
+                            _hlPressed == 0 ? _hlPressed = 1 : _hlPressed = 0;
+                            final bytesMessage =
+                                utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
+                            _bytesSocketHandler.sendMessage(bytesMessage);
+                            await _bytesSocketHandler.disconnect('');
                             B.stateChanged();
                           },
                           child: Text("HIGH LIGHTS",
-                              style: TextStyle(color: _hlPressed ? Colors.red : B.theme.primary)),
+                              style:
+                                  TextStyle(color: _hlPressed == 1 ? Colors.red : B.theme.primary)),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            _llPressed = !_llPressed;
+                          onPressed: () async {
+                            // Connecting to server:
+                            await _bytesSocketHandler.connect();
+                            _llPressed == 0 ? _llPressed = 1 : _llPressed = 0;
+                            final bytesMessage =
+                                utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
+                            _bytesSocketHandler.sendMessage(bytesMessage);
+                            await _bytesSocketHandler.disconnect('');
                             B.stateChanged();
                           },
                           child: Text("LOW LIGHTS",
-                              style: TextStyle(color: _llPressed ? Colors.red : B.theme.primary)),
+                              style:
+                                  TextStyle(color: _llPressed == 1 ? Colors.red : B.theme.primary)),
                         )
                       ],
                     ),
                     Joystick(
                         mode: JoystickMode.vertical,
-                        listener: (details) {
+                        listener: (details) async {
                           // Most DOWN returns 0.99 while most UP returns -0.99
+                          // Connecting to server:
+                          await _bytesSocketHandler.connect();
+                          _lastMessage[0] = 0;
+                          _lastMessage[1] = details.y < 0 ? (-details.y * 5).round() : 0;
+                          _lastMessage[2] = details.y > 0 ? (details.y * 5).round() : 0;
+                          final bytesMessage =
+                              utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
+                          _bytesSocketHandler.sendMessage(bytesMessage);
+                          await _bytesSocketHandler.disconnect('');
+                          B.stateChanged();
                         }),
                   ],
                 )
@@ -121,12 +166,18 @@ Widget theScaffold({required BuildContext context, numDevices}) {
   );
 }
 
-Color getStatusColor(status) {
-  Color color;
-  status == "connected"
-      ? color = Colors.green
-      : status == "disconnected"
-          ? color = Colors.red
-          : color = B.theme.onBackground;
-  return color;
+connect() async {
+  var websocketConnectionUri = 'ws://$_ip:$_port'
+      '/websocket';
+  const connectionOptions = SocketConnectionOptions(
+      timeoutConnectionMs: 4000, // fail timeout after 4000 ms
+      skipPingMessages: true,
+      pingRestrictionForce: true);
+
+  final IMessageProcessor<List<int>, List<int>> bytesSocketProcessor = SocketSimpleBytesProcessor();
+  _bytesSocketHandler = IWebSocketHandler<List<int>, List<int>>.createClient(
+    websocketConnectionUri, // Local ws server
+    bytesSocketProcessor,
+    connectionOptions: connectionOptions,
+  );
 }

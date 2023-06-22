@@ -138,12 +138,9 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                       'ws://${_ipController.text}:${_portController.text}'
                                       '/websocket';
                                   const connectionOptions = SocketConnectionOptions(
-                                    pingIntervalMs: 10000, // send ping every 10s
-                                    timeoutConnectionMs:
-                                        4000, // connection fail timeout after 4000 ms
-                                    /// see ping/pong messages in [logEventStream] stream
-                                    skipPingMessages: false,
-                                  );
+                                      timeoutConnectionMs: 4000, // fail timeout after 4000 ms
+                                      skipPingMessages: true,
+                                      pingRestrictionForce: true);
 
                                   final IMessageProcessor<List<int>, List<int>>
                                       bytesSocketProcessor = SocketSimpleBytesProcessor();
