@@ -301,11 +301,6 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                           ? (_msg[2] - 48)
                                           : 0
                                   : 0,
-                              progressBar: GaugeRoundedProgressBar(
-                                gradient: GaugeAxisGradient(
-                                  colors: [B.theme.primary, B.theme.error],
-                                ),
-                              ),
 
                               /// Optionally, you can configure your gauge, providing additional
                               /// styles and transformers.
@@ -323,11 +318,18 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   background: B.theme.inversePrimary,
                                 ),
 
+                                progressBar: GaugeRoundedProgressBar(
+                                  gradient: GaugeAxisGradient(
+                                    colors: [B.theme.primary, B.theme.error],
+                                  ),
+                                ),
+
                                 /// Define the pointer that will indicate the progress.
                                 pointer: NeedlePointer(
-                                  size: const Size(10, 35),
                                   position: const GaugePointerPosition.center(offset: Offset(0, 8)),
-                                  backgroundColor: B.theme.onBackground,
+                                  color: B.theme.onBackground,
+                                  width: 10,
+                                  height: 35,
                                 ),
                               )),
                         ),
