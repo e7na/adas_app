@@ -23,7 +23,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late ColorScheme theme;
   late ThemeController themeController;
   late String lang;
-  
+
   // Some state management stuff
   bool scanStarted = false;
   bool locationService = false;
@@ -232,11 +232,11 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     List<List<Uuid>> uuids = [];
     finalDevices = [];
     //get stored values from the Hive Box
-    int numDevices = box.get("NumDevices")!;
+    int numDevices = box.get("NumDevices", defaultValue: 0);
     //Split names/ids into a list of strings
-    List<String> names = box.get("Names")!.split(",");
-    List<String> ids = box.get("IDs")!.split(",");
-    List<String> uuidsString = box.get("Uuids")!.split(",");
+    List<String> names = box.get("Names").split(",");
+    List<String> ids = box.get("IDs").split(",");
+    List<String> uuidsString = box.get("Uuids").split(",");
     // split uuids into a list for each device
     for (int i = 0; i < uuidsString.length; i++) {
       List<Uuid> uuidsList = [];
@@ -246,7 +246,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       }
       uuids.add(uuidsList);
     }
-    debugPrint("$uuids");
+    debugPrint("uuids:$uuids");
     // separate into ble devices
     for (int i = 0; i < numDevices; i++) {
       //now we will have a list of the car devices called finalDevices

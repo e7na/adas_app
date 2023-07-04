@@ -33,7 +33,7 @@ class _SetterPageState extends State<SetterPage> {
       B.theme = Theme.of(context).colorScheme;
       B.themeChanged();
       // get list of saved devices
-      B.getDevices();
+      B.box.get("NumDevices", defaultValue: 0) > 0 ? B.getDevices() : null;
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => const MainPage()));
     });
