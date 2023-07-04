@@ -29,5 +29,9 @@
   "Current Theme": "Current Theme",
   "Dynamic Colors": "Dynamic Colors",
   "T4": "Use systems theme, this will only work as intended on android 12+",
-  "Speed": "Speed"
+  "Speed": "Speed",
+  "BRAKES": "BRAKES",
+  "RELEASE BRAKES": "RELEASE BRAKES",
+  "HIGH LIGHTS": "HIGH LIGHTS",
+  "LOW LIGHTS": "LOW LIGHTS"
 }

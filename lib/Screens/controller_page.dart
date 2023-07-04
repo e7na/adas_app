@@ -15,6 +15,7 @@ List<int> _lastMessage = [0, 0, 0, 0, 0];
 int _hlPressed = 0;
 int _llPressed = 0;
 late dynamic _bytesSocketHandler;
+bool _brakes = false;
 
 class ControllerPage extends StatefulWidget {
   const ControllerPage({super.key});
@@ -84,59 +85,49 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                         mode: JoystickMode.horizontal,
                         listener: (details) async {
                           // Most RIGHT returns 0.99 while most LEFT returns -0.99
-                          // Connecting to server:
-                          await _bytesSocketHandler.connect();
-                          _lastMessage[0] = 0;
                           _lastMessage[3] = details.x > 0 ? (details.x * 5).round() : 0;
                           _lastMessage[4] = details.x < 0 ? (-details.x * 5).round() : 0;
                           final bytesMessage =
                               utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
-                          _bytesSocketHandler.sendMessage(bytesMessage);
-                          await _bytesSocketHandler.disconnect('');
+                          _brakes ? null : _bytesSocketHandler.sendMessage(bytesMessage);
                           B.stateChanged();
                         }),
                     Column(
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            // Connecting to server:
-                            await _bytesSocketHandler.connect();
-                            _lastMessage = [1, 0, 0, 0, 0];
+                            _brakes = !_brakes;
+                            _lastMessage = _brakes ? [1, 0, 0, 0, 0] : [0, 0, 0, 0, 0];
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            await _bytesSocketHandler.disconnect('');
                             B.stateChanged();
                           },
-                          child: const Text("BRAKES"),
+                          child: _brakes
+                              ? const Text("RELEASE BRAKES").tr()
+                              : const Text("BRAKES").tr(),
                         ),
                         ElevatedButton(
                           onPressed: () async {
-                            // Connecting to server:
-                            await _bytesSocketHandler.connect();
                             _hlPressed == 0 ? _hlPressed = 1 : _hlPressed = 0;
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            await _bytesSocketHandler.disconnect('');
                             B.stateChanged();
                           },
-                          child: Text("HIGH LIGHTS",
+                          child: Text("HIGH LIGHTS".tr(),
                               style:
                                   TextStyle(color: _hlPressed == 1 ? Colors.red : B.theme.primary)),
                         ),
                         ElevatedButton(
                           onPressed: () async {
-                            // Connecting to server:
-                            await _bytesSocketHandler.connect();
                             _llPressed == 0 ? _llPressed = 1 : _llPressed = 0;
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            await _bytesSocketHandler.disconnect('');
                             B.stateChanged();
                           },
-                          child: Text("LOW LIGHTS",
+                          child: Text("LOW LIGHTS".tr(),
                               style:
                                   TextStyle(color: _llPressed == 1 ? Colors.red : B.theme.primary)),
                         )
@@ -146,15 +137,11 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                         mode: JoystickMode.vertical,
                         listener: (details) async {
                           // Most DOWN returns 0.99 while most UP returns -0.99
-                          // Connecting to server:
-                          await _bytesSocketHandler.connect();
-                          _lastMessage[0] = 0;
                           _lastMessage[1] = details.y < 0 ? (-details.y * 5).round() : 0;
                           _lastMessage[2] = details.y > 0 ? (details.y * 5).round() : 0;
                           final bytesMessage =
                               utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
-                          _bytesSocketHandler.sendMessage(bytesMessage);
-                          await _bytesSocketHandler.disconnect('');
+                          _brakes ? null : _bytesSocketHandler.sendMessage(bytesMessage);
                           B.stateChanged();
                         }),
                   ],
@@ -180,4 +167,7 @@ connect() async {
     bytesSocketProcessor,
     connectionOptions: connectionOptions,
   );
+
+  // Connecting to server:
+  await _bytesSocketHandler.connect();
 }
