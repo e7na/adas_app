@@ -40,18 +40,22 @@ class DeviceTile extends StatelessWidget {
                   device.id,
                   style: data,
                 )),
-            ListTile(
-                title: Text("RSSI".tr()),
-                trailing: Text(
-                  rssi == 0 ? "Not Found".tr() : "$rssi",
-                  style: data,
-                )),
-            ListTile(
-                title: Text("DISTANCE".tr()),
-                trailing: Text(
-                  rssi == 0 ? "Not Calculated".tr() : "$distance ${"M".tr()}",
-                  style: data,
-                )),
+            statusString == "CONNECTED"
+                ? const SizedBox()
+                : ListTile(
+                    title: Text("RSSI".tr()),
+                    trailing: Text(
+                      rssi == 0 ? "Not Found".tr() : "$rssi",
+                      style: data,
+                    )),
+            statusString == "CONNECTED"
+                ? const SizedBox()
+                : ListTile(
+                    title: Text("DISTANCE".tr()),
+                    trailing: Text(
+                      rssi == 0 ? "Not Calculated".tr() : "$distance ${"M".tr()}",
+                      style: data,
+                    )),
             ListTile(
                 title: Text("STATUS".tr()),
                 trailing: Text(
@@ -60,27 +64,47 @@ class DeviceTile extends StatelessWidget {
                       fontSize: 16,
                       color: getStatusColor(theme: theme, statusString: statusString)),
                 )),
-            ListTile(
-                title: Text("AUTH".tr()),
-                subtitle: Text(
-                  authString.toUpperCase().tr(),
-                  style: TextStyle(
-                      fontSize: 16, color: getAuthsColor(theme: theme, authString: authString)),
-                ),
-                trailing: ElevatedButton(
-                    onPressed: statusString != "CONNECTED" || authString == "authorized"
-                        ? null
-                        : () => B.authorizeDevice(device),
-                    child: Text("AUTHORIZE".tr()))),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    width: 300,
-                    child: ElevatedButton(
-                        onPressed: authString == "unauthorized" ? null : () {},
-                        child: const Text("Open Doors").tr()))
-              ],
+            statusString != "CONNECTED"
+                ? const SizedBox()
+                : ListTile(
+                    title: Text("AUTH".tr()),
+                    subtitle: Text(
+                      authString.toUpperCase().tr(),
+                      style: TextStyle(
+                          fontSize: 16, color: getAuthsColor(theme: theme, authString: authString)),
+                    ),
+                    trailing: ElevatedButton(
+                        onPressed:
+                            authString == "authorized" ? null : () => B.authorizeDevice(device),
+                        child: Text("AUTHORIZE".tr()))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  statusString != "CONNECTED"
+                      ? const SizedBox()
+                      : Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: ElevatedButton(
+                                onPressed: authString == "unauthorized" ? null : () => {},
+                                child: const Text("Open Doors").tr()),
+                          ),
+                        ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: ElevatedButton(
+                          onPressed: statusString == "DISCONNECTED"
+                              ? () => B.connectToDevice(device)
+                              : () => B.disconnectDevice(device),
+                          child:
+                              Text(statusString == "DISCONNECTED" ? "CONNECT" : "DISCONNECT").tr()),
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ));

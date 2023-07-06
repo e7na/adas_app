@@ -42,6 +42,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   List<BleDevice> finalDevices = [];
   Map<String, List<int>> rssiValues = {};
   Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
+  Map finalDevicesStreamsSubs = <String, StreamSubscription<ConnectionStateUpdate>>{};
   Map finalDevicesStates = <String, DeviceConnectionState>{};
   Map finalDevicesAuthStates = <String, String>{};
   final devices = <DiscoveredDevice>[];
@@ -313,7 +314,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       connectionTimeout: const Duration(seconds: 1),
     );
     // Let's listen to our connection so we can make updates on a state change
-    finalDevicesStreams[device.id].listen((event) {
+    finalDevicesStreamsSubs[device.id] = finalDevicesStreams[device.id].listen((event) {
       finalDevicesStates[device.id] = event.connectionState;
       event.connectionState == DeviceConnectionState.disconnected
           ? finalDevicesAuthStates[device.id] = "unauthorized"
@@ -325,8 +326,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   //disconnect from device
   disconnectDevice(BleDevice device) {
-    finalDevicesStreams[device.id].currentConnectionStream.cancel();
+    finalDevicesStreamsSubs[device.id].cancel();
     finalDevicesStates[device.id] = DeviceConnectionState.disconnected;
+    emit(BleConnected());
   }
 
   // This Function is used to enable bluetooth

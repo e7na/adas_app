@@ -5,7 +5,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/device_tile.dart';
-import 'package:blue/Data/Models/device_model.dart';
 import 'settings_page.dart';
 import 'setter_page.dart';
 
@@ -112,39 +111,24 @@ Widget theScaffold({
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(
-              width: 140,
-              child: ElevatedButton(
-                // start scan or stop it.
-                onPressed: B.scanStarted
-                    ? B.stopScan
-                    : () async {
-                        B.startScan();
-                      },
-                child: Icon(
-                  B.scanStarted ? Icons.cancel : Icons.location_on,
-                  color: B.theme.onSurfaceVariant,
-                ),
-              ),
-            ),
-            // This will be to disconnect or to reconnect
-            SizedBox(
-              width: 140,
-              child: ElevatedButton(
-                onPressed: () => connect(B),
-                child: Icon(
-                  Icons.bluetooth_connected_rounded,
-                  color: B.theme.primary,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: ElevatedButton(
+                  // start scan or stop it.
+                  onPressed: B.scanStarted
+                      ? B.stopScan
+                      : () async {
+                          B.startScan();
+                        },
+                  child: Icon(
+                    B.scanStarted ? Icons.cancel : Icons.location_on,
+                    color: B.theme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ));
-}
-
-connect(var B) async {
-  for (BleDevice device in B.finalDevices) {
-    B.connectToDevice(device);
-  }
 }
