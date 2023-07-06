@@ -33,5 +33,11 @@
   "BRAKES": "الفرامل",
   "RELEASE BRAKES": "ترك الفرامل",
   "HIGH LIGHTS": "اضاءة عالية",
-  "LOW LIGHTS": "اضاءة منخفظة"
+  "LOW LIGHTS": "اضاءة منخفظة",
+  "AUTH": "السماحية",
+  "AUTHORIZE": "السماح",
+  "AUTHORIZED": "مسموح",
+  "UNAUTHORIZED": "غير مسموح",
+  "Open Doors": "فتح الابواب",
+  "Close Doors": "غلق الابواب"
 }

@@ -33,5 +33,11 @@
   "BRAKES": "BRAKES",
   "RELEASE BRAKES": "RELEASE BRAKES",
   "HIGH LIGHTS": "HIGH LIGHTS",
-  "LOW LIGHTS": "LOW LIGHTS"
+  "LOW LIGHTS": "LOW LIGHTS",
+  "AUTH": "AUTH",
+  "AUTHORIZE": "Authorize",
+  "AUTHORIZED": "Authorized",
+  "UNAUTHORIZED": "Unauthorized",
+  "Open Doors": "Open Doors",
+  "Close Doors": "Close Doors"
 }

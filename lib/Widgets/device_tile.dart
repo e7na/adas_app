@@ -9,7 +9,12 @@ class DeviceTile extends StatelessWidget {
   final String distance;
   final DeviceConnectionState status;
 
-  const DeviceTile({Key? key, required this.device, required this.rssi, required this.distance, required this.status})
+  const DeviceTile(
+      {Key? key,
+      required this.device,
+      required this.rssi,
+      required this.distance,
+      required this.status})
       : super(key: key);
 
   @override
@@ -50,7 +55,23 @@ class DeviceTile extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 16,
                       color: getStatusColor(theme: theme, statusString: statusString)),
-                ))
+                )),
+            ListTile(
+                title: Text("AUTH".tr()),
+                subtitle: Text(
+                  "unauthorized".toUpperCase().tr(),
+                  style: TextStyle(
+                      fontSize: 16, color: getAuthsColor(theme: theme, authString: "unauthorized")),
+                ),
+                trailing: ElevatedButton(onPressed: (){}, child: Text("AUTHORIZE".tr()))),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                    width: 300,
+                    child: ElevatedButton(onPressed: null, child: const Text("Open Doors").tr()))
+              ],
+            )
           ],
         ));
   }
@@ -64,6 +85,16 @@ Color getStatusColor({required statusString, required ColorScheme theme}) {
     color = theme.primary;
   } else {
     color = theme.onBackground;
+  }
+  return color;
+}
+
+Color getAuthsColor({required authString, required ColorScheme theme}) {
+  Color color;
+  if (authString == "unauthorized") {
+    color = theme.error;
+  } else {
+    color = theme.primary;
   }
   return color;
 }
