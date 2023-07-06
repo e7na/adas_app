@@ -233,27 +233,29 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     finalDevices = [];
     //get stored values from the Hive Box
     int numDevices = box.get("NumDevices", defaultValue: 0);
-    //Split names/ids into a list of strings
-    List<String> names = box.get("Names").split(",");
-    List<String> ids = box.get("IDs").split(",");
-    List<String> uuidsString = box.get("Uuids").split(",");
-    // split uuids into a list for each device
-    for (int i = 0; i < uuidsString.length; i++) {
-      List<Uuid> uuidsList = [];
-      List<String> list = uuidsString[i].split("#");
-      for (var element in list) {
-        element != "" ? uuidsList.add(Uuid.parse(element)) : null;
+    if(numDevices > 0){
+      //Split names/ids into a list of strings
+      List<String> names = box.get("Names").split(",");
+      List<String> ids = box.get("IDs").split(",");
+      List<String> uuidsString = box.get("Uuids").split(",");
+      // split uuids into a list for each device
+      for (int i = 0; i < uuidsString.length; i++) {
+        List<Uuid> uuidsList = [];
+        List<String> list = uuidsString[i].split("#");
+        for (var element in list) {
+          element != "" ? uuidsList.add(Uuid.parse(element)) : null;
+        }
+        uuids.add(uuidsList);
       }
-      uuids.add(uuidsList);
+      debugPrint("uuids:$uuids");
+      // separate into ble devices
+      for (int i = 0; i < numDevices; i++) {
+        //now we will have a list of the car devices called finalDevices
+        finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
+      }
+      // await connectToAllDevice();
+      emit(GetDevices());
     }
-    debugPrint("uuids:$uuids");
-    // separate into ble devices
-    for (int i = 0; i < numDevices; i++) {
-      //now we will have a list of the car devices called finalDevices
-      finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
-    }
-    // await connectToAllDevice();
-    emit(GetDevices());
   }
 
   //establish connection with device
