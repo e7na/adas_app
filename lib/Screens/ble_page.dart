@@ -98,14 +98,12 @@ Widget theScaffold({
                       : 0;
                 }
                 return DeviceTile(
-                    device: BleDevice(
-                      name: B.finalDevices[index].name,
-                      id: B.finalDevices[index].id,
-                      uuids: B.finalDevices[index].uuids ?? [],
-                    ),
-                    rssi: rssi,
-                    distance: B.calculateDistance(rssi: rssi),
-                    status: deviceState ?? DeviceConnectionState.disconnected);
+                  device: B.finalDevices[index],
+                  rssi: rssi,
+                  distance: B.calculateDistance(rssi: rssi),
+                  status: deviceState ?? DeviceConnectionState.disconnected,
+                  B: B,
+                );
               }),
         ],
       ),

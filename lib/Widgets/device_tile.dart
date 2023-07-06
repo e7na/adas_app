@@ -1,3 +1,4 @@
+import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,18 +9,21 @@ class DeviceTile extends StatelessWidget {
   final int rssi;
   final String distance;
   final DeviceConnectionState status;
+  final BleBloc B;
 
   const DeviceTile(
       {Key? key,
       required this.device,
       required this.rssi,
       required this.distance,
-      required this.status})
+      required this.status,
+      required this.B})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String statusString = "$status".split(".")[1].toUpperCase();
+    String authString = B.finalDevicesAuthStates[device.id];
     ColorScheme theme = Theme.of(context).colorScheme;
     TextStyle data = TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: theme.primary);
     return Theme(
@@ -59,17 +63,23 @@ class DeviceTile extends StatelessWidget {
             ListTile(
                 title: Text("AUTH".tr()),
                 subtitle: Text(
-                  "unauthorized".toUpperCase().tr(),
+                  authString.toUpperCase().tr(),
                   style: TextStyle(
-                      fontSize: 16, color: getAuthsColor(theme: theme, authString: "unauthorized")),
+                      fontSize: 16, color: getAuthsColor(theme: theme, authString: authString)),
                 ),
-                trailing: ElevatedButton(onPressed: (){}, child: Text("AUTHORIZE".tr()))),
+                trailing: ElevatedButton(
+                    onPressed: statusString != "CONNECTED" || authString == "authorized"
+                        ? null
+                        : () => B.authorizeDevice(device),
+                    child: Text("AUTHORIZE".tr()))),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                     width: 300,
-                    child: ElevatedButton(onPressed: null, child: const Text("Open Doors").tr()))
+                    child: ElevatedButton(
+                        onPressed: authString == "unauthorized" ? null : () {},
+                        child: const Text("Open Doors").tr()))
               ],
             )
           ],
@@ -79,9 +89,9 @@ class DeviceTile extends StatelessWidget {
 
 Color getStatusColor({required statusString, required ColorScheme theme}) {
   Color color;
-  if (statusString == "disconnected".toUpperCase()) {
+  if (statusString == "DISCONNECTED") {
     color = theme.error;
-  } else if (statusString == "connected".toUpperCase()) {
+  } else if (statusString == "CONNECTED") {
     color = theme.primary;
   } else {
     color = theme.onBackground;

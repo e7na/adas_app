@@ -24,8 +24,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late ColorScheme theme;
   late ThemeController themeController;
   late String lang;
-  late encrypt.Key key;
-  late encrypt.IV iv;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -38,11 +36,14 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Bluetooth related variables
   final ble = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> scanStream;
+  late encrypt.Key key;
+  late encrypt.IV iv;
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
   Map<String, List<int>> rssiValues = {};
   Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
   Map finalDevicesStates = <String, DeviceConnectionState>{};
+  Map finalDevicesAuthStates = <String, String>{};
   final devices = <DiscoveredDevice>[];
 
   static BleBloc get(context) => BlocProvider.of(context);
@@ -262,12 +263,46 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       for (int i = 0; i < numDevices; i++) {
         //now we will have a list of the car devices called finalDevices
         finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
+        finalDevicesAuthStates[ids[i]] = "unauthorized";
       }
       // get the encryption key
       key = encrypt.Key.fromBase64(box.get("key"));
       iv = encrypt.IV.fromBase64(box.get("iv"));
       emit(GetDevices());
     }
+  }
+
+  //establish connection with device
+  authorizeDevice(BleDevice device) async {
+    // Read the msg that needs to be encrypted
+    final characteristic2 = QualifiedCharacteristic(
+        // This is the service & characteristics ids from the esp32 used in the project
+        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
+        characteristicId: Uuid.parse("beb5483e-36e1-4688-b7f5-ea07361b26a8"),
+        deviceId: device.id);
+    // get the value from the msg characteristic
+    final response = await ble.readCharacteristic(characteristic2);
+    debugPrint("response: $response");
+    // send the encrypted msg
+    final characteristic3 = QualifiedCharacteristic(
+        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
+        characteristicId: Uuid.parse("fc477e34-adb4-4d01-b56e-d0a2671ecc39"),
+        deviceId: device.id);
+    // write the encrypted msg to the encrypted characteristic
+    await ble.writeCharacteristicWithResponse(characteristic3, value: key.bytes);
+    // Let's listen to the state of the authorization characteristic now
+    final characteristic1 = QualifiedCharacteristic(
+        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
+        characteristicId: Uuid.parse("fc477e34-adb4-4d01-b56e-d0a2671ecc39"),
+        deviceId: device.id);
+    ble.subscribeToCharacteristic(characteristic1).listen((data) {
+      // set the authorization state to the one coming from the esp32
+      data == [0x1]
+          ? finalDevicesAuthStates[device.id] = "authorized"
+          : finalDevicesAuthStates[device.id] = "unauthorized";
+    }, onError: (dynamic error) {
+      // code to handle errors
+    });
   }
 
   //establish connection with device
@@ -280,6 +315,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     // Let's listen to our connection so we can make updates on a state change
     finalDevicesStreams[device.id].listen((event) {
       finalDevicesStates[device.id] = event.connectionState;
+      event.connectionState == DeviceConnectionState.disconnected
+          ? finalDevicesAuthStates[device.id] = "unauthorized"
+          : null;
       debugPrint("${device.id} ${event.connectionState}");
       emit(BleConnected());
     });
