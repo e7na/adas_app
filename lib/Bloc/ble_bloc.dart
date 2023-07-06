@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:blue/Data/Models/device_model.dart';
 import 'package:blue/Services/flex_colors/theme_controller.dart';
 
@@ -23,6 +24,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   late ColorScheme theme;
   late ThemeController themeController;
   late String lang;
+  late encrypt.Key key;
+  late encrypt.IV iv;
 
   // Some state management stuff
   bool scanStarted = false;
@@ -223,6 +226,13 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     box.put("IDs", ids);
     box.put("Names", names);
     box.put("Uuids", uuids);
+    // Generate the encryption key
+    box.get("key", defaultValue: 0) == 0
+        ? {key = encrypt.Key.fromSecureRandom(32), box.put("key", key.base64)}
+        : null;
+    box.get("iv", defaultValue: 0) == 0
+        ? {iv = encrypt.IV.fromSecureRandom(16), box.put("iv", iv.base64)}
+        : null;
     stopScan();
   }
 
@@ -233,7 +243,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     finalDevices = [];
     //get stored values from the Hive Box
     int numDevices = box.get("NumDevices", defaultValue: 0);
-    if(numDevices > 0){
+    if (numDevices > 0) {
       //Split names/ids into a list of strings
       List<String> names = box.get("Names").split(",");
       List<String> ids = box.get("IDs").split(",");
@@ -253,7 +263,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         //now we will have a list of the car devices called finalDevices
         finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
       }
-      // await connectToAllDevice();
+      // get the encryption key
+      key = encrypt.Key.fromBase64(box.get("key"));
+      iv = encrypt.IV.fromBase64(box.get("iv"));
       emit(GetDevices());
     }
   }

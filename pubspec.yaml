@@ -49,6 +49,7 @@ dependencies:
   flutter_svg: ^2.0.7
   gauge_indicator: ^0.4.2
   flutter_joystick: ^0.0.3
+  encrypt: ^5.0.1
 
 dev_dependencies:
   flutter_test:
