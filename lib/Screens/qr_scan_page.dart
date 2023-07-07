@@ -13,10 +13,10 @@ class ScanQrPage extends StatelessWidget {
         // fit: BoxFit.contain,
         onDetect: (capture) {
           // to prevent multiple scans
-          if (!foundQR) {
+          if (!foundQR && capture.barcodes[0].rawValue.toString().split('|||').length == 2) {
             foundQR = true;
-            print("key:${capture.barcodes[0].rawValue.toString().split('||')[0]}"); // key
-            print("iv:${capture.barcodes[0].rawValue.toString().split('||')[1]}"); // iv
+            print("keys:${capture.barcodes[0].rawValue.toString().split('|||')[0]}"); // keys
+            print("ivs:${capture.barcodes[0].rawValue.toString().split('|||')[1]}"); // ivs
             // Navigator.of(context).pushReplacement(MaterialPageRoute(
             //     builder: (context) => tempPage(text: capture.barcodes[0].rawValue.toString())));
           }

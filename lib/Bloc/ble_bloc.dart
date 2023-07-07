@@ -38,8 +38,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Bluetooth related variables
   final ble = FlutterReactiveBle();
   late StreamSubscription<DiscoveredDevice> scanStream;
-  late encrypt.Key key;
-  late encrypt.IV iv;
+  Map keys = <String, encrypt.Key>{};
+  Map ivs = <String, encrypt.IV>{};
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
   Map<String, List<int>> rssiValues = {};
@@ -203,11 +203,20 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     String names = "";
     String ids = "";
     String uuids = "";
+    String keys = "";
+    String vectors = "";
     box.put("NumDevices", chosenDevices.length);
     // get each all names/ids in a comma separated single string
     for (int i = 0; i < chosenDevices.length; i++) {
       names += chosenDevices[i].name;
       ids += chosenDevices[i].id;
+      // Generate the encryption keys
+      // if there were no keys before, generate new ones
+      // but if there was keys make sure to use the old ones
+      keys +=
+          "${chosenDevices[i].id}||${box.get("Keys", defaultValue: "") == "" || !box.get("Keys").contains(chosenDevices[i].id) ? encrypt.Key.fromSecureRandom(32).base64 : searchKeys(chosenDevices[i].id)}";
+      vectors +=
+          "${chosenDevices[i].id}||${box.get("Vectors", defaultValue: "") == "" || !box.get("Vectors").contains(chosenDevices[i].id) ? encrypt.IV.fromSecureRandom(16).base64 : searchVectors(chosenDevices[i].id)}";
       // device can have multiple uuids
       for (int j = 0; j < chosenDevices[i].uuids!.length; j++) {
         uuids += chosenDevices[i].uuids![j].toString();
@@ -220,6 +229,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       if (i < chosenDevices.length - 1) {
         names += ",";
         ids += ",";
+        keys += ",";
+        vectors += ",";
         uuids += ",";
       }
       somethingChosen = false;
@@ -227,14 +238,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     // Store Them in the Hive Box
     box.put("IDs", ids);
     box.put("Names", names);
+    box.put("Keys", keys);
+    box.put("Vectors", vectors);
     box.put("Uuids", uuids);
-    // Generate the encryption key
-    box.get("key", defaultValue: 0) == 0
-        ? {key = encrypt.Key.fromSecureRandom(32), box.put("key", key.base64)}
-        : null;
-    box.get("iv", defaultValue: 0) == 0
-        ? {iv = encrypt.IV.fromSecureRandom(16), box.put("iv", iv.base64)}
-        : null;
     stopScan();
   }
 
@@ -250,6 +256,14 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       List<String> names = box.get("Names").split(",");
       List<String> ids = box.get("IDs").split(",");
       List<String> uuidsString = box.get("Uuids").split(",");
+      List<String> keysString = box.get("Keys").split(",");
+      List<String> vectorsString = box.get("Vectors").split(",");
+      // split keys and vectors into a map for each device
+      for (int i = 0; i < keysString.length; i++) {
+        keys[keysString[i].split("||")[0]] = encrypt.Key.fromBase64(keysString[i].split("||")[1]);
+        ivs[vectorsString[i].split("||")[0]] =
+            encrypt.IV.fromBase64(vectorsString[i].split("||")[1]);
+      }
       // split uuids into a list for each device
       for (int i = 0; i < uuidsString.length; i++) {
         List<Uuid> uuidsList = [];
@@ -266,11 +280,31 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         finalDevices.add(BleDevice(name: names[i], id: ids[i], uuids: uuids[i]));
         finalDevicesAuthStates[ids[i]] = "unauthorized";
       }
-      // get the encryption key
-      key = encrypt.Key.fromBase64(box.get("key"));
-      iv = encrypt.IV.fromBase64(box.get("iv"));
       emit(GetDevices());
     }
+  }
+
+  // These functions are used to search in the string for old keys and vectors
+  String searchKeys(id) {
+    String key = "";
+    for (int i = 0; i < box.get("Keys").split(",").length; i++) {
+      box.get("Keys").split(",")[i].split("||")[0] == id
+          ? key = box.get("Keys").split(",")[i].split("||")[1]
+          : null;
+    }
+    key == "" ? key = encrypt.Key.fromSecureRandom(32).base64 : null;
+    return key;
+  }
+
+  String searchVectors(id) {
+    String iv = "";
+    for (int i = 0; i < box.get("Vectors").split(",").length; i++) {
+      box.get("Vectors").split(",")[i].split("||")[0] == id
+          ? iv = box.get("Vectors").split(",")[i].split("||")[1]
+          : null;
+    }
+    iv == "" ? iv = encrypt.IV.fromSecureRandom(16).base64 : null;
+    return iv;
   }
 
   // Unlock or close car doors
@@ -313,13 +347,13 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
         characteristicId: Uuid.parse("8c233b56-4988-4c3c-95b5-ec5b3c179c91"),
         deviceId: device.id);
-    await ble.writeCharacteristicWithResponse(characteristic2, value: key.bytes);
+    await ble.writeCharacteristicWithResponse(characteristic2, value: keys[device.id].bytes);
     // send the encryption vector to the esp32
     final characteristic3 = QualifiedCharacteristic(
         serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
         characteristicId: Uuid.parse("56bba80a-91f1-46ab-b892-7325e19c3429"),
         deviceId: device.id);
-    await ble.writeCharacteristicWithResponse(characteristic3, value: iv.bytes);
+    await ble.writeCharacteristicWithResponse(characteristic3, value: ivs[device.id].bytes);
   }
 
   //handshake with esp32
@@ -333,8 +367,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     // get the value from the msg characteristic
     final response = await ble.readCharacteristic(characteristic4);
     // encrypt the msg
-    Uint8List encryptedMsg =
-        encrypt.Encrypter(encrypt.AES(key)).encrypt(utf8.decode(response), iv: iv).bytes;
+    Uint8List encryptedMsg = encrypt.Encrypter(encrypt.AES(keys[device.id]))
+        .encrypt(utf8.decode(response), iv: ivs[device.id])
+        .bytes;
     // send the encrypted msg
     final characteristic5 = QualifiedCharacteristic(
         serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),

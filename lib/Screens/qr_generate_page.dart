@@ -11,7 +11,7 @@ class QRGeneratePage extends StatelessWidget {
       appBar: AppBar(title: const Text('QR Generator')),
       body: Center(
         child: QrImageView(
-          data: "${B.key.base64}||${B.iv.base64}",
+          data: "${B.box.get("Keys")}|||${B.box.get("Vectors")}",
           version: QrVersions.auto,
           size: 300.0,
           backgroundColor: Colors.white,
