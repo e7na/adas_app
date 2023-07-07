@@ -1,7 +1,9 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -273,37 +275,60 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
   }
 
-  //establish connection with device
-  authorizeDevice(BleDevice device) async {
-    // Read the msg that needs to be encrypted
-    final characteristic2 = QualifiedCharacteristic(
-        // This is the service & characteristics ids from the esp32 used in the project
-        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
-        characteristicId: Uuid.parse("beb5483e-36e1-4688-b7f5-ea07361b26a8"),
-        deviceId: device.id);
-    // get the value from the msg characteristic
-    final response = await ble.readCharacteristic(characteristic2);
-    debugPrint("response: $response");
-    // send the encrypted msg
-    final characteristic3 = QualifiedCharacteristic(
-        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
-        characteristicId: Uuid.parse("fc477e34-adb4-4d01-b56e-d0a2671ecc39"),
-        deviceId: device.id);
-    // write the encrypted msg to the encrypted characteristic
-    await ble.writeCharacteristicWithResponse(characteristic3, value: key.bytes);
-    // Let's listen to the state of the authorization characteristic now
+  authorizeDevice(BleDevice device) {
+    // listen to the state of the authorization characteristic
     final characteristic1 = QualifiedCharacteristic(
-        serviceId: Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b"),
-        characteristicId: Uuid.parse("fc477e34-adb4-4d01-b56e-d0a2671ecc39"),
+        serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+        characteristicId: Uuid.parse("e95e7f63-f041-469f-90db-04d2e3e7619b"),
         deviceId: device.id);
     ble.subscribeToCharacteristic(characteristic1).listen((data) {
       // set the authorization state to the one coming from the esp32
-      data == [0x1]
-          ? finalDevicesAuthStates[device.id] = "authorized"
-          : finalDevicesAuthStates[device.id] = "unauthorized";
+      finalDevicesAuthStates[device.id] = utf8.decode(data).toLowerCase();
+      // should be a 3rd state waiting for the user to send key
+      finalDevicesAuthStates[device.id] == "unauthorized" ? sendKey(device) : null;
+      // if still unauthorized after sending key, perform handshake
+      finalDevicesAuthStates[device.id] == "unauthorized" ? handshake(device) : null;
     }, onError: (dynamic error) {
       // code to handle errors
     });
+  }
+
+  // send encryption key to the esp32
+  sendKey(BleDevice device) async {
+    // send the encryption key to the esp32
+    final characteristic2 = QualifiedCharacteristic(
+        serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+        characteristicId: Uuid.parse("8c233b56-4988-4c3c-95b5-ec5b3c179c91"),
+        deviceId: device.id);
+    await ble.writeCharacteristicWithResponse(characteristic2, value: key.bytes);
+    // send the encryption vector to the esp32
+    final characteristic3 = QualifiedCharacteristic(
+        serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+        characteristicId: Uuid.parse("56bba80a-91f1-46ab-b892-7325e19c3429"),
+        deviceId: device.id);
+    await ble.writeCharacteristicWithResponse(characteristic3, value: iv.bytes);
+  }
+
+  //handshake with esp32
+  handshake(BleDevice device) async {
+    // Read the msg that needs to be encrypted
+    final characteristic4 = QualifiedCharacteristic(
+        // This is the service & characteristics ids from the esp32 used in the project
+        serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+        characteristicId: Uuid.parse("53a15a66-6dd7-4421-9468-38cf731a77db"),
+        deviceId: device.id);
+    // get the value from the msg characteristic
+    final response = await ble.readCharacteristic(characteristic4);
+    // encrypt the msg
+    Uint8List encryptedMsg =
+        encrypt.Encrypter(encrypt.AES(key)).encrypt(utf8.decode(response), iv: iv).bytes;
+    // send the encrypted msg
+    final characteristic5 = QualifiedCharacteristic(
+        serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+        characteristicId: Uuid.parse("acc9a30f-9e44-4323-8193-7bac8c9bc484"),
+        deviceId: device.id);
+    // write the encrypted msg to the encrypted characteristic
+    await ble.writeCharacteristicWithResponse(characteristic5, value: encryptedMsg);
   }
 
   //establish connection with device
