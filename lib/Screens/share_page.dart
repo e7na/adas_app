@@ -1,12 +1,12 @@
-import 'package:blue/Screens/scan_qr_page.dart';
-import 'package:blue/Screens/setter_page.dart';
-import 'package:blue/Screens/settings_page.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
+import 'package:blue/Bloc/ble_bloc.dart';
+import 'qr_generate_page.dart';
+import 'qr_scan_page.dart';
+import 'setter_page.dart';
 
-import '../Bloc/ble_bloc.dart';
 class SharePage extends StatefulWidget {
   const SharePage({super.key});
 
@@ -49,7 +49,7 @@ Widget theScaffold({
             ),
           ),
           backgroundColor:
-          B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           children: [
@@ -65,8 +65,8 @@ Widget theScaffold({
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: () => Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) => const SettingsPage())),
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => const QRGeneratePage())),
                             style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
                             child: const Text("Share QR").tr()),
                       ),

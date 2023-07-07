@@ -1,4 +1,3 @@
-import 'package:blue/Screens/temp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -15,9 +14,11 @@ class ScanQrPage extends StatelessWidget {
         onDetect: (capture) {
           // to prevent multiple scans
           if (!foundQR) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => tempPage(text: capture.barcodes[0].rawValue.toString())));
             foundQR = true;
+            print("key:${capture.barcodes[0].rawValue.toString().split('||')[0]}"); // key
+            print("iv:${capture.barcodes[0].rawValue.toString().split('||')[1]}"); // iv
+            // Navigator.of(context).pushReplacement(MaterialPageRoute(
+            //     builder: (context) => tempPage(text: capture.barcodes[0].rawValue.toString())));
           }
         },
       ),
