@@ -7,6 +7,7 @@ import 'package:blue/Bloc/ble_bloc.dart';
 import 'package:blue/Widgets/device_tile.dart';
 import 'settings_page.dart';
 import 'setter_page.dart';
+import 'share_page.dart';
 
 class BLEPage extends StatefulWidget {
   const BLEPage({Key? key}) : super(key: key);
@@ -68,6 +69,12 @@ Widget theScaffold({
         elevation: 1,
         expandedHeight: 300,
         actions: [
+          IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => const SharePage())),
+              icon: const Icon(
+                Icons.share,
+              )),
           IconButton(
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => const SettingsPage())),

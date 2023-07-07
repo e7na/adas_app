@@ -39,5 +39,8 @@
   "AUTHORIZED": "مسموح",
   "UNAUTHORIZED": "غير مسموح",
   "Open Doors": "فتح الابواب",
-  "Close Doors": "غلق الابواب"
+  "Close Doors": "غلق الابواب",
+  "Share": "المشاركة",
+  "Share QR": "مشاركة المفتاح بستخدام الQR Code ",
+  "Scan QR": "مسح الQR Code"
 }

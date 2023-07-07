@@ -39,5 +39,8 @@
   "AUTHORIZED": "Authorized",
   "UNAUTHORIZED": "Unauthorized",
   "Unlock Doors": "Unlock Doors",
-  "Lock Doors": "Lock Doors"
+  "Lock Doors": "Lock Doors",
+  "Share": "Share",
+  "Share QR": "Share Key Using QR",
+  "Scan QR": "Scan QR Code"
 }
