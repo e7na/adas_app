@@ -38,6 +38,6 @@
   "AUTHORIZE": "Authorize",
   "AUTHORIZED": "Authorized",
   "UNAUTHORIZED": "Unauthorized",
-  "Open Doors": "Open Doors",
-  "Close Doors": "Close Doors"
+  "Unlock Doors": "Unlock Doors",
+  "Lock Doors": "Lock Doors"
 }

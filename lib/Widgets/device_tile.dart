@@ -88,8 +88,10 @@ class DeviceTile extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4.0),
                             child: ElevatedButton(
-                                onPressed: authString == "unauthorized" ? null : () => {},
-                                child: const Text("Open Doors").tr()),
+                                onPressed: authString == "unauthorized"
+                                    ? null
+                                    : () => B.controlDoors(device),
+                                child: Text(B.unlockDoors ? "lock Doors" : "Unlock Doors").tr()),
                           ),
                         ),
                   Expanded(

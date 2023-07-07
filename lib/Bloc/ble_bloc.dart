@@ -33,7 +33,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool somethingChosen = false;
   bool addedToStreams = false;
   bool timerStarted = false;
-  String currentLog = "";
+  bool unlockDoors = false;
 
   // Bluetooth related variables
   final ble = FlutterReactiveBle();
@@ -86,7 +86,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       // if every thing is ready start scanning
     } else {
       scanStarted = true;
-      currentLog = 'Start ble discovery';
       // if only one device is the final devices list then scan for that device only
       // else scan for all
       scanStream = ble
@@ -101,7 +100,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
           emit(BleAddDevice());
         }
       }, onError: (Object e) {
-        currentLog = 'Device scan fails with error: $e';
         emit(BleError());
       });
     }
@@ -272,6 +270,21 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       key = encrypt.Key.fromBase64(box.get("key"));
       iv = encrypt.IV.fromBase64(box.get("iv"));
       emit(GetDevices());
+    }
+  }
+
+  // Unlock or close car doors
+  controlDoors(BleDevice device) async {
+    if (finalDevicesAuthStates[device.id] == "authorized") {
+      // Will set it to true the first time
+      unlockDoors = !unlockDoors;
+      // send the msg to control door
+      final characteristic6 = QualifiedCharacteristic(
+          serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
+          characteristicId: Uuid.parse("9800d290-19fb-4085-9610-f1e878725ad2"),
+          deviceId: device.id);
+      await ble.writeCharacteristicWithResponse(characteristic6,
+          value: utf8.encode(unlockDoors ? "ON" : "OFF"));
     }
   }
 
