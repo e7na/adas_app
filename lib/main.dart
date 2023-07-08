@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:blue/Bloc/ble_bloc.dart';
 import 'Services/flex_colors/theme_controller.dart';
 import 'Services/flex_colors/theme_service.dart';
 import 'Services/flex_colors/theme_service_hive.dart';
-import 'package:blue/Screens/setter_page.dart';
+import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Screens/setter_page.dart';
 import 'Data/flex_themes.dart';
 import 'Data/theme.dart';
 
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
             return MaterialApp(
-                title: 'Blue',
+                title: 'ADAS',
                 debugShowCheckedModeBanner: false,
                 theme: flexTheme(
                     mode: "light",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:blue/Services/flex_colors/app_color.dart';
-import 'package:blue/Services/flex_colors/theme_controller.dart';
+import 'package:adas/Services/flex_colors/app_color.dart';
+import 'package:adas/Services/flex_colors/theme_controller.dart';
 
 ThemeData flexTheme(
     {required String mode,

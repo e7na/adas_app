@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:websocket_universal/websocket_universal.dart';
-import 'package:blue/Bloc/ble_bloc.dart';
+import 'package:adas/Bloc/ble_bloc.dart';
 import 'controller_page.dart';
 import 'setter_page.dart';
 import 'settings_page.dart';

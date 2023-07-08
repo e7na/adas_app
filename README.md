@@ -1,3 +1,3 @@
-# Blue
+# ADAS Graduation APP
 
-A starting point for the graduation project app.
+The graduation project app.

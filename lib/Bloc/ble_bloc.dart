@@ -13,8 +13,8 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:blue/Data/Models/device_model.dart';
-import 'package:blue/Services/flex_colors/theme_controller.dart';
+import 'package:adas/Data/Models/device_model.dart';
+import 'package:adas/Services/flex_colors/theme_controller.dart';
 
 part 'ble_event.dart';
 

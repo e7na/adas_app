@@ -1,4 +1,4 @@
-import 'package:blue/Screens/setter_page.dart';
+import 'package:adas/Screens/setter_page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:easy_localization/easy_localization.dart';

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:websocket_universal/websocket_universal.dart';
-import 'package:blue/Bloc/ble_bloc.dart';
+import 'package:adas/Bloc/ble_bloc.dart';
 import 'setter_page.dart';
 
 late String _ip;

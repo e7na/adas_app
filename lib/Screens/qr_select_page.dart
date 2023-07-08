@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
-import 'package:blue/Bloc/ble_bloc.dart';
+import 'package:adas/Bloc/ble_bloc.dart';
 import 'qr_generate_page.dart';
 import 'setter_page.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:blue/Screens/setter_page.dart';
+import 'package:adas/Screens/setter_page.dart';
 
 class QRGeneratePage extends StatelessWidget {
   final String deviceID;

@@ -3,9 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
-import 'package:blue/Services/flex_colors/theme_controller.dart';
-import 'package:blue/Bloc/ble_bloc.dart';
-import 'package:blue/Data/system_ui.dart';
+import 'package:adas/Services/flex_colors/theme_controller.dart';
+import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Data/system_ui.dart';
 import 'main_page.dart';
 
 late BleBloc B;
