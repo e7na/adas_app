@@ -89,7 +89,9 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       // if only one device is the final devices list then scan for that device only
       // else scan for all
       scanStream = ble
-          .scanForDevices(withServices: finalDevices.length == 1 ? finalDevices.first.uuids! : [])
+          .scanForDevices(
+              withServices: finalDevices.length == 1 ? finalDevices.first.uuids! : [],
+              scanMode: ScanMode.lowLatency)
           .listen((device) {
         final knownDeviceIndex = devices.indexWhere((d) => d.id == device.id);
         if (knownDeviceIndex >= 0) {
@@ -241,7 +243,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     box.put("Keys", keys);
     box.put("Vectors", vectors);
     box.put("Uuids", uuids);
-    stopScan();
   }
 
   // Extract selected devices from the Hive Box into a list

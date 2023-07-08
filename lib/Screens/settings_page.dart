@@ -80,13 +80,13 @@ Widget theScaffold({
                         padding: const EdgeInsets.symmetric(horizontal: 60.0),
                         child: ElevatedButton(
                             onPressed: () => {
-                                  B.stopScan(),
-                                  B.chosenDevices = [],
-                                  B.finalDevices = [],
+                                  B.chosenDevices.clear(),
+                                  B.finalDevices.clear(),
                                   B.box.put('NumDevices', 0),
                                   B.box.put("IDs", ""),
                                   B.box.put("Names", ""),
                                   B.box.put("Uuids", ""),
+                                  B.stopScan(),
                                   Navigator.of(context).pop(),
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(builder: (context) => const ScanPage()))
