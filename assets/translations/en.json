@@ -43,5 +43,7 @@
   "Share": "Share",
   "Share QR": "Share Key Using QR",
   "Scan QR": "Scan QR Code",
-  "Select Device": "Select Device"
+  "Select Device": "Select Device",
+  "Warning": "Warning",
+  "T5": "Key received from QR code, This will replace your current key, Are you sure you want to continue?"
 }

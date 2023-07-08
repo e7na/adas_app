@@ -306,6 +306,28 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     return iv;
   }
 
+  // this function is called in the scan qr code page
+  replaceKeys({required String id, required String key, required String vector}) {
+    String keysString = "";
+    String vectorsString = "";
+    // replace the old key and vector with the new one
+    // if the device is not in the list, this will add it
+    keys[id] = encrypt.Key.fromBase64(key);
+    ivs[id] = encrypt.IV.fromBase64(vector);
+    // recreate the stored string
+    for (int i = 0; i < keys.length; i++) {
+      keysString += "${keys.entries.elementAt(i).key}||${keys.entries.elementAt(i).value.base64}";
+      vectorsString += "${ivs.entries.elementAt(i).key}||${ivs.entries.elementAt(i).value.base64}";
+      if (i < keys.length - 1) {
+        keysString += ",";
+        vectorsString += ",";
+      }
+    }
+    // store the new string
+    box.put("Keys", keysString);
+    box.put("Vectors", vectorsString);
+  }
+
   // Unlock or close car doors
   controlDoors(BleDevice device) async {
     if (finalDevicesAuthStates[device.id] == "authorized") {

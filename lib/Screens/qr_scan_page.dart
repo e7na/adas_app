@@ -1,5 +1,7 @@
+import 'package:blue/Screens/setter_page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ScanQrPage extends StatelessWidget {
   const ScanQrPage({super.key});
@@ -15,14 +17,57 @@ class ScanQrPage extends StatelessWidget {
           // to prevent multiple scans
           if (!foundQR && capture.barcodes[0].rawValue.toString().split('|||').length == 2) {
             foundQR = true;
-            print("id:${capture.barcodes[0].rawValue.toString().split('|||')[0].split('||')[0]}");
-            print("key:${capture.barcodes[0].rawValue.toString().split('|||')[0].split('||')[1]}");
-            print("iv:${capture.barcodes[0].rawValue.toString().split('|||')[1]}");
-            // Navigator.of(context).pushReplacement(MaterialPageRoute(
-            //     builder: (context) => tempPage(text: capture.barcodes[0].rawValue.toString())));
+            showAlertDialog(context, capture.barcodes[0].rawValue!);
           }
         },
       ),
     );
   }
+}
+
+showAlertDialog(BuildContext context, String barCodeValue) {
+  // set up the buttons
+  Widget cancelButton = TextButton(
+    child: const Text("Cancel"),
+    onPressed: () {
+      // close alert dialog
+      Navigator.of(context).pop();
+      // close qr scan page
+      Navigator.of(context).pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: const Text("Continue"),
+    onPressed: () {
+      // replace key and iv
+      B.replaceKeys(
+          id: barCodeValue.toString().split('|||')[0].split('||')[0],
+          key: barCodeValue.toString().split('|||')[0].split('||')[1],
+          vector: barCodeValue.toString().split('|||')[1]);
+      // close alert dialog
+      Navigator.of(context).pop();
+      // close qr scan page
+      Navigator.of(context).pop();
+      // close share page
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: const Text("Warning").tr(),
+    content: const Text("T5").tr(),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
