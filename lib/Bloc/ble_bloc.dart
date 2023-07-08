@@ -273,7 +273,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         }
         uuids.add(uuidsList);
       }
-      debugPrint("uuids:$uuids");
       // separate into ble devices
       for (int i = 0; i < numDevices; i++) {
         //now we will have a list of the car devices called finalDevices

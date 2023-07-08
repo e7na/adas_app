@@ -3,18 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:blue/Bloc/ble_bloc.dart';
-import 'qr_scan_page.dart';
+import 'qr_generate_page.dart';
 import 'setter_page.dart';
-import 'qr_select_page.dart';
 
-class SharePage extends StatefulWidget {
-  const SharePage({super.key});
+class SelectQrPage extends StatefulWidget {
+  const SelectQrPage({super.key});
 
   @override
-  State<SharePage> createState() => _SharePageState();
+  State<SelectQrPage> createState() => _SelectQrPageState();
 }
 
-class _SharePageState extends State<SharePage> {
+class _SelectQrPageState extends State<SelectQrPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BleBloc, BleState>(
@@ -39,7 +38,7 @@ Widget theScaffold({
       appBar: AppBar(toolbarHeight: 0),
       body: SamsungUiScrollEffect(
           automaticallyImplyLeading: true,
-          expandedTitle: Text("Share".tr(), style: const TextStyle(fontSize: 32)),
+          expandedTitle: Text("Select Device".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
             padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
             child: Row(
@@ -62,22 +61,31 @@ Widget theScaffold({
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => const SelectQrPage())),
-                            style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
-                            child: const Text("Share QR").tr()),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: () => Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) => const ScanQrPage())),
-                            style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
-                            child: const Text("Scan QR").tr()),
-                      ),
+                      ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: B.finalDevices.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QRGeneratePage(
+                                            deviceID: B.finalDevices[index].id,
+                                          )),
+                                );
+                              },
+                              title: Text(
+                                B.finalDevices[index].name == ""
+                                    ? "No Name".tr()
+                                    : B.finalDevices[index].name,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: Text(B.finalDevices[index].id),
+                            );
+                          }),
                     ],
                   ),
                 )

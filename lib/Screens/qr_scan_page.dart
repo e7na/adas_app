@@ -15,8 +15,9 @@ class ScanQrPage extends StatelessWidget {
           // to prevent multiple scans
           if (!foundQR && capture.barcodes[0].rawValue.toString().split('|||').length == 2) {
             foundQR = true;
-            print("keys:${capture.barcodes[0].rawValue.toString().split('|||')[0]}"); // keys
-            print("ivs:${capture.barcodes[0].rawValue.toString().split('|||')[1]}"); // ivs
+            print("id:${capture.barcodes[0].rawValue.toString().split('|||')[0].split('||')[0]}");
+            print("key:${capture.barcodes[0].rawValue.toString().split('|||')[0].split('||')[1]}");
+            print("iv:${capture.barcodes[0].rawValue.toString().split('|||')[1]}");
             // Navigator.of(context).pushReplacement(MaterialPageRoute(
             //     builder: (context) => tempPage(text: capture.barcodes[0].rawValue.toString())));
           }

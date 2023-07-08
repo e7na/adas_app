@@ -42,5 +42,6 @@
   "Close Doors": "غلق الابواب",
   "Share": "المشاركة",
   "Share QR": "مشاركة المفتاح بستخدام الQR Code ",
-  "Scan QR": "مسح الQR Code"
+  "Scan QR": "مسح الQR Code",
+  "Select Device": "اختر الجهاز"
 }
