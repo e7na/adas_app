@@ -430,10 +430,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     if (Platform.isAndroid) {
       const AndroidIntent(
         action: 'android.bluetooth.adapter.action.REQUEST_ENABLE',
-      ).launch().catchError((e) => AppSettings.openBluetoothSettings());
+      ).launch().catchError((e) => AppSettings.openAppSettings(type: AppSettingsType.bluetooth));
       await Future.delayed(const Duration(seconds: 2));
     } else {
-      AppSettings.openBluetoothSettings();
+      AppSettings.openAppSettings(type: AppSettingsType.bluetooth);
     }
   }
 
@@ -442,10 +442,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     if (Platform.isAndroid) {
       const AndroidIntent(
         action: 'android.settings.LOCATION_SOURCE_SETTINGS',
-      ).launch().catchError((e) => AppSettings.openLocationSettings());
+      ).launch().catchError((e) => AppSettings.openAppSettings(type: AppSettingsType.location));
       await Future.delayed(const Duration(seconds: 2));
     } else {
-      AppSettings.openLocationSettings();
+      AppSettings.openAppSettings(type: AppSettingsType.location);
     }
   }
 
