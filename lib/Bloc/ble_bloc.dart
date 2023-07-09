@@ -42,6 +42,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   Map ivs = <String, encrypt.IV>{};
   List<BleDevice> chosenDevices = [];
   List<BleDevice> finalDevices = [];
+  late StreamSubscription<List<int>> authorizationStream;
   Map<String, List<int>> rssiValues = {};
   Map finalDevicesStreams = <String, Stream<ConnectionStateUpdate>>{};
   Map finalDevicesStreamsSubs = <String, StreamSubscription<ConnectionStateUpdate>>{};
@@ -344,19 +345,33 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     }
   }
 
-  authorizeDevice(BleDevice device) {
+  authorizeDevice(BleDevice device) async {
     // listen to the state of the authorization characteristic
     final characteristic1 = QualifiedCharacteristic(
         serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
         characteristicId: Uuid.parse("e95e7f63-f041-469f-90db-04d2e3e7619b"),
         deviceId: device.id);
-    ble.subscribeToCharacteristic(characteristic1).listen((data) {
+    // read the state of the authorization characteristic
+    final response = await ble.readCharacteristic(characteristic1);
+    utf8.decode(response).toLowerCase() != "authorized"
+        ? {
+            // start listening to the authorization characteristic
+            startStream(device, characteristic1),
+            // send key and vector to the esp32
+            sendKey(device),
+            // if still unauthorized after sending key, perform handshake
+            handshake(device),
+            emit(StatusChanged()),
+          }
+        : null;
+  }
+
+  startStream(BleDevice device, QualifiedCharacteristic characteristic1) {
+    // subscribe to the authorization characteristic
+    authorizationStream = ble.subscribeToCharacteristic(characteristic1).listen((data) {
       // set the authorization state to the one coming from the esp32
       finalDevicesAuthStates[device.id] = utf8.decode(data).toLowerCase();
-      // should be a 3rd state waiting for the user to send key
-      finalDevicesAuthStates[device.id] == "unauthorized" ? sendKey(device) : null;
-      // if still unauthorized after sending key, perform handshake
-      finalDevicesAuthStates[device.id] == "unauthorized" ? handshake(device) : null;
+      emit(StatusChanged());
     }, onError: (dynamic error) {
       // code to handle errors
     });
