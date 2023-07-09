@@ -74,8 +74,7 @@ class DeviceTile extends StatelessWidget {
                           fontSize: 16, color: getAuthsColor(theme: theme, authString: authString)),
                     ),
                     trailing: ElevatedButton(
-                        onPressed:
-                            authString == "authorized" ? null : () => B.authorizeDevice(device),
+                        onPressed:() => B.sendKey(device),
                         child: Text("AUTHORIZE".tr()))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
