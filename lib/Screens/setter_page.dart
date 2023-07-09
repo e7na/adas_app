@@ -7,6 +7,7 @@ import 'package:adas/Services/flex_colors/theme_controller.dart';
 import 'package:adas/Bloc/ble_bloc.dart';
 import 'package:adas/Data/system_ui.dart';
 import 'main_page.dart';
+import 'on_boarding.dart';
 
 late BleBloc B;
 
@@ -34,8 +35,10 @@ class _SetterPageState extends State<SetterPage> {
       B.themeChanged();
       // get list of saved devices
       B.getDevices();
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => const MainPage()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => B.box.get("showHome", defaultValue: false) == true
+              ? const MainPage()
+              : const IntroPage()));
     });
   }
 

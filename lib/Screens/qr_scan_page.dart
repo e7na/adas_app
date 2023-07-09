@@ -10,7 +10,7 @@ class ScanQrPage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool foundQR = false;
     return Scaffold(
-      appBar: AppBar(title: const Text('Mobile Scanner')),
+        appBar: AppBar(title: const Text('QR Scanner').tr()),
       body: MobileScanner(
         // fit: BoxFit.contain,
         onDetect: (capture) {
@@ -28,7 +28,7 @@ class ScanQrPage extends StatelessWidget {
 showAlertDialog(BuildContext context, String barCodeValue) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: const Text("Cancel"),
+    child: const Text("Cancel").tr(),
     onPressed: () {
       // close alert dialog
       Navigator.of(context).pop();
@@ -37,7 +37,7 @@ showAlertDialog(BuildContext context, String barCodeValue) {
     },
   );
   Widget continueButton = TextButton(
-    child: const Text("Continue"),
+    child: const Text("Continue").tr(),
     onPressed: () {
       // replace key and iv
       B.replaceKeys(

@@ -336,7 +336,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                              "Speed: ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? -(_msg[2] - 48) : 0 : 0}"),
+                              "${"Speed".tr()}: ${(_msg[1] - 48) != 1 ? (_msg[1] - 48) > 0 ? (_msg[1] - 48) : (_msg[2] - 48) > 0 ? -(_msg[2] - 48) : 0 : 0}"),
                         ),
                       ],
                     ),
