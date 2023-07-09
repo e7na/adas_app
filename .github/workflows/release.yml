@@ -1,9 +1,7 @@
 name: build & release
 on:
   push:
-    branches: [master, devops]
-    tags:
-      - "*"
+
 env:
   flutter-version: "3.10.5"
   FLUTTER_TOOLS_CACHE: |
