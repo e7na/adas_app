@@ -354,7 +354,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       // set the authorization state to the one coming from the esp32
       finalDevicesAuthStates[device.id] = utf8.decode(data).toLowerCase();
       // should be a 3rd state waiting for the user to send key
-      finalDevicesAuthStates[device.id] == "unauthorized" ? sendKey(device) : null;
+      sendKey(device);
       // if still unauthorized after sending key, perform handshake
       finalDevicesAuthStates[device.id] == "unauthorized" ? handshake(device) : null;
     }, onError: (dynamic error) {
