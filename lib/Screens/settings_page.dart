@@ -7,6 +7,9 @@ import 'package:adas/Bloc/ble_bloc.dart';
 import 'scan_page.dart';
 import 'setter_page.dart';
 
+late String _currentLang;
+List<String> _lang = ["English", "Arabic"];
+
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
@@ -16,6 +19,7 @@ class SettingsPage extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         B.theme = Theme.of(context).colorScheme;
+        _currentLang = context.locale.toString();
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -55,6 +59,36 @@ Widget theScaffold({
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: ListTile(
+                    title: Text(
+                      "Language".tr(),
+                    ),
+                    subtitle: Text(
+                      "sLanguage".tr(),
+                    ),
+                    trailing: DropdownButton(
+                      iconSize: 20,
+                      padding: const EdgeInsets.all(8),
+                      borderRadius: BorderRadius.circular(10),
+                      alignment: Alignment.center,
+                      underline: Container(),
+                      elevation: 0,
+                      isDense: true,
+                      value: _currentLang == 'en' ? 'English' : 'Arabic',
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: _lang.map((String items) {
+                        return DropdownMenuItem(value: items, child: Text(items).tr());
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        newValue == "English" ? _currentLang = 'en' : _currentLang = 'ar';
+                        context.setLocale(Locale(_currentLang));
+                        B.stateChanged();
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: ThemePopupMenu(
                     schemeIndex: B.themeController.schemeIndex,
                     onChanged: (value) {
