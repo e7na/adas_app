@@ -359,7 +359,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
             startStream(device, characteristic1),
             // send key and vector to the esp32
             sendKey(device),
-            // if still unauthorized after sending key, perform handshake
+            await Future.delayed(const Duration(seconds: 2)),
             handshake(device),
             emit(StatusChanged()),
           }
@@ -404,9 +404,10 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     // get the value from the msg characteristic
     final response = await ble.readCharacteristic(characteristic4);
     // encrypt the msg
-    Uint8List encryptedMsg = encrypt.Encrypter(encrypt.AES(keys[device.id]))
-        .encrypt(utf8.decode(response), iv: ivs[device.id])
-        .bytes;
+    Uint8List encryptedMsg =
+        encrypt.Encrypter(encrypt.AES(keys[device.id], mode: encrypt.AESMode.cbc, padding: null))
+            .encrypt(utf8.decode(response), iv: ivs[device.id])
+            .bytes;
     // send the encrypted msg
     final characteristic5 = QualifiedCharacteristic(
         serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),

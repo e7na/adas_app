@@ -18,6 +18,7 @@ class _IntroPageState extends State<IntroPage> {
   bool lang = false;
   @override
   Widget build(BuildContext context) {
+    B.theme = Theme.of(context).colorScheme;
     context.locale.toString() == "ar" ? lang = true : lang = false;
     return Scaffold(
       body: SafeArea(
