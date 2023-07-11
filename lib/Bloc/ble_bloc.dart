@@ -427,6 +427,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   //establish connection with device
   connectToDevice(BleDevice device) {
+    // stop scan to save battery
+    scanStarted == true ? stopScan() : null;
     // Connect to device with id
     finalDevicesStreams[device.id] = ble.connectToDevice(
       id: device.id,
@@ -447,6 +449,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   disconnectDevice(BleDevice device) {
     finalDevicesStreamsSubs[device.id].cancel();
     finalDevicesStates[device.id] = DeviceConnectionState.disconnected;
+    finalDevicesAuthStates[device.id] = "unauthorized";
     emit(BleConnected());
   }
 
