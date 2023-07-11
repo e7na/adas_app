@@ -91,7 +91,8 @@ class DeviceTile extends StatelessWidget {
                                 onPressed: authString == "unauthorized"
                                     ? null
                                     : () => B.controlDoors(device),
-                                child: Text(B.unlockDoors ? "lock Doors" : "Unlock Doors").tr()),
+                                child: Text(B.unlockDoors == "ON" ? "lock Doors" : "Unlock Doors")
+                                    .tr()),
                           ),
                         ),
                   Expanded(

@@ -33,7 +33,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   bool somethingChosen = false;
   bool addedToStreams = false;
   bool timerStarted = false;
-  bool unlockDoors = false;
+  String unlockDoors = "OFF";
 
   // Bluetooth related variables
   final ble = FlutterReactiveBle();
@@ -333,15 +333,23 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   // Unlock or close car doors
   controlDoors(BleDevice device) async {
     if (finalDevicesAuthStates[device.id] == "authorized") {
-      // Will set it to true the first time
-      unlockDoors = !unlockDoors;
       // send the msg to control door
       final characteristic6 = QualifiedCharacteristic(
           serviceId: Uuid.parse("d9327ccb-992b-4d78-98ce-2297ed2c09d6"),
           characteristicId: Uuid.parse("9800d290-19fb-4085-9610-f1e878725ad2"),
           deviceId: device.id);
+      // read the state of the doors characteristic
+      final response = await ble.readCharacteristic(characteristic6);
+      // Make Sure the values come from the esp32
+      unlockDoors = utf8.decode(response);
       await ble.writeCharacteristicWithResponse(characteristic6,
-          value: utf8.encode(unlockDoors ? "ON" : "OFF"));
+          value: utf8.encode(unlockDoors == "OFF" ? "ON" : "OFF"));
+      // wait to make sure it changed in the esp32
+      await Future.delayed(const Duration(seconds: 1));
+      final response2 = await ble.readCharacteristic(characteristic6);
+      // Make Sure the value changed in the esp32
+      unlockDoors = utf8.decode(response2);
+      emit(StatusChanged());
     }
   }
 
