@@ -217,7 +217,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
       // if there were no keys before, generate new ones
       // but if there was keys make sure to use the old ones
       keys +=
-          "${chosenDevices[i].id}||${box.get("Keys", defaultValue: "") == "" || !box.get("Keys").contains(chosenDevices[i].id) ? encrypt.Key.fromSecureRandom(32).base64 : searchKeys(chosenDevices[i].id)}";
+          "${chosenDevices[i].id}||${box.get("Keys", defaultValue: "") == "" || !box.get("Keys").contains(chosenDevices[i].id) ? encrypt.Key.fromSecureRandom(16).base64 : searchKeys(chosenDevices[i].id)}";
       vectors +=
           "${chosenDevices[i].id}||${box.get("Vectors", defaultValue: "") == "" || !box.get("Vectors").contains(chosenDevices[i].id) ? encrypt.IV.fromSecureRandom(16).base64 : searchVectors(chosenDevices[i].id)}";
       // device can have multiple uuids
@@ -293,7 +293,7 @@ class BleBloc extends Bloc<BleEvent, BleState> {
           ? key = box.get("Keys").split(",")[i].split("||")[1]
           : null;
     }
-    key == "" ? key = encrypt.Key.fromSecureRandom(32).base64 : null;
+    key == "" ? key = encrypt.Key.fromSecureRandom(16).base64 : null;
     return key;
   }
 
