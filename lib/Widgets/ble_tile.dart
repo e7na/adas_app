@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
 import 'package:adas/Data/Models/device_model.dart';
 import 'package:adas/Screens/setter_page.dart';
 
@@ -22,26 +20,21 @@ class _BleTileState extends State<BleTile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return ListTile(
-          leading: Text("${widget.rssi}",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: B.theme.primary)),
-          title: Text(
-            widget.device.name == "" ? "No Name".tr() : widget.device.name,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Text(widget.device.id),
-          trailing: ElevatedButton(
-              child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
-              onPressed: () async {
-                isRemove
-                    ? {isRemove = B.deviceRemove(device: widget.device), B.isRemoveChanged()}
-                    : {isRemove = B.deviceAdd(device: widget.device), B.isRemoveChanged()};
-              }),
-        );
-      },
+    return ListTile(
+      leading: Text("${widget.rssi}",
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: C.theme.primary)),
+      title: Text(
+        widget.device.name == "" ? "No Name".tr() : widget.device.name,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(widget.device.id),
+      trailing: ElevatedButton(
+          child: Icon(isRemove ? Icons.cancel_rounded : Icons.check),
+          onPressed: () async {
+            isRemove
+                ? {isRemove = C.deviceRemove(device: widget.device), C.isRemoveChanged()}
+                : {isRemove = C.deviceAdd(device: widget.device), C.isRemoveChanged()};
+          }),
     );
   }
 }

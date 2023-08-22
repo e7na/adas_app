@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
 import 'package:adas/Services/flex_colors/theme_controller.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'package:adas/Data/system_ui.dart';
 import 'main_page.dart';
 import 'on_boarding.dart';
 
-late BleBloc B;
+late BleCubit C;
 
 class SetterPage extends StatefulWidget {
   final Box box;
@@ -25,18 +25,18 @@ class _SetterPageState extends State<SetterPage> {
   @override
   void initState() {
     super.initState();
-    B = BleBloc.get(context);
-    B.box = widget.box;
-    B.themeController = widget.themeController;
+    C = BleCubit.get(context);
+    C.box = widget.box;
+    C.themeController = widget.themeController;
     // to get theme from context
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      B.lang = context.locale.toString();
-      B.theme = Theme.of(context).colorScheme;
-      B.themeChanged();
+      C.lang = context.locale.toString();
+      C.theme = Theme.of(context).colorScheme;
+      C.themeChanged();
       // get list of saved devices
-      B.getDevices();
+      C.getDevices();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => B.box.get("showHome", defaultValue: false) == true
+          builder: (context) => C.box.get("showHome", defaultValue: false) == true
               ? const MainPage()
               : const IntroPage()));
     });
@@ -44,6 +44,7 @@ class _SetterPageState extends State<SetterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(value: systemUI(B: B), child: Container());
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: systemUI(brightness: C.brightness), child: Container());
   }
 }

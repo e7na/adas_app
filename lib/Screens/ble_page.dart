@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'package:adas/Widgets/device_tile.dart';
 import 'settings_page.dart';
 import 'setter_page.dart';
@@ -21,19 +21,18 @@ class _BLEPageState extends State<BLEPage> {
   void initState() {
     super.initState();
     // get list of saved devices
-    B.getDevices();
+    C.getDevices();
     //To get Rssi Values
-    B.startScan();
+    C.startScan();
     //Connect to devices on start up
     // connect(B);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -65,7 +64,7 @@ Widget theScaffold({
         ),
         automaticallyImplyLeading: true,
         backgroundColor:
-            B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+            C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
         elevation: 1,
         expandedHeight: 300,
         actions: [
@@ -87,28 +86,28 @@ Widget theScaffold({
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: B.finalDevices.length,
+              itemCount: C.finalDevices.length,
               itemBuilder: (context, index) {
                 int rssi = 0;
                 DeviceConnectionState? deviceState;
-                if (B.finalDevicesStates.length > index) {
-                  deviceState = B.finalDevicesStates[B.finalDevices[index].id];
+                if (C.finalDevicesStates.length > index) {
+                  deviceState = C.finalDevicesStates[C.finalDevices[index].id];
                 }
-                if (B.scanStarted) {
+                if (C.scanStarted) {
                   Iterable<DiscoveredDevice> dDevice =
-                      B.devices.where((d) => d.id == B.finalDevices[index].id);
+                      C.devices.where((d) => d.id == C.finalDevices[index].id);
                   dDevice.isNotEmpty
                       ? rssi = dDevice.first.rssi != 0
-                          ? B.averageRssi(rssi: dDevice.first.rssi, id: B.finalDevices[index].id)
+                          ? C.averageRssi(rssi: dDevice.first.rssi, id: C.finalDevices[index].id)
                           : 0
                       : 0;
                 }
                 return DeviceTile(
-                  device: B.finalDevices[index],
+                  device: C.finalDevices[index],
                   rssi: rssi,
-                  distance: B.calculateDistance(rssi: rssi),
+                  distance: C.calculateDistance(rssi: rssi),
                   status: deviceState ?? DeviceConnectionState.disconnected,
-                  B: B,
+                  C: C,
                 );
               }),
         ],
@@ -123,14 +122,14 @@ Widget theScaffold({
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ElevatedButton(
                   // start scan or stop it.
-                  onPressed: B.scanStarted
-                      ? B.stopScan
+                  onPressed: C.scanStarted
+                      ? C.stopScan
                       : () async {
-                          B.startScan();
+                          C.startScan();
                         },
                   child: Icon(
-                    B.scanStarted ? Icons.cancel : Icons.location_on,
-                    color: B.theme.onSurfaceVariant,
+                    C.scanStarted ? Icons.cancel : Icons.location_on,
+                    color: C.theme.onSurfaceVariant,
                   ),
                 ),
               ),

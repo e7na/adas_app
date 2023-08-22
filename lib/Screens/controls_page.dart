@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:websocket_universal/websocket_universal.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'controller_page.dart';
 import 'setter_page.dart';
 import 'settings_page.dart';
@@ -28,17 +28,16 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
-    _ipController.text = B.box.get("Ip") ?? "192.168.137.1";
-    _portController.text = B.box.get("Port") ?? "8000";
+    _ipController.text = C.box.get("Ip") ?? "192.168.137.1";
+    _portController.text = C.box.get("Port") ?? "8000";
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -60,7 +59,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
           child: Row(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
+                padding: EdgeInsets.only(left: 40.0, right: 50.0, top: C.lang == "ar" ? 6 : 0),
                 child: Text(
                   "ControlTitle".tr(),
                   style: const TextStyle(fontSize: 24),
@@ -71,7 +70,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
         ),
         automaticallyImplyLeading: true,
         backgroundColor:
-            B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+            C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
         elevation: 1,
         expandedHeight: 300,
         actions: [
@@ -125,15 +124,15 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   _bytesSocketHandler.close();
                                   _connected = false;
                                   _msg = [48, 48, 48, 48, 48, 48, 48];
-                                  B.stateChanged();
+                                  C.stateChanged();
                                 }
                               : () async {
-                                  _ipController.text == B.box.get("Ip")
+                                  _ipController.text == C.box.get("Ip")
                                       ? null
-                                      : B.box.put("Ip", _ipController.text);
-                                  _portController.text == B.box.get("Port")
+                                      : C.box.put("Ip", _ipController.text);
+                                  _portController.text == C.box.get("Port")
                                       ? null
-                                      : B.box.put("Port", _portController.text);
+                                      : C.box.put("Port", _portController.text);
                                   var websocketConnectionUri =
                                       'ws://${_ipController.text}:${_portController.text}'
                                       '/websocket';
@@ -160,7 +159,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                           ' ping=${debugEvent.pingMs} ms. '
                                           'Debug message=${debugEvent.message}');
                                     }
-                                    B.stateChanged();
+                                    C.stateChanged();
                                   });
 
                                   // Listening to server responses:
@@ -176,7 +175,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                     if (kDebugMode) {
                                       print('> webSocket sent bytes message to   server: "$inMsg"');
                                     }
-                                    B.stateChanged();
+                                    C.stateChanged();
                                   });
 
                                   // Connecting to server:
@@ -219,7 +218,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                             size: 40,
                             color: (_msg[1] - 48) > 0
                                 ? Colors.green.withOpacity((_msg[1] - 48) / 5)
-                                : B.theme.onBackground,
+                                : C.theme.onBackground,
                           )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -230,13 +229,13 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   size: 40,
                                   color: (_msg[4] - 48) > 0
                                       ? Colors.green.withOpacity((_msg[4] - 48) / 5)
-                                      : B.theme.onBackground)),
+                                      : C.theme.onBackground)),
                           Stack(
                             children: [
                               SvgPicture.asset(
                                 "assets/images/car.svg",
                                 colorFilter: ColorFilter.mode(
-                                    (_msg[0] - 48) == 1 ? Colors.red : B.theme.onBackground,
+                                    (_msg[0] - 48) == 1 ? Colors.red : C.theme.onBackground,
                                     BlendMode.srcIn),
                                 height: 200,
                               ),
@@ -247,15 +246,15 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                         ? (_msg[5] - 48) > 0
                                             ? (_msg[6] - 48) > 0
                                                 ? Colors.green
-                                                : B.theme.primary
+                                                : C.theme.primary
                                             : (_msg[6] - 48) > 0
                                                 ? Colors.yellow
                                                 : (_msg[0] - 48) == 1
                                                     ? Colors.red
-                                                    : B.theme.onBackground
+                                                    : C.theme.onBackground
                                         : (_msg[0] - 48) == 1
                                             ? Colors.red
-                                            : B.theme.onBackground,
+                                            : C.theme.onBackground,
                                     BlendMode.srcIn),
                                 height: 200,
                               ),
@@ -267,7 +266,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                   size: 40,
                                   color: (_msg[3] - 48) > 0
                                       ? Colors.green.withOpacity((_msg[3] - 48) / 5)
-                                      : B.theme.onBackground)),
+                                      : C.theme.onBackground)),
                         ],
                       ),
                       Padding(
@@ -276,7 +275,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                               size: 40,
                               color: (_msg[2] - 48) > 0
                                   ? Colors.green.withOpacity((_msg[2] - 48) / 5)
-                                  : B.theme.onBackground)),
+                                  : C.theme.onBackground)),
                     ],
                   ),
                   Padding(
@@ -315,19 +314,19 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                                 /// Set the background color and axis thickness.
                                 style: GaugeAxisStyle(
                                   thickness: 12,
-                                  background: B.theme.inversePrimary,
+                                  background: C.theme.inversePrimary,
                                 ),
 
                                 progressBar: GaugeRoundedProgressBar(
                                   gradient: GaugeAxisGradient(
-                                    colors: [B.theme.primary, B.theme.error],
+                                    colors: [C.theme.primary, C.theme.error],
                                   ),
                                 ),
 
                                 /// Define the pointer that will indicate the progress.
                                 pointer: NeedlePointer(
                                   position: const GaugePointerPosition.center(offset: Offset(0, 8)),
-                                  color: B.theme.onBackground,
+                                  color: C.theme.onBackground,
                                   width: 10,
                                   height: 35,
                                 ),
@@ -355,6 +354,6 @@ Color getStatusColor(status) {
       ? color = Colors.green
       : status == "disconnected"
           ? color = Colors.red
-          : color = B.theme.onBackground;
+          : color = C.theme.onBackground;
   return color;
 }

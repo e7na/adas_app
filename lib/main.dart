@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'Services/flex_colors/theme_controller.dart';
 import 'Services/flex_colors/theme_service.dart';
 import 'Services/flex_colors/theme_service_hive.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'package:adas/Screens/setter_page.dart';
 import 'Data/flex_themes.dart';
 import 'Data/theme.dart';
@@ -47,9 +47,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BleBloc(),
-      child: BlocConsumer<BleBloc, BleState>(
-        listener: (context, state) {},
+      create: (context) => BleCubit(),
+      child: BlocBuilder<BleCubit, BleState>(
         builder: (context, state) {
           return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
             return MaterialApp(

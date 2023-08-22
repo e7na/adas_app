@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'qr_generate_page.dart';
 import 'setter_page.dart';
 
@@ -16,10 +16,9 @@ class SelectQrPage extends StatefulWidget {
 class _SelectQrPageState extends State<SelectQrPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -40,7 +39,7 @@ Widget theScaffold({
           automaticallyImplyLeading: true,
           expandedTitle: Text("Select Device".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
-            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
+            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: C.lang == "ar" ? 6 : 0),
             child: Row(
               children: [
                 Text("Share".tr(), style: const TextStyle(fontSize: 24)),
@@ -48,7 +47,7 @@ Widget theScaffold({
             ),
           ),
           backgroundColor:
-              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+              C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           children: [
@@ -65,7 +64,7 @@ Widget theScaffold({
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: B.finalDevices.length,
+                          itemCount: C.finalDevices.length,
                           itemBuilder: (context, index) {
                             return ListTile(
                               onTap: () {
@@ -73,17 +72,17 @@ Widget theScaffold({
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => QRGeneratePage(
-                                            deviceID: B.finalDevices[index].id,
+                                            deviceID: C.finalDevices[index].id,
                                           )),
                                 );
                               },
                               title: Text(
-                                B.finalDevices[index].name == ""
+                                C.finalDevices[index].name == ""
                                     ? "No Name".tr()
-                                    : B.finalDevices[index].name,
+                                    : C.finalDevices[index].name,
                                 style: const TextStyle(fontWeight: FontWeight.w600),
                               ),
-                              subtitle: Text(B.finalDevices[index].id),
+                              subtitle: Text(C.finalDevices[index].id),
                             );
                           }),
                     ],

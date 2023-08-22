@@ -40,7 +40,7 @@ showAlertDialog(BuildContext context, String barCodeValue) {
     child: const Text("Continue").tr(),
     onPressed: () {
       // replace key and iv
-      B.replaceKeys(
+      C.replaceKeys(
           id: barCodeValue.toString().split('|||')[0].split('||')[0],
           key: barCodeValue.toString().split('|||')[0].split('||')[1],
           vector: barCodeValue.toString().split('|||')[1]);

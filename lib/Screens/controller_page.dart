@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:websocket_universal/websocket_universal.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'setter_page.dart';
 
 late String _ip;
@@ -27,8 +27,8 @@ class ControllerPage extends StatefulWidget {
 class _ControllerPageState extends State<ControllerPage> {
   @override
   void initState() {
-    _ip = B.box.get("Ip") ?? "192.168.137.1";
-    _port = B.box.get("Port") ?? "8000";
+    _ip = C.box.get("Ip") ?? "192.168.137.1";
+    _port = C.box.get("Port") ?? "8000";
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -49,10 +49,9 @@ class _ControllerPageState extends State<ControllerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -68,7 +67,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
   return Scaffold(
     appBar: AppBar(
       title: Text("ControllerTitle".tr()),
-      backgroundColor: B.theme.onPrimary,
+      backgroundColor: C.theme.onPrimary,
     ),
     body: Padding(
       padding: const EdgeInsets.all(33.0),
@@ -90,7 +89,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           final bytesMessage =
                               utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                           _brakes ? null : _bytesSocketHandler.sendMessage(bytesMessage);
-                          B.stateChanged();
+                          C.stateChanged();
                         }),
                     Column(
                       children: [
@@ -101,7 +100,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            B.stateChanged();
+                            C.stateChanged();
                           },
                           child: _brakes
                               ? const Text("RELEASE BRAKES").tr()
@@ -113,11 +112,11 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            B.stateChanged();
+                            C.stateChanged();
                           },
                           child: Text("HIGH LIGHTS".tr(),
                               style:
-                                  TextStyle(color: _hlPressed == 1 ? Colors.red : B.theme.primary)),
+                                  TextStyle(color: _hlPressed == 1 ? Colors.red : C.theme.primary)),
                         ),
                         ElevatedButton(
                           onPressed: () async {
@@ -125,11 +124,11 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                             final bytesMessage =
                                 utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                             _bytesSocketHandler.sendMessage(bytesMessage);
-                            B.stateChanged();
+                            C.stateChanged();
                           },
                           child: Text("LOW LIGHTS".tr(),
                               style:
-                                  TextStyle(color: _llPressed == 1 ? Colors.red : B.theme.primary)),
+                                  TextStyle(color: _llPressed == 1 ? Colors.red : C.theme.primary)),
                         )
                       ],
                     ),
@@ -142,7 +141,7 @@ Widget theScaffold({required BuildContext context, numDevices}) {
                           final bytesMessage =
                               utf8.encode("${_lastMessage.join()}$_hlPressed$_llPressed");
                           _brakes ? null : _bytesSocketHandler.sendMessage(bytesMessage);
-                          B.stateChanged();
+                          C.stateChanged();
                         }),
                   ],
                 )

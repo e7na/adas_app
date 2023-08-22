@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'controls_page.dart';
 import 'scan_page.dart';
 import 'setter_page.dart';
@@ -24,10 +24,9 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -53,7 +52,7 @@ Widget theScaffold({required BuildContext context}) {
           ),
         ),
         backgroundColor:
-            B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+            C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
         elevation: 1,
         expandedHeight: 300,
         children: [
@@ -67,7 +66,7 @@ Widget theScaffold({required BuildContext context}) {
                   child: ElevatedButton(
                       onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>
-                              B.finalDevices.isNotEmpty ? const BLEPage() : const ScanPage())),
+                              C.finalDevices.isNotEmpty ? const BLEPage() : const ScanPage())),
                       style: ElevatedButton.styleFrom(minimumSize: const Size(400, 50)),
                       child: const Text("BLE").tr()),
                 ),

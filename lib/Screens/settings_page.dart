@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
 import 'package:adas/Widgets/theme_popup_menu.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'scan_page.dart';
 import 'setter_page.dart';
 
@@ -15,10 +15,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         _currentLang = context.locale.toString();
         return ColoredBox(
           color: Colors.white,
@@ -40,7 +39,7 @@ Widget theScaffold({
           automaticallyImplyLeading: true,
           expandedTitle: Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 32)),
           collapsedTitle: Padding(
-            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: B.lang == "ar" ? 6 : 0),
+            padding: EdgeInsets.only(left: 40.0, right: 50.0, top: C.lang == "ar" ? 6 : 0),
             child: Row(
               children: [
                 Text("SettingsTitle".tr(), style: const TextStyle(fontSize: 24)),
@@ -48,7 +47,7 @@ Widget theScaffold({
             ),
           ),
           backgroundColor:
-              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+              C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           children: [
@@ -82,7 +81,7 @@ Widget theScaffold({
                       onChanged: (String? newValue) {
                         newValue == "English" ? _currentLang = 'en' : _currentLang = 'ar';
                         context.setLocale(Locale(_currentLang));
-                        B.stateChanged();
+                        C.stateChanged();
                       },
                     ),
                   ),
@@ -90,10 +89,10 @@ Widget theScaffold({
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: ThemePopupMenu(
-                    schemeIndex: B.themeController.schemeIndex,
+                    schemeIndex: C.themeController.schemeIndex,
                     onChanged: (value) {
-                      B.themeController.setSchemeIndex(value);
-                      B.themeChanged();
+                      C.themeController.setSchemeIndex(value);
+                      C.themeChanged();
                     },
                   ),
                 ),
@@ -102,25 +101,25 @@ Widget theScaffold({
                     child: SwitchListTile(
                       title: Text("Dynamic Colors".tr()),
                       subtitle: Text("T4".tr()),
-                      value: B.box.get("isDynamic") ?? false,
+                      value: C.box.get("isDynamic") ?? false,
                       onChanged: (bool value) {
-                        B.box.put("isDynamic", value);
-                        B.themeChanged();
+                        C.box.put("isDynamic", value);
+                        C.themeChanged();
                       },
                     )),
-                B.finalDevices.isEmpty
+                C.finalDevices.isEmpty
                     ? Container()
                     : Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 60.0),
                         child: ElevatedButton(
                             onPressed: () => {
-                                  B.chosenDevices.clear(),
-                                  B.finalDevices.clear(),
-                                  B.box.put('NumDevices', 0),
-                                  B.box.put("IDs", ""),
-                                  B.box.put("Names", ""),
-                                  B.box.put("Uuids", ""),
-                                  B.stopScan(),
+                                  C.chosenDevices.clear(),
+                                  C.finalDevices.clear(),
+                                  C.box.put('NumDevices', 0),
+                                  C.box.put("IDs", ""),
+                                  C.box.put("Names", ""),
+                                  C.box.put("Uuids", ""),
+                                  C.stopScan(),
                                   Navigator.of(context).pop(),
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(builder: (context) => const ScanPage()))

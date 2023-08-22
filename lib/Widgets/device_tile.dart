@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:adas/Data/Models/device_model.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 
 class DeviceTile extends StatelessWidget {
   final BleDevice device;
   final int rssi;
   final String distance;
   final DeviceConnectionState status;
-  final BleBloc B;
+  final BleCubit C;
 
   const DeviceTile(
       {Key? key,
@@ -17,13 +17,13 @@ class DeviceTile extends StatelessWidget {
       required this.rssi,
       required this.distance,
       required this.status,
-      required this.B})
+      required this.C})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String statusString = "$status".split(".")[1].toUpperCase();
-    String authString = B.finalDevicesAuthStates[device.id];
+    String authString = C.finalDevicesAuthStates[device.id];
     ColorScheme theme = Theme.of(context).colorScheme;
     TextStyle data = TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: theme.primary);
     return Theme(
@@ -75,7 +75,7 @@ class DeviceTile extends StatelessWidget {
                     ),
                     trailing: ElevatedButton(
                         onPressed:
-                            authString == "authorized" ? null : () => B.authorizeDevice(device),
+                            authString == "authorized" ? null : () => C.authorizeDevice(device),
                         child: Text("AUTHORIZE".tr()))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -90,8 +90,8 @@ class DeviceTile extends StatelessWidget {
                             child: ElevatedButton(
                                 onPressed: authString == "unauthorized"
                                     ? null
-                                    : () => B.controlDoors(device),
-                                child: Text(B.unlockDoors == "ON" ? "lock Doors" : "Unlock Doors")
+                                    : () => C.controlDoors(device),
+                                child: Text(C.unlockDoors == "ON" ? "lock Doors" : "Unlock Doors")
                                     .tr()),
                           ),
                         ),
@@ -100,8 +100,8 @@ class DeviceTile extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: ElevatedButton(
                           onPressed: statusString == "DISCONNECTED"
-                              ? () => B.connectToDevice(device)
-                              : () => B.disconnectDevice(device),
+                              ? () => C.connectToDevice(device)
+                              : () => C.disconnectDevice(device),
                           child:
                               Text(statusString == "DISCONNECTED" ? "CONNECT" : "DISCONNECT").tr()),
                     ),

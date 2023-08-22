@@ -1,4 +1,4 @@
-part of 'ble_bloc.dart';
+part of 'ble_cubit.dart';
 
 @immutable
 abstract class BleState {}
@@ -20,3 +20,4 @@ class BleConnected extends BleState {}
 class ThemeChanged extends BleState {}
 
 class StatusChanged extends BleState {}
+

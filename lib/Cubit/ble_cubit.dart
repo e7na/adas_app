@@ -16,11 +16,11 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:adas/Data/Models/device_model.dart';
 import 'package:adas/Services/flex_colors/theme_controller.dart';
 
-part 'ble_event.dart';
-
 part 'ble_state.dart';
 
-class BleBloc extends Bloc<BleEvent, BleState> {
+class BleCubit extends Cubit<BleState> {
+  BleCubit() : super(BleInitial());
+  static BleCubit get(context) => BlocProvider.of(context);
   Brightness brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
   late Box box;
   late ColorScheme theme;
@@ -49,12 +49,6 @@ class BleBloc extends Bloc<BleEvent, BleState> {
   Map finalDevicesStates = <String, DeviceConnectionState>{};
   Map finalDevicesAuthStates = <String, String>{};
   final devices = <DiscoveredDevice>[];
-
-  static BleBloc get(context) => BlocProvider.of(context);
-
-  BleBloc() : super(BleInitial()) {
-    on<BleEvent>((event, emit) {});
-  }
 
   // Permissions handling stuff
   Future<Map<Permission, PermissionStatus>> requestPermissions() async {

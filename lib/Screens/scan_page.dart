@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:samsung_ui_scroll_effect/samsung_ui_scroll_effect.dart';
-import 'package:adas/Bloc/ble_bloc.dart';
+import 'package:adas/Cubit/ble_cubit.dart';
 import 'package:adas/Widgets/ble_tile.dart';
 import 'package:adas/Data/Models/device_model.dart';
 import 'ble_page.dart';
@@ -15,10 +15,9 @@ class ScanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BleBloc, BleState>(
-      listener: (context, state) {},
+    return BlocBuilder<BleCubit, BleState>(
       builder: (context, state) {
-        B.theme = Theme.of(context).colorScheme;
+        C.theme = Theme.of(context).colorScheme;
         return ColoredBox(
           color: Colors.white,
           child: theScaffold(
@@ -42,7 +41,7 @@ Widget theScaffold({
               Text("ScanTitle".tr(), style: const TextStyle(fontSize: 32)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                child: Text(B.scanStarted ? "T2".tr() : "T1".tr(),
+                child: Text(C.scanStarted ? "T2".tr() : "T1".tr(),
                     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
               )
             ],
@@ -60,7 +59,7 @@ Widget theScaffold({
           ),
           automaticallyImplyLeading: true,
           backgroundColor:
-              B.brightness == Brightness.light ? B.theme.background : B.theme.surfaceVariant,
+              C.brightness == Brightness.light ? C.theme.background : C.theme.surfaceVariant,
           elevation: 1,
           expandedHeight: 300,
           actions: [
@@ -77,20 +76,20 @@ Widget theScaffold({
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  B.devices.isNotEmpty
+                  C.devices.isNotEmpty
                       ? ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: B.devices.length,
+                          itemCount: C.devices.length,
                           itemBuilder: (context, index) {
                             return BleTile(
                                 device: BleDevice(
-                                  name: B.devices[index].name,
-                                  id: B.devices[index].id,
-                                  uuids: B.devices[index].serviceUuids,
+                                  name: C.devices[index].name,
+                                  id: C.devices[index].id,
+                                  uuids: C.devices[index].serviceUuids,
                                 ),
-                                rssi: B.devices[index].rssi,
+                                rssi: C.devices[index].rssi,
                                 index: index);
                           })
                       : SizedBox(
@@ -99,8 +98,8 @@ Widget theScaffold({
                               child: Text(
                             "Start Scan".tr(),
                             style: TextStyle(
-                                color: B.brightness == Brightness.light
-                                    ? B.theme.primary
+                                color: C.brightness == Brightness.light
+                                    ? C.theme.primary
                                     : Colors.white),
                           ))),
                 ])
@@ -114,14 +113,14 @@ Widget theScaffold({
               width: 140,
               child: ElevatedButton(
                 // start scan or stop it.
-                onPressed: B.scanStarted
-                    ? B.stopScan
+                onPressed: C.scanStarted
+                    ? C.stopScan
                     : () {
-                        B.requestPermissions().whenComplete(() => B.startScan());
+                        C.requestPermissions().whenComplete(() => C.startScan());
                       },
                 child: Icon(
-                  B.scanStarted ? Icons.cancel : Icons.search,
-                  color: B.theme.onSurfaceVariant,
+                  C.scanStarted ? Icons.cancel : Icons.search,
+                  color: C.theme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -129,9 +128,9 @@ Widget theScaffold({
               width: 140,
               child: ElevatedButton(
                 // If a device is chosen, it is be enabled.
-                onPressed: B.somethingChosen
+                onPressed: C.somethingChosen
                     ? () {
-                        B.saveDevices().whenComplete(() => Navigator.of(context).pushReplacement(
+                        C.saveDevices().whenComplete(() => Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) => const BLEPage())));
                       }
                     : null,
